@@ -22,12 +22,12 @@ module.exports = class GraphAPi {
       {
         uri: `${config.mPlatfom}/me/messages`,
         qs: {
-          access_token: config.pageAccesToken
+          access_token: config.pageAccesToken,
         },
         method: "POST",
-        json: requestBody
+        json: requestBody,
       },
-      error => {
+      (error) => {
         if (error) {
           console.error("Unable to send message:", error);
         }
@@ -43,10 +43,10 @@ module.exports = class GraphAPi {
       {
         uri: `${config.mPlatfom}/me/messenger_profile`,
         qs: {
-          access_token: config.pageAccesToken
+          access_token: config.pageAccesToken,
         },
         method: "POST",
-        json: requestBody
+        json: requestBody,
       },
       (error, _res, body) => {
         if (!error) {
@@ -86,9 +86,9 @@ module.exports = class GraphAPi {
           callback_url: config.webhookUrl,
           verify_token: config.verifyToken,
           fields: fields,
-          include_values: "true"
+          include_values: "true",
         },
-        method: "POST"
+        method: "POST",
       },
       (error, _res, body) => {
         if (!error) {
@@ -122,11 +122,11 @@ module.exports = class GraphAPi {
         uri: `${config.mPlatfom}/${config.pageId}/subscribed_apps`,
         qs: {
           access_token: config.pageAccesToken,
-          subscribed_fields: fields
+          subscribed_fields: fields,
         },
-        method: "POST"
+        method: "POST",
       },
-      error => {
+      (error) => {
         if (error) {
           console.error("Unable to send message:", error);
         }
@@ -160,9 +160,9 @@ module.exports = class GraphAPi {
         uri: `${config.mPlatfom}/${senderPsid}`,
         qs: {
           access_token: config.pageAccesToken,
-          fields: "first_name, last_name, gender, locale, timezone"
+          fields: "first_name, last_name, gender, locale, timezone",
         },
-        method: "GET"
+        method: "GET",
       })
         .on("response", function(response) {
           // console.log(response.statusCode);
@@ -197,9 +197,9 @@ module.exports = class GraphAPi {
       request({
         uri: `${config.mPlatfom}/me/personas`,
         qs: {
-          access_token: config.pageAccesToken
+          access_token: config.pageAccesToken,
         },
-        method: "GET"
+        method: "GET",
       })
         .on("response", function(response) {
           // console.log(response.statusCode);
@@ -233,16 +233,16 @@ module.exports = class GraphAPi {
 
       let requestBody = {
         name: name,
-        profile_picture_url: profile_picture_url
+        profile_picture_url: profile_picture_url,
       };
 
       request({
         uri: `${config.mPlatfom}/me/personas`,
         qs: {
-          access_token: config.pageAccesToken
+          access_token: config.pageAccesToken,
         },
         method: "POST",
-        json: requestBody
+        json: requestBody,
       })
         .on("response", function(response) {
           // console.log(response.statusCode);
@@ -263,7 +263,7 @@ module.exports = class GraphAPi {
 
           resolve(JSON.parse(body).id);
         });
-    }).catch(error => {
+    }).catch((error) => {
       console.error("Unable to create a persona:", error, body);
     });
   }
@@ -278,9 +278,9 @@ module.exports = class GraphAPi {
         uri: `${config.mPlatfom}/me/nlp_configs`,
         qs: {
           access_token: config.pageAccesToken,
-          nlp_enabled: true
+          nlp_enabled: true,
         },
-        method: "POST"
+        method: "POST",
       },
       (error, _res, body) => {
         if (!error) {
@@ -300,14 +300,14 @@ module.exports = class GraphAPi {
         {
           _eventName: "postback_payload",
           _value: eventName,
-          _origin: "original_coast_clothing"
-        }
+          _origin: "original_coast_clothing",
+        },
       ]),
       advertiser_tracking_enabled: 1,
       application_tracking_enabled: 1,
       extinfo: JSON.stringify(["mb1"]),
       page_id: config.pageId,
-      page_scoped_user_id: senderPsid
+      page_scoped_user_id: senderPsid,
     };
 
     // Send the HTTP request to the Activities API
@@ -315,9 +315,9 @@ module.exports = class GraphAPi {
       {
         uri: `${config.mPlatfom}/${config.appId}/activities`,
         method: "POST",
-        form: requestBody
+        form: requestBody,
       },
-      error => {
+      (error) => {
         if (!error) {
           console.log(`FBA event '${eventName}'`);
         } else {

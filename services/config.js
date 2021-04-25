@@ -21,13 +21,13 @@ const ENV_VARS = [
   "APP_SECRET",
   "VERIFY_TOKEN",
   "APP_URL",
-  "SHOP_URL"
+  "SHOP_URL",
 ];
 
 module.exports = {
   // Messenger Platform API
   mPlatformDomain: "https://graph.facebook.com",
-  mPlatformVersion: "v3.2",
+  mPlatformVersion: "v10.0",
 
   // Page and Application information
   pageId: process.env.PAGE_ID,
@@ -61,20 +61,20 @@ module.exports = {
     return [
       {
         name: "Jorge",
-        picture: `${this.appUrl}/personas/sales.jpg`
+        picture: `${this.appUrl}/personas/sales.jpg`,
       },
       {
         name: "Laura",
-        picture: `${this.appUrl}/personas/billing.jpg`
+        picture: `${this.appUrl}/personas/billing.jpg`,
       },
       {
         name: "Riandy",
-        picture: `${this.appUrl}/personas/order.jpg`
+        picture: `${this.appUrl}/personas/order.jpg`,
       },
       {
         name: "Daniel",
-        picture: `${this.appUrl}/personas/care.jpg`
-      }
+        picture: `${this.appUrl}/personas/care.jpg`,
+      },
     ];
   },
 
@@ -86,7 +86,7 @@ module.exports = {
     let id = this.personas["Jorge"] || process.env.PERSONA_SALES;
     return {
       name: "Jorge",
-      id: id
+      id: id,
     };
   },
 
@@ -94,7 +94,7 @@ module.exports = {
     let id = this.personas["Laura"] || process.env.PERSONA_BILLING;
     return {
       name: "Laura",
-      id: id
+      id: id,
     };
   },
 
@@ -102,7 +102,7 @@ module.exports = {
     let id = this.personas["Riandy"] || process.env.PERSONA_ORDER;
     return {
       name: "Riandy",
-      id: id
+      id: id,
     };
   },
 
@@ -110,7 +110,7 @@ module.exports = {
     let id = this.personas["Daniel"] || process.env.PERSONA_CARE;
     return {
       name: "Daniel",
-      id: id
+      id: id,
     };
   },
 
@@ -134,5 +134,5 @@ module.exports = {
         }
       }
     });
-  }
+  },
 };

@@ -30,7 +30,7 @@ module.exports = class Curation {
         response = [
           Response.genText(
             i18n.__("leadgen.promo", {
-              userFirstName: this.user.firstName
+              userFirstName: this.user.firstName,
             })
           ),
           Response.genGenericTemplate(
@@ -38,7 +38,7 @@ module.exports = class Curation {
             i18n.__("leadgen.title"),
             i18n.__("leadgen.subtitle"),
             [Response.genPostbackButton(i18n.__("leadgen.apply"), "COUPON_50")]
-          )
+          ),
         ];
         break;
 
@@ -63,9 +63,9 @@ module.exports = class Curation {
               Response.genPostbackButton(
                 i18n.__("curation.sales"),
                 "CARE_SALES"
-              )
+              ),
             ]
-          )
+          ),
         ];
         break;
 
@@ -73,12 +73,12 @@ module.exports = class Curation {
         response = Response.genQuickReply(i18n.__("curation.prompt"), [
           {
             title: i18n.__("curation.me"),
-            payload: "CURATION_FOR_ME"
+            payload: "CURATION_FOR_ME",
           },
           {
             title: i18n.__("curation.someone"),
-            payload: "CURATION_SOMEONE_ELSE"
-          }
+            payload: "CURATION_SOMEONE_ELSE",
+          },
         ]);
         break;
 
@@ -87,20 +87,20 @@ module.exports = class Curation {
         response = Response.genQuickReply(i18n.__("curation.occasion"), [
           {
             title: i18n.__("curation.work"),
-            payload: "CURATION_OCASION_WORK"
+            payload: "CURATION_OCASION_WORK",
           },
           {
             title: i18n.__("curation.dinner"),
-            payload: "CURATION_OCASION_DINNER"
+            payload: "CURATION_OCASION_DINNER",
           },
           {
             title: i18n.__("curation.party"),
-            payload: "CURATION_OCASION_PARTY"
+            payload: "CURATION_OCASION_PARTY",
           },
           {
             title: i18n.__("curation.sales"),
-            payload: "CARE_SALES"
-          }
+            payload: "CARE_SALES",
+          },
         ]);
         break;
 
@@ -109,16 +109,16 @@ module.exports = class Curation {
         response = Response.genQuickReply(i18n.__("curation.price"), [
           {
             title: "~ $20",
-            payload: "CURATION_BUDGET_20_WORK"
+            payload: "CURATION_BUDGET_20_WORK",
           },
           {
             title: "~ $30",
-            payload: "CURATION_BUDGET_30_WORK"
+            payload: "CURATION_BUDGET_30_WORK",
           },
           {
             title: "+ $50",
-            payload: "CURATION_BUDGET_50_WORK"
-          }
+            payload: "CURATION_BUDGET_50_WORK",
+          },
         ]);
         break;
 
@@ -127,16 +127,16 @@ module.exports = class Curation {
         response = Response.genQuickReply(i18n.__("curation.price"), [
           {
             title: "~ $20",
-            payload: "CURATION_BUDGET_20_DINNER"
+            payload: "CURATION_BUDGET_20_DINNER",
           },
           {
             title: "~ $30",
-            payload: "CURATION_BUDGET_30_DINNER"
+            payload: "CURATION_BUDGET_30_DINNER",
           },
           {
             title: "+ $50",
-            payload: "CURATION_BUDGET_50_DINNER"
-          }
+            payload: "CURATION_BUDGET_50_DINNER",
+          },
         ]);
         break;
 
@@ -145,16 +145,16 @@ module.exports = class Curation {
         response = Response.genQuickReply(i18n.__("curation.price"), [
           {
             title: "~ $20",
-            payload: "CURATION_BUDGET_20_PARTY"
+            payload: "CURATION_BUDGET_20_PARTY",
           },
           {
             title: "~ $30",
-            payload: "CURATION_BUDGET_30_PARTY"
+            payload: "CURATION_BUDGET_30_PARTY",
           },
           {
             title: "+ $50",
-            payload: "CURATION_BUDGET_50_PARTY"
-          }
+            payload: "CURATION_BUDGET_50_PARTY",
+          },
         ]);
         break;
 
@@ -186,7 +186,7 @@ module.exports = class Curation {
             Response.genPostbackButton(
               i18n.__("curation.show"),
               "CURATION_OTHER_STYLE"
-            )
+            ),
           ]
         );
         break;
@@ -208,7 +208,7 @@ module.exports = class Curation {
       Response.genPostbackButton(
         i18n.__("curation.show"),
         "CURATION_OTHER_STYLE"
-      )
+      ),
     ];
 
     if (budget === "50") {
