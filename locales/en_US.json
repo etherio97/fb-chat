@@ -1,6 +1,6 @@
 {
   "profile": {
-    "greeting": "Welcome to Original Coast Clothing {{user_first_name}}! Click get started to enjoy our sample automated messaging experience. If you want to build a similar one visit https://fb.me/get-sample-oc"
+    "greeting": "မင်္ဂလာပါ {{user_first_name}}! ဘာများကူညီပေးရမလဲခင်ဗျ။"
   },
   "menu": {
     "support": "Customer Support",
@@ -11,9 +11,9 @@
     "start_over": "Start over"
   },
   "get_started": {
-    "welcome": "Hi {{userFirstName}}! Welcome to Original Coast Clothing where you'll find styles for every occasion.",
-    "guidance": "At any time, use the menu below to navigate through the features",
-    "help": "What we can do to help you today?"
+    "welcome": "မင်္ဂလာပါ {{userFirstName}}!",
+    "guidance": "",
+    "help": "ဘာများကူညီပေးရမလဲခင်ဗျ။"
   },
   "leadgen": {
     "promo": "Hi {{userFirstName}}, finding great outfits is now easier and more convenient.",
@@ -47,28 +47,28 @@
     "status": "Your order is on it’s way, expect to have it in 3 days."
   },
   "care": {
-    "prompt": "To connect you with the right team please let me know what this is about?",
-    "order": "Order Inquiries",
-    "billing": "Billing Issues",
-    "other": "Other",
-    "issue": "Hi {{userFirstName}}, my name is {{agentFirstName}}, I'm here to assist you with any questions you might have about your {{topic}}.",
-    "default": "Hi {{userFirstName}}, my name is {{agentFirstName}}, I'm here to assist you today. How can I help you?",
-    "style": "Hi {{userFirstName}}, my name is {{agentFirstName}}, I’m here to answer questions you might have on our summer styles",
-    "end": "This is as far as the demo goes. Leverage the power of the messenger platform for your business. See https://fb.me/get-sample-oc to learn how to build a similar experience",
-    "help": "Help"
+    "prompt": "ဘယ်လိုအခက်အခဲရှိလို့ပါလဲခင်ဗျာ...",
+    "order": "သတင်း",
+    "billing": "မေးမြန်း",
+    "other": "အခြား",
+    "issue": "မင်္ဂလာပါ {{userFirstName}}, ကျွန်တော်က {{agentFirstName}} ပါ။",
+    "default": "မင်္ဂလာပါ {{userFirstName}}, ကျွန်တော်က {{agentFirstName}} ပါ။",
+    "style": "မင်္ဂလာပါ {{userFirstName}}, ကျွန်တော်က {{agentFirstName}} ပါ။",
+    "end": "မင်္ဂလာရှိသောနေ့ရက်လေးဖြစ်ပါစေခင်ဗျာ... ကျေးဇူးတင်ပါတယ်ခင်ဗျ။",
+    "help": "ကူညီရယူရန်"
   },
   "survey": {
-    "prompt": "Hi, want to get quick feedback on your recent experience with {{agentFirstName}}",
-    "positive": "Thanks for the feedback",
-    "neutral": "Thanks for the feedback, if there something we should improve feel free to comment with #suggestion",
-    "negative": "Thanks for telling us. Sorry to hear that, if there something we can do to turn this let us know",
-    "suggestion": "Your suggestion has been recorded for future review by the team. If this is something we need to get back to you right now just comment \"help\""
+    "prompt": "မင်္ဂလာပါ။ {{agentFirstName}} နဲ့ ပြောဆိုရတာအဆင်ပြေလားခင်ဗျ။ ဆူသင့်ရင်ဆူ ဆုပေးသင့်ပေးရအောင် အဆင့်သတ်မှတ်ပေးပါဦးဗျာ။",
+    "positive": "အခုလိုဖြေကြားပေးတဲ့အတွက် ကျေးဇူးတင်ပါတယ်ခင်ဗျ။",
+    "neutral": "အခုလိုဖြေကြားပေးတဲ့အတွက် ကျေးဇူးတင်ပါတယ်ခင်ဗျ။ ပိုပြီးကောင်းမွန်လာအောင် #suggestion ထည့်သွင်းပြီးအကြံပြုစာများပေးပို့နိုင်ပါတယ်။",
+    "negative": "အခုလိုဖြေကြားပေးတဲ့အတွက် ကျေးဇူးတင်ပါတယ်ခင်ဗျ။ အဆင်မပြေဖြစ်သွားတဲ့အတွက် စိတ်မကောင်းပါဘူးဗျာ။ ပိုပြီးကောင်းမွန်လာအောင် #suggestion ထည့်သွင်းပြီးအကြံပြုစာပေးပို့ပေးပြီး အကြံပြုနိုင်ပါတယ်။",
+    "suggestion": "{{useFirstName}} ရဲ့ အကြံပြုစာကို ကျွန်တော်ကိုဖန်တီးထားတဲ့သူတွေရှိပို့ဆောင်ပြီးပါပြီ။ အခုလိုအကြံပြုစာပို့ပေးတဲ့အတွက် ကျေးဇူးတင်ပါတယ်ခင်ဗျ။"
   },
   "chat_plugin": {
-    "prompt": "Thanks for visiting our store, be sure to check out all the great styles we have on the summer section."
+    "prompt": "အခုလိုလာရောက်တဲ့အတွက် ကျေးဇူးတင်ပါတယ်ခင်ဗျာ..."
   },
   "fallback": {
-    "any": "Sorry, but I don’t recognize \"{{message}}\".",
-    "attachment": "Thanks for sending this attachment, we can connect you to an agent to review it or we can start over"
+    "any": "ကျွန်တော်ကဖန်တီးထားတဲ့သူက \"{{message}}\" ကိုနာမလည်းအောင်မသင်ပေးထားဘူးဗျ။ သူကိုပြန်ပြောပေးရမလားဗျ။",
+    "attachment": "အခုလိုပေးပို့ပေးတဲ့အတွက် အထူးပင်ကျေးဇူးတင်ရှိပါတယ်ခင်ဗျာ..."
   }
 }
