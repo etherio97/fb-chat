@@ -1,29 +1,17 @@
-/**
- * Copyright 2019-present, Facebook, Inc. All rights reserved.
- *
- * This source code is licensed under the BSD-style license found in the
- * LICENSE file in the root directory of this source tree.
- *
- * Messenger For Original Coast Clothing
- * https://developers.facebook.com/docs/messenger-platform/getting-started/sample-apps/original-coast-clothing
- */
-
-"use strict";
-
 const i18n = require("../i18n.config");
 
 module.exports = class Response {
   static genQuickReply(text, quickReplies) {
     let response = {
       text: text,
-      quick_replies: []
+      quick_replies: [],
     };
 
     for (let quickReply of quickReplies) {
       response["quick_replies"].push({
         content_type: "text",
         title: quickReply["title"],
-        payload: quickReply["payload"]
+        payload: quickReply["payload"],
       });
     }
 
@@ -41,11 +29,11 @@ module.exports = class Response {
               title: title,
               subtitle: subtitle,
               image_url: image_url,
-              buttons: buttons
-            }
-          ]
-        }
-      }
+              buttons: buttons,
+            },
+          ],
+        },
+      },
     };
 
     return response;
@@ -61,11 +49,11 @@ module.exports = class Response {
             {
               title: title,
               subtitle: subtitle,
-              image_url: image_url
-            }
-          ]
-        }
-      }
+              image_url: image_url,
+            },
+          ],
+        },
+      },
     };
 
     return response;
@@ -78,9 +66,9 @@ module.exports = class Response {
         payload: {
           template_type: "button",
           text: title,
-          buttons: buttons
-        }
-      }
+          buttons: buttons,
+        },
+      },
     };
 
     return response;
@@ -88,7 +76,7 @@ module.exports = class Response {
 
   static genText(text) {
     let response = {
-      text: text
+      text: text,
     };
 
     return response;
@@ -97,7 +85,7 @@ module.exports = class Response {
   static genTextWithPersona(text, persona_id) {
     let response = {
       text: text,
-      persona_id: persona_id
+      persona_id: persona_id,
     };
 
     return response;
@@ -107,7 +95,7 @@ module.exports = class Response {
     let response = {
       type: "postback",
       title: title,
-      payload: payload
+      payload: payload,
     };
 
     return response;
@@ -118,7 +106,7 @@ module.exports = class Response {
       type: "web_url",
       title: title,
       url: url,
-      messenger_extensions: true
+      messenger_extensions: true,
     };
 
     return response;
@@ -127,23 +115,21 @@ module.exports = class Response {
   static genNuxMessage(user) {
     let welcome = this.genText(
       i18n.__("get_started.welcome", {
-        userFirstName: user.firstName
+        userFirstName: user.firstName,
       })
     );
 
-    let guide = this.genText(i18n.__("get_started.guidance"));
-
     let curation = this.genQuickReply(i18n.__("get_started.help"), [
       {
-        title: i18n.__("menu.suggestion"),
-        payload: "CURATION"
+        title: i18n.__("menu.news"),
+        payload: "NEWS",
       },
       {
-        title: i18n.__("menu.help"),
-        payload: "CARE_HELP"
-      }
+        title: i18n.__("menu.report"),
+        payload: "REPORT",
+      },
     ]);
 
-    return [welcome, guide, curation];
+    return [welcome, curation];
   }
 };

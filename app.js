@@ -1,16 +1,3 @@
-/**
- * Copyright 2019-present, Facebook, Inc. All rights reserved.
- *
- * This source code is licensed under the BSD-style license found in the
- * LICENSE file in the root directory of this source tree.
- *
- * Messenger For Original Coast Clothing
- * https://developers.facebook.com/docs/messenger-platform/getting-started/sample-apps/original-coast-clothing
- */
-
-"use strict";
-
-// Imports dependencies and set up http server
 const express = require("express"),
   { urlencoded, json } = require("body-parser"),
   crypto = require("crypto"),
@@ -24,28 +11,22 @@ const express = require("express"),
 
 var users = {};
 
-// Parse application/x-www-form-urlencoded
 app.use(
   urlencoded({
     extended: true,
   })
 );
 
-// Parse application/json. Verify that callback came from Facebook
 app.use(json({ verify: verifyRequestSignature }));
 
-// Serving static files in Express
 app.use(express.static(path.join(path.resolve(), "public")));
 
-// Set template engine in Express
 app.set("view engine", "ejs");
 
-// Respond with index file when a GET request is made to the homepage
 app.get("/", function(_req, res) {
   res.render("index");
 });
 
-// Adds support for GET requests to our webhook
 app.get("/webhook", (req, res) => {
   // Parse the query params
   let mode = req.query["hub.mode"];
@@ -66,97 +47,76 @@ app.get("/webhook", (req, res) => {
   }
 });
 
-// Creates the endpoint for your webhook
 app.post("/webhook", (req, res) => {
   let body = req.body;
 
-  // Checks if this is an event from a page subscription
-  if (body.object === "page") {
-    // Returns a '200 OK' response to all requests
-    res.status(200).send("EVENT_RECEIVED");
+  if (body.object !== "page") return res.sendStatus(404);
 
-    // Iterates over each entry - there may be multiple if batched
-    body.entry.forEach(function(entry) {
-      if ("changes" in entry) {
-        // Handle Page Changes event
-        let receiveMessage = new Receive();
-        if (entry.changes[0].field === "feed") {
-          let change = entry.changes[0].value;
-          switch (change.item) {
-            case "post":
-              return receiveMessage.handlePrivateReply(
-                "post_id",
-                change.post_id
-              );
-            case "comment":
-              return receiveMessage.handlePrivateReply(
-                "comment_id",
-                change.comment_id
-              );
-            default:
-              console.log("Unsupported feed change type.");
-              return;
-          }
+  res.status(200).send("EVENT_RECEIVED");
+
+  body.entry.forEach(function(entry) {
+    if ("changes" in entry) {
+      let receiveMessage = new Receive();
+      if (entry.changes[0].field === "feed") {
+        let change = entry.changes[0].value;
+        switch (change.item) {
+          case "post":
+            return receiveMessage.handlePrivateReply("post_id", change.post_id);
+          case "comment":
+            return receiveMessage.handlePrivateReply(
+              "comment_id",
+              change.comment_id
+            );
+          default:
+            console.log("Unsupported feed change type.");
+            return;
         }
       }
+    }
 
-      // Gets the body of the webhook event
-      let webhookEvent = entry.messaging[0];
-      // console.log(webhookEvent);
+    let webhookEvent = entry.messaging[0];
 
-      // Discard uninteresting events
-      if ("read" in webhookEvent) {
-        // console.log("Got a read event");
-        return;
-      }
+    if ("read" in webhookEvent || "delivery" in webhookEvent) {
+      return;
+    }
 
-      if ("delivery" in webhookEvent) {
-        // console.log("Got a delivery event");
-        return;
-      }
+    let senderPsid = webhookEvent.sender.id;
 
-      // Get the sender PSID
-      let senderPsid = webhookEvent.sender.id;
+    if (!(senderPsid in users)) {
+      let user = new User(senderPsid);
 
-      if (!(senderPsid in users)) {
-        let user = new User(senderPsid);
-
-        GraphAPi.getUserProfile(senderPsid)
-          .then((userProfile) => {
-            user.setProfile(userProfile);
-          })
-          .catch((error) => {
-            // The profile is unavailable
-            console.log("Profile is unavailable:", error);
-          })
-          .finally(() => {
-            users[senderPsid] = user;
-            i18n.setLocale(user.locale);
-            console.log(
-              "New Profile PSID:",
-              senderPsid,
-              "with locale:",
-              i18n.getLocale()
-            );
-            let receiveMessage = new Receive(users[senderPsid], webhookEvent);
-            return receiveMessage.handleMessage();
-          });
-      } else {
-        i18n.setLocale(users[senderPsid].locale);
-        console.log(
-          "Profile already exists PSID:",
-          senderPsid,
-          "with locale:",
-          i18n.getLocale()
-        );
-        let receiveMessage = new Receive(users[senderPsid], webhookEvent);
-        return receiveMessage.handleMessage();
-      }
-    });
-  } else {
-    // Returns a '404 Not Found' if event is not from a page subscription
-    res.sendStatus(404);
-  }
+      GraphAPi.getUserProfile(senderPsid)
+        .then((userProfile) => {
+          user.setProfile(userProfile);
+        })
+        .catch((error) => {
+          // The profile is unavailable
+          console.log("Profile is unavailable:", error);
+        })
+        .finally(() => {
+          users[senderPsid] = user;
+          i18n.setLocale(user.locale);
+          console.log(
+            "New Profile PSID:",
+            senderPsid,
+            "with locale:",
+            i18n.getLocale()
+          );
+          let receiveMessage = new Receive(users[senderPsid], webhookEvent);
+          return receiveMessage.handleMessage();
+        });
+    } else {
+      i18n.setLocale(users[senderPsid].locale);
+      console.log(
+        "Profile already exists PSID:",
+        senderPsid,
+        "with locale:",
+        i18n.getLocale()
+      );
+      let receiveMessage = new Receive(users[senderPsid], webhookEvent);
+      return receiveMessage.handleMessage();
+    }
+  });
 });
 
 // Set up your App's Messenger Profile

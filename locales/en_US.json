@@ -3,6 +3,8 @@
     "greeting": "မင်္ဂလာပါ {{user_first_name}}! ဘာများကူညီပေးရမလဲခင်ဗျ။"
   },
   "menu": {
+    "report": "သတင်းပေးရန်",
+    "news": "သတင်းရယူရန်",
     "support": "Customer Support",
     "order": "Order updates",
     "help": "Talk to an agent",
@@ -12,7 +14,6 @@
   },
   "get_started": {
     "welcome": "မင်္ဂလာပါ {{userFirstName}}!",
-    "guidance": "",
     "help": "ဘာများကူညီပေးရမလဲခင်ဗျ။"
   },
   "leadgen": {
