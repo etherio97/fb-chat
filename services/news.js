@@ -110,7 +110,7 @@ module.exports = class News {
                 "... read more at: https://facebook.com/" +
                 config.pageId +
                 "_" +
-                article.id
+                article.post_id
             : content,
           [{ title: "နောက်တစ်ပုဒ်", payload: "NEWS_ANOTHER" }]
         );
