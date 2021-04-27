@@ -73,12 +73,8 @@ module.exports = class News {
       response = Response.genGenericTemplate(
         article.image || DEFAULT_IMAGE,
         article.title + " -" + article.source,
-        article.content.slice(0, 124),
-        [
-          Response.genPostbackButton("အပြည်အစုံဖတ်ရန်", "NEWS_READ"),
-          Response.genWebUrlButton("External Link", article.link),
-          Response.genPostbackButton("နောက်တစ်ပုဒ်", "NEWS_ANOTHER"),
-        ]
+        "",
+        [Response.genWebUrlButton("External Link", article.link)]
       );
       read.push(article.id);
     } else {
