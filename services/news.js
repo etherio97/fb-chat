@@ -102,20 +102,12 @@ module.exports = class News {
         let article = DB.read()["articles"].find(
           (article) => article.id == last
         );
-        response =
-          article.content.length > 600
-            ? Response.genButtonTemplate(
-                article.content.slice(0, 590) + "...",
-                [
-                  Response.genWebUrlButton(
-                    "ဆက်လက်ဖတ်ရန်",
-                    "https://www.facebook.com/113483134124452_" + article.id
-                  ),
-                ]
-              )
-            : Response.genQuickReply(article.content, [
-                { title: "နောက်တစ်ပုဒ်", payload: "NEWS_ANOTHER" },
-              ]);
+        response = Response.genButtonTemplate(article.title, [
+          Response.genWebUrlButton(
+            "ဆက်လက်ဖတ်ရန်",
+            "https://www.facebook.com/113483134124452_" + article.id
+          ),
+        ]);
         break;
 
       case "NEWS_GETTING":
