@@ -108,8 +108,6 @@ module.exports = class News {
           content.length > 300
             ? content.slice(0, 250) +
                 "... read more at: https://facebook.com/" +
-                config.pageId +
-                "_" +
                 article.post_id
             : content,
           [{ title: "နောက်တစ်ပုဒ်", payload: "NEWS_ANOTHER" }]
