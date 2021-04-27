@@ -1,5 +1,3 @@
-const i18n = require("../i18n.config");
-
 module.exports = class Response {
   static genQuickReply(text, quickReplies) {
     let response = {
@@ -113,19 +111,14 @@ module.exports = class Response {
   }
 
   static genNuxMessage(user) {
-    let welcome = this.genText(
-      i18n.__("get_started.welcome", {
-        userFirstName: user.firstName,
-      })
-    );
-
-    let curation = this.genQuickReply(i18n.__("get_started.help"), [
+    let welcome = this.genText(`မင်္ဂလာပါ ${user.firstName}`);
+    let curation = this.genQuickReply("ဘာများကူညီပေးရမလဲဗျ။", [
       {
-        title: i18n.__("menu.news"),
+        title: "သတင်းယူရန်",
         payload: "NEWS_GETTING",
       },
       {
-        title: i18n.__("menu.report"),
+        title: "သတင်းပေး",
         payload: "NEWS_REPORTING",
       },
     ]);

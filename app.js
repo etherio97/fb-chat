@@ -7,7 +7,6 @@ const express = require("express"),
   User = require("./services/user"),
   config = require("./services/config"),
   DB = require("./services/db"),
-  News = require("./services/news"),
   app = express();
 
 var users = {};
