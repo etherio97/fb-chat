@@ -1,19 +1,5 @@
-/**
- * Copyright 2019-present, Facebook, Inc. All rights reserved.
- *
- * This source code is licensed under the BSD-style license found in the
- * LICENSE file in the root directory of this source tree.
- *
- * Messenger For Original Coast Clothing
- * https://developers.facebook.com/docs/messenger-platform/getting-started/sample-apps/original-coast-clothing
- */
-
-"use strict";
-
-// Use dotenv to read .env vars into Node
 require("dotenv").config();
 
-// Required environment variables
 const ENV_VARS = [
   "PAGE_ID",
   "APP_ID",
@@ -27,7 +13,7 @@ const ENV_VARS = [
 module.exports = {
   // Messenger Platform API
   mPlatformDomain: "https://graph.facebook.com",
-  mPlatformVersion: "v10.0",
+  mPlatformVersion: "v3.2",
 
   // Page and Application information
   pageId: process.env.PAGE_ID,

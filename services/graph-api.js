@@ -1,23 +1,9 @@
-/**
- * Copyright 2019-present, Facebook, Inc. All rights reserved.
- *
- * This source code is licensed under the BSD-style license found in the
- * LICENSE file in the root directory of this source tree.
- *
- * Messenger For Original Coast Clothing
- * https://developers.facebook.com/docs/messenger-platform/getting-started/sample-apps/original-coast-clothing
- */
-
-"use strict";
-
-// Imports dependencies
 const request = require("request"),
   camelCase = require("camelcase"),
   config = require("./config");
 
 module.exports = class GraphAPi {
   static callSendAPI(requestBody) {
-    // Send the HTTP request to the Messenger Platform
     request(
       {
         uri: `${config.mPlatfom}/me/messages`,
@@ -36,9 +22,6 @@ module.exports = class GraphAPi {
   }
 
   static callMessengerProfileAPI(requestBody) {
-    // Send the HTTP request to the Messenger Profile API
-
-    console.log(`Setting Messenger Profile for app ${config.appId}`);
     request(
       {
         uri: `${config.mPlatfom}/me/messenger_profile`,
@@ -59,14 +42,6 @@ module.exports = class GraphAPi {
   }
 
   static callSubscriptionsAPI(customFields) {
-    // Send the HTTP request to the Subscriptions Edge to configure your webhook
-    // You can use the Graph API's /{app-id}/subscriptions edge to configure and
-    // manage your app's Webhooks product
-    // https://developers.facebook.com/docs/graph-api/webhooks/subscriptions-edge
-    console.log(
-      `Setting app ${config.appId} callback url to ${config.webhookUrl}`
-    );
-
     let fields =
       "messages, messaging_postbacks, messaging_optins, \
         message_deliveries, messaging_referrals";
@@ -74,8 +49,6 @@ module.exports = class GraphAPi {
     if (customFields !== undefined) {
       fields = fields + ", " + customFields;
     }
-
-    console.log(fields);
 
     request(
       {
@@ -101,12 +74,6 @@ module.exports = class GraphAPi {
   }
 
   static callSubscribedApps(customFields) {
-    // Send the HTTP request to subscribe an app for Webhooks for Pages
-    // You can use the Graph API's /{page-id}/subscribed_apps edge to configure
-    // and manage your pages subscriptions
-    // https://developers.facebook.com/docs/graph-api/reference/page/subscribed_apps
-    console.log(`Subscribing app ${config.appId} to page ${config.pageId}`);
-
     let fields =
       "messages, messaging_postbacks, messaging_optins, \
         message_deliveries, messaging_referrals";
@@ -154,19 +121,15 @@ module.exports = class GraphAPi {
   static callUserProfileAPI(senderPsid) {
     return new Promise(function(resolve, reject) {
       let body = [];
-
-      // Send the HTTP request to the Graph API
       request({
         uri: `${config.mPlatfom}/${senderPsid}`,
         qs: {
           access_token: config.pageAccesToken,
-          fields: "first_name, last_name, gender, locale, timezone",
+          fields: "first_name, last_name, gender",
         },
         method: "GET",
       })
         .on("response", function(response) {
-          // console.log(response.statusCode);
-
           if (response.statusCode !== 200) {
             reject(Error(response.statusCode));
           }
@@ -175,13 +138,10 @@ module.exports = class GraphAPi {
           body.push(chunk);
         })
         .on("error", function(error) {
-          console.error("Unable to fetch profile:" + error);
           reject(Error("Network Error"));
         })
         .on("end", () => {
           body = Buffer.concat(body).toString();
-          // console.log(JSON.parse(body));
-
           resolve(JSON.parse(body));
         });
     });
@@ -190,10 +150,6 @@ module.exports = class GraphAPi {
   static getPersonaAPI() {
     return new Promise(function(resolve, reject) {
       let body = [];
-
-      // Send the POST request to the Personas API
-      console.log(`Fetching personas for app ${config.appId}`);
-
       request({
         uri: `${config.mPlatfom}/me/personas`,
         qs: {
@@ -202,8 +158,6 @@ module.exports = class GraphAPi {
         method: "GET",
       })
         .on("response", function(response) {
-          // console.log(response.statusCode);
-
           if (response.statusCode !== 200) {
             reject(Error(response.statusCode));
           }
@@ -217,8 +171,6 @@ module.exports = class GraphAPi {
         })
         .on("end", () => {
           body = Buffer.concat(body).toString();
-          // console.log(JSON.parse(body));
-
           resolve(JSON.parse(body).data);
         });
     });
@@ -226,16 +178,12 @@ module.exports = class GraphAPi {
 
   static postPersonaAPI(name, profile_picture_url) {
     let body = [];
-
     return new Promise(function(resolve, reject) {
-      // Send the POST request to the Personas API
       console.log(`Creating a Persona for app ${config.appId}`);
-
       let requestBody = {
         name: name,
         profile_picture_url: profile_picture_url,
       };
-
       request({
         uri: `${config.mPlatfom}/me/personas`,
         qs: {
@@ -245,7 +193,6 @@ module.exports = class GraphAPi {
         json: requestBody,
       })
         .on("response", function(response) {
-          // console.log(response.statusCode);
           if (response.statusCode !== 200) {
             reject(Error(response.statusCode));
           }
@@ -259,8 +206,6 @@ module.exports = class GraphAPi {
         })
         .on("end", () => {
           body = Buffer.concat(body).toString();
-          // console.log(JSON.parse(body));
-
           resolve(JSON.parse(body).id);
         });
     }).catch((error) => {
@@ -269,9 +214,6 @@ module.exports = class GraphAPi {
   }
 
   static callNLPConfigsAPI() {
-    // Send the HTTP request to the Built-in NLP Configs API
-    // https://developers.facebook.com/docs/graph-api/reference/page/nlp_configs/
-
     console.log(`Enable Built-in NLP for Page ${config.pageId}`);
     request(
       {
@@ -293,7 +235,6 @@ module.exports = class GraphAPi {
   }
 
   static callFBAEventsAPI(senderPsid, eventName) {
-    // Construct the message body
     let requestBody = {
       event: "CUSTOM_APP_EVENTS",
       custom_events: JSON.stringify([

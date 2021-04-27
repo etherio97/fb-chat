@@ -102,12 +102,14 @@ module.exports = class News {
         let article = DB.read()["articles"].find(
           (article) => article.id == last
         );
-        response = Response.genButtonTemplate(article.title, [
-          Response.genWebUrlButton(
-            "ဆက်လက်ဖတ်ရန်",
-            "https://www.facebook.com/113483134124452_" + article.id
-          ),
-        ]);
+        response = [
+          Response.genGenericTemplate(article.title, [
+            Response.genWebUrlButton(
+              "ဆက်လက်ဖတ်ရန်",
+              "https://www.facebook.com/113483134124452_" + article.id
+            ),
+          ]),
+        ];
         break;
 
       case "NEWS_GETTING":
