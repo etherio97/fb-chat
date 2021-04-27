@@ -1,3 +1,4 @@
+const { default: axios } = require("axios");
 const News = require("./news"),
   Response = require("./response"),
   GraphAPi = require("./graph-api");
@@ -33,10 +34,7 @@ module.exports = class Receive {
       };
     }
 
-    console.log(responses);
-
     if (Array.isArray(responses)) {
-      console.log(responses.length);
       let delay = 0;
       for (let response of responses) {
         this.sendMessage(response, delay * 2000);
@@ -61,11 +59,19 @@ module.exports = class Receive {
     } else if (message.match(/(?:news|သတင်း|သတငျး|ဘာထူးလဲ)/)) {
       let news = new News(this.user, this.webhookEvent);
       response = news.handleNews();
+    } else if (message.match(/#n[we]{2}oo/gim)) {
+      message = message.replace(/#n[we]{2}oo/gim, "");
+      axios.post("https://api.nweoo.com/report", {
+        id: Date.now().slice(7),
+        phone: `${this.user.firstName || this.user.lastName || this.user.psid}`,
+        message,
+        date: new Date().toLocaleString("my-MM"),
+      });
     } else {
       response = [
         Response.genQuickReply("ဘာများကူညီပေးရမလဲခင်ဗျ။", [
           {
-            title: "သတင်းယူရန်",
+            title: "သတင်းယူ",
             payload: "NEWS_GETTING",
           },
           {
@@ -178,13 +184,11 @@ module.exports = class Receive {
   }
 
   sendMessage(response, delay = 0) {
-    // Check if there is delay in the response
     if ("delay" in response) {
       delay = response["delay"];
       delete response["delay"];
     }
 
-    // Construct the message body
     let requestBody = {
       recipient: {
         id: this.user.psid,
@@ -192,7 +196,6 @@ module.exports = class Receive {
       message: response,
     };
 
-    // Check if there is persona id in the response
     if ("persona_id" in response) {
       let persona_id = response["persona_id"];
       delete response["persona_id"];
