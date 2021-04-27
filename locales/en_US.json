@@ -5,6 +5,8 @@
   "menu": {
     "report": "သတင်းပေးရန်",
     "news": "သတင်းရယူရန်",
+    "getting_news": "သတင်းရယူရန်",
+    "reporting_news": "သတင်းပေးရန်",
     "support": "Customer Support",
     "order": "Order updates",
     "help": "Talk to an agent",
@@ -23,29 +25,12 @@
     "apply": "Apply discount",
     "coupon": "Added your coupon to this thread, you can now check out the discounted summer collection"
   },
-  "curation": {
-    "prompt": "Are you looking for an outfit for yourself or someone else?",
-    "occasion": "Great! Let's get started. First, is there an occasion in mind?",
-    "price": "How much are you looking to spend?",
-    "me": "For me!",
-    "someone": "Someone else",
-    "work": "Work",
-    "dinner": "Dinner",
-    "party": "Party",
-    "sales": "Talk to sales",
-    "shop": "Shop this look",
-    "title": "Summer collection 2019",
-    "subtitle": "Featured outfit",
-    "show": "Another look"
-  },
-  "order": {
-    "prompt": "We'll be happy to help you. Select from the following",
-    "search": "Search by order number",
-    "account": "Link my Account",
-    "dialog": "Account linking dialog",
-    "searching": "Searching for your last order...",
-    "number": "Sure, please write the order number",
-    "status": "Your order is on it’s way, expect to have it in 3 days."
+  "news":{
+    "channels": "ဘယ်လိုနည်းလမ်းကိုအသုံးပြုလိုပါသလဲ။",
+    "getting_sms": "တယ်လီနောအသုံးပြုသူများအနေနဲ့ 09758035929 ကို news (သို့) သတင်း လို့ SMS ပေးပို့ပြီး သတင်းခေါင်းစဉ်များကိုရယူနိုင်ပါတယ်။",
+    "getting_messenger": "ဒီကနေ news (သို့) သတင်း လို့ပို့ပြီး သတင်းများကိုရယူနိုင်ပါတယ်။",
+    "reporting_sms": "ဖုန်းနံပါတ် 09758035929 ကို #nweoo ထည့်ပြီး သတင်းအချက်အလက်တွေကို SMS နဲ့ပေးပို့လိုက်တာနဲ့ အမြန်ဆုံးကျွန်တော်တို့ Page ပေါ်တင်ပေးသွားမှာဖြစ်ပါတယ်။",
+    "reporting_messenger": "ဒီကနေ #nweoo ထည့်ပြီး သတင်းအချက်အလက်တွေကို ပို့လိုက်တာနဲ့ ချက်ချင်းကျွန်တော်တို့ရဲ့ Page ပေါ်တင်ပေးသွားမှာဖြစ်ပါတယ်။"
   },
   "care": {
     "prompt": "ဘယ်လိုအခက်အခဲရှိလို့ပါလဲခင်ဗျာ...",
@@ -56,20 +41,20 @@
     "default": "မင်္ဂလာပါ {{userFirstName}}, ကျွန်တော်က {{agentFirstName}} ပါ။",
     "style": "မင်္ဂလာပါ {{userFirstName}}, ကျွန်တော်က {{agentFirstName}} ပါ။",
     "end": "မင်္ဂလာရှိသောနေ့ရက်လေးဖြစ်ပါစေခင်ဗျာ... ကျေးဇူးတင်ပါတယ်ခင်ဗျ။",
-    "help": "ကူညီရယူရန်"
+    "help": "ကူညီ"
   },
   "survey": {
     "prompt": "မင်္ဂလာပါ။ {{agentFirstName}} နဲ့ ပြောဆိုရတာအဆင်ပြေလားခင်ဗျ။ ဆူသင့်ရင်ဆူ ဆုပေးသင့်ပေးရအောင် အဆင့်သတ်မှတ်ပေးပါဦးဗျာ။",
     "positive": "အခုလိုဖြေကြားပေးတဲ့အတွက် ကျေးဇူးတင်ပါတယ်ခင်ဗျ။",
     "neutral": "အခုလိုဖြေကြားပေးတဲ့အတွက် ကျေးဇူးတင်ပါတယ်ခင်ဗျ။ ပိုပြီးကောင်းမွန်လာအောင် #suggestion ထည့်သွင်းပြီးအကြံပြုစာများပေးပို့နိုင်ပါတယ်။",
     "negative": "အခုလိုဖြေကြားပေးတဲ့အတွက် ကျေးဇူးတင်ပါတယ်ခင်ဗျ။ အဆင်မပြေဖြစ်သွားတဲ့အတွက် စိတ်မကောင်းပါဘူးဗျာ။ ပိုပြီးကောင်းမွန်လာအောင် #suggestion ထည့်သွင်းပြီးအကြံပြုစာပေးပို့ပေးပြီး အကြံပြုနိုင်ပါတယ်။",
-    "suggestion": "{{useFirstName}} ရဲ့ အကြံပြုစာကို ကျွန်တော်ကိုဖန်တီးထားတဲ့သူတွေရှိပို့ဆောင်ပြီးပါပြီ။ အခုလိုအကြံပြုစာပို့ပေးတဲ့အတွက် ကျေးဇူးတင်ပါတယ်ခင်ဗျ။"
+    "suggestion": "{{userFirstName}} ရဲ့ အကြံပြုစာကို ကျွန်တော်ကိုဖန်တီးထားတဲ့သူတွေရှိပို့ဆောင်ပြီးပါပြီ။ အခုလိုအကြံပြုစာပို့ပေးတဲ့အတွက် ကျေးဇူးတင်ပါတယ်ခင်ဗျ။"
   },
   "chat_plugin": {
     "prompt": "အခုလိုလာရောက်တဲ့အတွက် ကျေးဇူးတင်ပါတယ်ခင်ဗျာ..."
   },
   "fallback": {
-    "any": "ကျွန်တော်ကဖန်တီးထားတဲ့သူက \"{{message}}\" ကိုနာမလည်းအောင်မသင်ပေးထားဘူးဗျ။ သူကိုပြန်ပြောပေးရမလားဗျ။",
-    "attachment": "အခုလိုပေးပို့ပေးတဲ့အတွက် အထူးပင်ကျေးဇူးတင်ရှိပါတယ်ခင်ဗျာ..."
+    "any": "ကျွန်တော်အနေနဲ့ '{{message}}' ကိုနားမလည်လို့ တာဝန်ရှိတဲ့သူတွေနဲ့ဆက်သွယ်ပေးရမလားဗျ။",
+    "attachment": "အခုလိုဆက်သွယ်တဲ့အတွက် ကျေးဇူးတင်ရှိပါတယ်ခင်ဗျာ..."
   }
 }

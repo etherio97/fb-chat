@@ -1,17 +1,4 @@
-/**
- * Copyright 2019-present, Facebook, Inc. All rights reserved.
- *
- * This source code is licensed under the BSD-style license found in the
- * LICENSE file in the root directory of this source tree.
- *
- * Messenger For Original Coast Clothing
- * https://developers.facebook.com/docs/messenger-platform/getting-started/sample-apps/original-coast-clothing
- */
-
-"use strict";
-
-const Curation = require("./curation"),
-  Order = require("./order"),
+const News = require("./news"),
   Response = require("./response"),
   Care = require("./care"),
   Survey = require("./survey"),
@@ -68,16 +55,8 @@ module.exports = class Receive {
 
   // Handles messages events with text
   handleTextMessage() {
-    console.log(
-      "Received text:",
-      `${this.webhookEvent.message.text} for ${this.user.psid}`
-    );
-
-    // check greeting is here and is confident
     let greeting = this.firstEntity(this.webhookEvent.message.nlp, "greetings");
-
     let message = this.webhookEvent.message.text.trim().toLowerCase();
-
     let response;
 
     if (
@@ -85,8 +64,6 @@ module.exports = class Receive {
       message.includes("start over")
     ) {
       response = Response.genNuxMessage(this.user);
-    } else if (Number(message)) {
-      response = Order.handlePayload("ORDER_NUMBER");
     } else if (message.includes("#")) {
       response = Survey.handlePayload("CSAT_SUGGESTION");
     } else if (message.includes(i18n.__("care.help").toLowerCase())) {
@@ -99,15 +76,14 @@ module.exports = class Receive {
             message: this.webhookEvent.message.text
           })
         ),
-        Response.genText(i18n.__("get_started.guidance")),
         Response.genQuickReply(i18n.__("get_started.help"), [
           {
-            title: i18n.__("menu.suggestion"),
-            payload: "CURATION"
+            title: i18n.__("menu.reporting_news"),
+            payload: "NEWS_REPORTING"
           },
           {
-            title: i18n.__("menu.help"),
-            payload: "CARE_HELP"
+            title: i18n.__("menu.getting_news"),
+            payload: "NEWS_GETTING"
           }
         ])
       ];
@@ -183,20 +159,12 @@ module.exports = class Receive {
       payload === "GITHUB"
     ) {
       response = Response.genNuxMessage(this.user);
-    } else if (payload.includes("CURATION") || payload.includes("COUPON")) {
-      let curation = new Curation(this.user, this.webhookEvent);
-      response = curation.handlePayload(payload);
-    } else if (payload.includes("CARE")) {
-      let care = new Care(this.user, this.webhookEvent);
-      response = care.handlePayload(payload);
-    } else if (payload.includes("ORDER")) {
-      response = Order.handlePayload(payload);
-    } else if (payload.includes("CSAT")) {
-      response = Survey.handlePayload(payload);
+    } else if (payload.includes("NEWS")) {
+      let news = new News(this.user, this.webhookEvent);
+      response = news.handlePayload(payload);
     } else if (payload.includes("CHAT-PLUGIN")) {
       response = [
         Response.genText(i18n.__("chat_plugin.prompt")),
-        Response.genText(i18n.__("get_started.guidance")),
         Response.genQuickReply(i18n.__("get_started.help"), [
           {
             title: i18n.__("care.order"),
@@ -224,19 +192,17 @@ module.exports = class Receive {
   handlePrivateReply(type, object_id) {
     let welcomeMessage =
       i18n.__("get_started.welcome") +
-      " " +
-      i18n.__("get_started.guidance") +
       ". " +
       i18n.__("get_started.help");
 
     let response = Response.genQuickReply(welcomeMessage, [
       {
-        title: i18n.__("menu.suggestion"),
-        payload: "CURATION"
+        title: i18n.__("menu.news"),
+        payload: "NEWS"
       },
       {
         title: i18n.__("menu.help"),
-        payload: "CARE_HELP"
+        payload: "HELP"
       }
     ]);
 
