@@ -34,7 +34,7 @@ module.exports = class News {
   updateHeadlines() {
     return axios
       .get("https://api.nweoo.com/news/headlines")
-      .then(({ data }) => data);
+      .then(({ data }) => Object.values(data));
   }
 
   updateArticles() {
@@ -78,6 +78,7 @@ module.exports = class News {
       );
       response.push(r);
     });
+
     return response;
   }
 
