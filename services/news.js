@@ -72,9 +72,9 @@ module.exports = class News {
       response = [
         Response.genImageTemplate(
           article.image || DEFAULT_IMAGE,
-          article.title + " -" + article.source
+          article.source
         ),
-        Response.genQuickReply(articles.title, [
+        Response.genQuickReply(article.title, [
           { title: "အပြည့်အစုံဖတ်ရန်", payload: "NEWS_FULL_ARTICLE" },
           { title: "နောက်တစ်ပုဒ်", payload: "NEWS_ANOTHER" },
         ]),
