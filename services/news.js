@@ -99,13 +99,23 @@ module.exports = class News {
         let user = this.user;
         let headlines = user.headlines;
         let last = headlines[headlines.length - 1];
-        response = Response.genQuickReply(
-          DB.read()["articles"].find((article) => article.id == last).content,
-          [
-            { title: "အပြည့်အစုံဖတ်ရန်", payload: "NEWS_FULL_ARTICLE" },
-            { title: "နောက်တစ်ပုဒ်", payload: "NEWS_ANOTHER" },
-          ]
+        let article = DB.read()["articles"].find(
+          (article) => article.id == last
         );
+        response =
+          article.content.length > 600
+            ? Response.genButtonTemplate(
+                article.content.slice(0, 590) + "...",
+                [
+                  Response.genWebUrlButton(
+                    "ဆက်လက်ဖတ်ရန်",
+                    "https://www.facebook.com/113483134124452_" + article.id
+                  ),
+                ]
+              )
+            : Response.genQuickReply(article.content, [
+                { title: "နောက်တစ်ပုဒ်", payload: "NEWS_ANOTHER" },
+              ]);
         break;
 
       case "NEWS_GETTING":
