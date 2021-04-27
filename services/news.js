@@ -79,7 +79,7 @@ module.exports = class News {
         )
       );
     }
-    console.log(response, response.length);
+
     return response;
   }
 

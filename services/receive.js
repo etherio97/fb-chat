@@ -33,7 +33,10 @@ module.exports = class Receive {
       };
     }
 
+    console.log(responses);
+
     if (Array.isArray(responses)) {
+      console.log(responses.length);
       let delay = 0;
       for (let response of responses) {
         this.sendMessage(response, delay * 2000);
