@@ -7,9 +7,12 @@ const express = require("express"),
   User = require("./services/user"),
   config = require("./services/config"),
   i18n = require("./i18n.config"),
+  DB = require("./services/db"),
   app = express();
 
 var users = {};
+
+DB.init();
 
 app.use(
   urlencoded({

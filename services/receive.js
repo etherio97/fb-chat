@@ -38,7 +38,7 @@ module.exports = class Receive {
       console.error(error);
       responses = {
         text: `An error has occured: '${error}'. We have been notified and \
-        will fix the issue shortly!`
+        will fix the issue shortly!`,
       };
     }
 
@@ -61,9 +61,12 @@ module.exports = class Receive {
 
     if (
       (greeting && greeting.confidence > 0.8) ||
-      message.includes("start over")
+      message.match(/(?:hello|hi|ဟယ်လို|ဟိုင်း|မင်္ဂလာ|mingala)/g)
     ) {
       response = Response.genNuxMessage(this.user);
+    } else if (message.match(/(?:news|သတင်း|သတငျး|ဘာထူးလဲ)/)) {
+      let news = new News(this.user, this.webhookEvent);
+      response = news.handleNews();
     } else if (message.includes("#")) {
       response = Survey.handlePayload("CSAT_SUGGESTION");
     } else if (message.includes(i18n.__("care.help").toLowerCase())) {
@@ -73,19 +76,19 @@ module.exports = class Receive {
       response = [
         Response.genText(
           i18n.__("fallback.any", {
-            message: this.webhookEvent.message.text
+            message: this.webhookEvent.message.text,
           })
         ),
         Response.genQuickReply(i18n.__("get_started.help"), [
           {
             title: i18n.__("menu.reporting_news"),
-            payload: "NEWS_REPORTING"
+            payload: "NEWS_REPORTING",
           },
           {
             title: i18n.__("menu.getting_news"),
-            payload: "NEWS_GETTING"
-          }
-        ])
+            payload: "NEWS_GETTING",
+          },
+        ]),
       ];
     }
 
@@ -100,12 +103,12 @@ module.exports = class Receive {
     response = Response.genQuickReply(i18n.__("fallback.attachment"), [
       {
         title: i18n.__("menu.help"),
-        payload: "CARE_HELP"
+        payload: "CARE_HELP",
       },
       {
         title: i18n.__("menu.start_over"),
-        payload: "GET_STARTED"
-      }
+        payload: "GET_STARTED",
+      },
     ]);
 
     return response;
@@ -161,21 +164,21 @@ module.exports = class Receive {
         Response.genQuickReply(i18n.__("get_started.help"), [
           {
             title: i18n.__("care.order"),
-            payload: "CARE_ORDER"
+            payload: "CARE_ORDER",
           },
           {
             title: i18n.__("care.billing"),
-            payload: "CARE_BILLING"
+            payload: "CARE_BILLING",
           },
           {
             title: i18n.__("care.other"),
-            payload: "CARE_OTHER"
-          }
-        ])
+            payload: "CARE_OTHER",
+          },
+        ]),
       ];
     } else {
       response = {
-        text: `This is a default postback message for payload: ${payload}!`
+        text: `This is a default postback message for payload: ${payload}!`,
       };
     }
 
@@ -184,26 +187,24 @@ module.exports = class Receive {
 
   handlePrivateReply(type, object_id) {
     let welcomeMessage =
-      i18n.__("get_started.welcome") +
-      ". " +
-      i18n.__("get_started.help");
+      i18n.__("get_started.welcome") + ". " + i18n.__("get_started.help");
 
     let response = Response.genQuickReply(welcomeMessage, [
       {
         title: i18n.__("menu.news"),
-        payload: "NEWS"
+        payload: "NEWS",
       },
       {
         title: i18n.__("menu.help"),
-        payload: "HELP"
-      }
+        payload: "HELP",
+      },
     ]);
 
     let requestBody = {
       recipient: {
-        [type]: object_id
+        [type]: object_id,
       },
-      message: response
+      message: response,
     };
 
     GraphAPi.callSendAPI(requestBody);
@@ -219,9 +220,9 @@ module.exports = class Receive {
     // Construct the message body
     let requestBody = {
       recipient: {
-        id: this.user.psid
+        id: this.user.psid,
       },
-      message: response
+      message: response,
     };
 
     // Check if there is persona id in the response
@@ -231,10 +232,10 @@ module.exports = class Receive {
 
       requestBody = {
         recipient: {
-          id: this.user.psid
+          id: this.user.psid,
         },
         message: response,
-        persona_id: persona_id
+        persona_id: persona_id,
       };
     }
 
