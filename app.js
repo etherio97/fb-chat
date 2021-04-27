@@ -6,7 +6,6 @@ const express = require("express"),
   GraphAPi = require("./services/graph-api"),
   User = require("./services/user"),
   config = require("./services/config"),
-  i18n = require("./i18n.config"),
   DB = require("./services/db"),
   News = require("./services/news"),
   app = express();
@@ -14,8 +13,6 @@ const express = require("express"),
 var users = {};
 
 DB.init();
-
-new News({}, {}).update();
 
 app.use(
   urlencoded({
@@ -25,29 +22,14 @@ app.use(
 
 app.use(json({ verify: verifyRequestSignature }));
 
-app.use(express.static(path.join(path.resolve(), "public")));
-
-app.set("view engine", "ejs");
-
-app.get("/", function(_req, res) {
-  res.render("index");
-});
-
 app.get("/webhook", (req, res) => {
-  // Parse the query params
   let mode = req.query["hub.mode"];
   let token = req.query["hub.verify_token"];
   let challenge = req.query["hub.challenge"];
-
-  // Checks if a token and mode is in the query string of the request
   if (mode && token) {
-    // Checks the mode and token sent is correct
     if (mode === "subscribe" && token === config.verifyToken) {
-      // Responds with the challenge token from the request
-      console.log("WEBHOOK_VERIFIED");
       res.status(200).send(challenge);
     } else {
-      // Responds with '403 Forbidden' if verify tokens do not match
       res.sendStatus(403);
     }
   }
@@ -100,19 +82,16 @@ app.post("/webhook", (req, res) => {
         })
         .finally(() => {
           users[psid] = user;
-          i18n.setLocale(user.locale);
           let receiveMessage = new Receive(users[psid], webhookEvent);
           return receiveMessage.handleMessage();
         });
     } else {
-      i18n.setLocale(users[psid].locale);
       let receiveMessage = new Receive(users[psid], webhookEvent);
       return receiveMessage.handleMessage();
     }
   });
 });
 
-// Set up your App's Messenger Profile
 app.get("/profile", (req, res) => {
   let token = req.query["verify_token"];
   let mode = req.query["mode"];
@@ -122,8 +101,6 @@ app.get("/profile", (req, res) => {
   }
   var Profile = require("./services/profile.js");
   Profile = new Profile();
-
-  // Checks if a token and mode is in the query string of the request
   if (mode && token) {
     if (token === config.verifyToken) {
       if (mode == "webhook" || mode == "all") {
@@ -164,19 +141,15 @@ app.get("/profile", (req, res) => {
       }
       res.status(200).end();
     } else {
-      // Responds with '403 Forbidden' if verify tokens do not match
       res.sendStatus(403);
     }
   } else {
-    // Returns a '404 Not Found' if mode or token are missing
     res.sendStatus(404);
   }
 });
 
-// Verify that the callback came from Facebook.
 function verifyRequestSignature(req, res, buf) {
   var signature = req.headers["x-hub-signature"];
-
   if (!signature) {
     console.log("Couldn't validate the signature.");
   } else {
@@ -192,30 +165,8 @@ function verifyRequestSignature(req, res, buf) {
   }
 }
 
-// Check if all environment variables are set
 config.checkEnvVariables();
 
-// listen for requests :)
 var listener = app.listen(config.port, function() {
   console.log("Your app is listening on port " + listener.address().port);
-
-  if (
-    Object.keys(config.personas).length == 0 &&
-    config.appUrl &&
-    config.verifyToken
-  ) {
-    console.log(
-      "Is this the first time running?\n" +
-        "Make sure to set the both the Messenger profile, persona " +
-        "and webhook by visiting:\n" +
-        config.appUrl +
-        "/profile?mode=all&verify_token=" +
-        config.verifyToken
-    );
-  }
-
-  if (config.pageId) {
-    console.log("Test your app by messaging:");
-    console.log("https://m.me/" + config.pageId);
-  }
 });
