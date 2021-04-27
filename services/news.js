@@ -69,16 +69,13 @@ module.exports = class News {
 
     if (articles.length) {
       let article = articles[0];
-
+      console.log(article);
       response = Response.genGenericTemplate(
         article.image || DEFAULT_IMAGE,
         article.title + " -" + article.source,
         article.content.slice(0, 124),
         [
-          Response.genPostbackButton(
-            "အပြည်အစုံဖတ်ရန်",
-            "NEWS_READ " + article.id
-          ),
+          Response.genPostbackButton("အပြည်အစုံဖတ်ရန်", "NEWS_READ"),
           Response.genWebUrlButton("External Link", article.link),
           Response.genPostbackButton("နောက်တစ်ပုဒ်", "NEWS_ANOTHER"),
         ]
