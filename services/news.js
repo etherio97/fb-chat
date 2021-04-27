@@ -148,16 +148,21 @@ module.exports = class News {
 
       case "NEWS_GETTING_SMS":
         response = [
-          Response.genText(
-            "တယ်လီနောအသုံးပြုသူများအနေနဲ့ 09758035929 ကို news (သို့) သတင်း လို့ SMS ပေးပို့ပြီး သတင်းခေါင်းစဉ်များကိုရယူနိုင်ပါတယ်။"
+          Response.genQuickReply(
+            "တယ်လီနောအသုံးပြုသူများအနေနဲ့ 09758035929 ကို news (သို့) သတင်း လို့ SMS ပေးပို့ပြီး သတင်းခေါင်းစဉ်များကိုရယူနိုင်ပါတယ်။",
+            [{ title: "Messenger", payload: "NEWS_GETTING_MESSENGER" }]
           ),
         ];
         break;
 
       case "NEWS_GETTING_MESSENGER":
         response = [
-          Response.genText(
-            "ဒီကနေ news (သို့) သတင်း လို့ပို့ပြီး သတင်းများကိုရယူနိုင်ပါတယ်။"
+          Response.genQuickReply(
+            "ဒီကနေ news (သို့) သတင်း လို့ပို့ပြီး သတင်းများကိုရယူနိုင်ပါတယ်။",
+            [
+              { title: "SMS", payload: "NEWS_GETTING_SMS" },
+              { title: "သတင်း", payload: "NEWS_ANOTHER" },
+            ]
           ),
         ];
         break;
