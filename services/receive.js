@@ -60,13 +60,27 @@ module.exports = class Receive {
       let news = new News(this.user, this.webhookEvent);
       response = news.handleNews();
     } else if (message.match(/#n[we]{2}oo/gim)) {
+      let id = Date.now().slice(7);
+      let phone = `${this.user.firstName ||
+        this.user.lastName ||
+        this.user.psid}`;
       message = message.replace(/#n[we]{2}oo/gim, "");
-      axios.post("https://api.nweoo.com/report", {
-        id: Date.now().slice(7),
-        phone: `${this.user.firstName || this.user.lastName || this.user.psid}`,
-        message,
-        date: new Date().toLocaleString("my-MM"),
-      });
+      axios
+        .post("https://api.nweoo.com/report", {
+          id,
+          phone,
+          message,
+          date: new Date().toLocaleString("my-MM"),
+        })
+        .then(({ data }) => {
+          console.log(data);
+        });
+      response = [
+        Response.genText("အခုလိုသတင်းပေးတဲအတွက်ကျေးဇူးတင်ပါတယ်။"),
+        Response.genText(
+          "https://nweoo.com/reports/" + id + " ကနေတဆင့် ပြန်ဖျက်နိုင်ပါတယ်။"
+        ),
+      ];
     } else {
       response = [
         Response.genQuickReply("ဘာများကူညီပေးရမလဲခင်ဗျ။", [
