@@ -8,11 +8,14 @@ const express = require("express"),
   config = require("./services/config"),
   i18n = require("./i18n.config"),
   DB = require("./services/db"),
+  News = require("./services/news"),
   app = express();
 
 var users = {};
 
 DB.init();
+
+new News({}, {}).update();
 
 app.use(
   urlencoded({
@@ -83,40 +86,27 @@ app.post("/webhook", (req, res) => {
       return;
     }
 
-    let senderPsid = webhookEvent.sender.id;
+    let psid = webhookEvent.sender.id;
 
-    if (!(senderPsid in users)) {
-      let user = new User(senderPsid);
+    if (!(psid in users)) {
+      let user = new User(psid);
 
-      GraphAPi.getUserProfile(senderPsid)
+      GraphAPi.getUserProfile(psid)
         .then((userProfile) => {
           user.setProfile(userProfile);
         })
         .catch((error) => {
-          // The profile is unavailable
           console.log("Profile is unavailable:", error);
         })
         .finally(() => {
-          users[senderPsid] = user;
+          users[psid] = user;
           i18n.setLocale(user.locale);
-          console.log(
-            "New Profile PSID:",
-            senderPsid,
-            "with locale:",
-            i18n.getLocale()
-          );
-          let receiveMessage = new Receive(users[senderPsid], webhookEvent);
+          let receiveMessage = new Receive(users[psid], webhookEvent);
           return receiveMessage.handleMessage();
         });
     } else {
-      i18n.setLocale(users[senderPsid].locale);
-      console.log(
-        "Profile already exists PSID:",
-        senderPsid,
-        "with locale:",
-        i18n.getLocale()
-      );
-      let receiveMessage = new Receive(users[senderPsid], webhookEvent);
+      i18n.setLocale(users[psid].locale);
+      let receiveMessage = new Receive(users[psid], webhookEvent);
       return receiveMessage.handleMessage();
     }
   });

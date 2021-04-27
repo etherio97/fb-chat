@@ -11,17 +11,13 @@ module.exports = class Receive {
     this.webhookEvent = webhookEvent;
   }
 
-  // Check if the event is a message or postback and
-  // call the appropriate handler function
   handleMessage() {
-    let event = this.webhookEvent;
-
     let responses;
+    let event = this.webhookEvent;
 
     try {
       if (event.message) {
         let message = event.message;
-
         if (message.quick_reply) {
           responses = this.handleQuickReply();
         } else if (message.attachments) {
@@ -35,10 +31,8 @@ module.exports = class Receive {
         responses = this.handleReferral();
       }
     } catch (error) {
-      console.error(error);
       responses = {
-        text: `An error has occured: '${error}'. We have been notified and \
-        will fix the issue shortly!`,
+        text: `နည်းပညာပိုင်းအရချို့ယွင်းမှုရှိနေပါတယ်။ \n\n---\n${error}`,
       };
     }
 
