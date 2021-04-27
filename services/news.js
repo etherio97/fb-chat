@@ -69,13 +69,12 @@ module.exports = class News {
 
     if (articles.length) {
       let article = articles[0];
-      console.log(article);
-      response = Response.genGenericTemplate(
-        article.image || DEFAULT_IMAGE,
-        article.title + " -" + article.source,
-        "",
-        [Response.genWebUrlButton("External Link", article.link)]
-      );
+      response = [
+        Response.genImageTemplate(
+          article.image || DEFAULT_IMAGE,
+          article.title + " -" + article.source
+        ),
+      ];
       read.push(article.id);
     } else {
       response = Response.genText("သတင်းများနောက်ထပ်မရှိပါ။");
