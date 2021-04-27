@@ -61,23 +61,31 @@ module.exports = class News {
 
   handleNews() {
     this.fetchAll();
-    let response = [];
+    let response;
+    let user = this.user;
+    let read = user.headlines;
     let articles = DB.read()["articles"] || [];
-    for (let article of articles) {
-      response.push(
-        Response.genGenericTemplate(
-          article.image || DEFAULT_IMAGE,
-          article.title + " -" + article.source,
-          article.content.slice(0, 124),
-          [
-            Response.genPostbackButton(
-              "အပြည်အစုံဖတ်ရန်",
-              "NEWS_READ " + article.id
-            ),
-            Response.genWebUrlButton("External Link", article.link),
-          ]
-        )
+    articles = articles.filter((article) => !read.includes(article.id));
+
+    if (articles.length) {
+      let article = articles[0];
+
+      response = Response.genGenericTemplate(
+        article.image || DEFAULT_IMAGE,
+        article.title + " -" + article.source,
+        article.content.slice(0, 124),
+        [
+          Response.genPostbackButton(
+            "အပြည်အစုံဖတ်ရန်",
+            "NEWS_READ " + article.id
+          ),
+          Response.genWebUrlButton("External Link", article.link),
+          Response.genPostbackButton("နောက်တစ်ပုဒ်", "NEWS_ANOTHER"),
+        ]
       );
+      read.push(article.id);
+    } else {
+      response = Response.genText("သတင်းများနောက်ထပ်မရှိပါ။");
     }
 
     return response;
