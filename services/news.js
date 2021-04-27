@@ -2,8 +2,7 @@ let updated_at = 0;
 const DEFAULT_IMAGE = "https://www.nweoo.com/images/cover.jpg";
 const { default: axios } = require("axios");
 const Response = require("./response"),
-  DB = require("./db"),
-  i18n = require("../i18n.config");
+  DB = require("./db");
 
 module.exports = class News {
   constructor(user, webhookEvent) {
@@ -63,16 +62,8 @@ module.exports = class News {
   handleNews() {
     this.fetchAll();
     let response = [];
-    let user = this.user;
-    let event = this.webhookEvent;
-    let sent = user.headlines || [];
     let articles = DB.read()["articles"] || [];
-    articles = articles
-      .filter((article) => !sent.includes(article.id))
-      .slice(0, 5);
-    let i = 0;
     articles.forEach((article) => {
-      i++;
       let r = Response.genGenericTemplate(
         article.image || DEFAULT_IMAGE,
         article.title + " -" + article.source,
@@ -85,7 +76,6 @@ module.exports = class News {
           Response.genWebUrlButton("External Link", article.link),
         ]
       );
-      r.delay = 1200 * i;
       response.push(r);
     });
     return response;
@@ -97,24 +87,22 @@ module.exports = class News {
     switch (payload) {
       case "NEWS_GETTING":
         response = [
-          Response.genQuickReply(
-            i18n.__("news.channels", [
-              {
-                title: "SMS",
-                payload: "NEWS_GETTING_SMS",
-              },
-              {
-                title: "Messenger",
-                payload: "NEWS_GETTING_MESSENGER",
-              },
-            ])
-          ),
+          Response.genQuickReply("ဘယ်လိုသတင်းများကိုရယူလိုပါသလဲ။", [
+            {
+              title: "SMS",
+              payload: "NEWS_GETTING_SMS",
+            },
+            {
+              title: "Messenger",
+              payload: "NEWS_GETTING_MESSENGER",
+            },
+          ]),
         ];
         break;
 
       case "NEWS_REPORTING":
         response = [
-          Response.genQuickReply(i18n.__("news.channels"), [
+          Response.genQuickReply("ဘယ်လိုသတင်းပေးလိုပါသလဲ။", [
             {
               title: "SMS",
               payload: "NEWS_REPORTING_SMS",
@@ -128,19 +116,35 @@ module.exports = class News {
         break;
 
       case "NEWS_GETTING_SMS":
-        response = [Response.genText(i18n.__("news.getting_sms"))];
+        response = [
+          Response.genText(
+            "တယ်လီနောအသုံးပြုသူများအနေနဲ့ 09758035929 ကို news (သို့) သတင်း လို့ SMS ပေးပို့ပြီး သတင်းခေါင်းစဉ်များကိုရယူနိုင်ပါတယ်။"
+          ),
+        ];
         break;
 
       case "NEWS_GETTING_MESSENGER":
-        response = [Response.genText(i18n.__("news.getting_messenger"))];
+        response = [
+          Response.genText(
+            "ဒီကနေ news (သို့) သတင်း လို့ပို့ပြီး သတင်းများကိုရယူနိုင်ပါတယ်။"
+          ),
+        ];
         break;
 
       case "NEWS_REPORTING_SMS":
-        response = [Response.genText(i18n.__("news.reporting_sms"))];
+        response = [
+          Response.genText(
+            "ဖုန်းနံပါတ် 09758035929 ကို #nweoo ထည့်ပြီး သတင်းအချက်အလက်တွေကို SMS နဲ့ပေးပို့လိုက်တာနဲ့ အမြန်ဆုံးကျွန်တော်တို့ Page ပေါ်တင်ပေးသွားမှာဖြစ်ပါတယ်။"
+          ),
+        ];
         break;
 
       case "NEWS_REPORTING_MESSENGER":
-        response = [Response.genText(i18n.__("news.reporting_messenger"))];
+        response = [
+          Response.genText(
+            "ဒီကနေ #nweoo ထည့်ပြီး သတင်းအချက်အလက်တွေကို ပို့လိုက်တာနဲ့ ချက်ချင်းကျွန်တော်တို့ရဲ့ Page ပေါ်တင်ပေးသွားမှာဖြစ်ပါတယ်။"
+          ),
+        ];
         break;
     }
 

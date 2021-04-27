@@ -1,9 +1,6 @@
 const News = require("./news"),
   Response = require("./response"),
-  Care = require("./care"),
-  Survey = require("./survey"),
-  GraphAPi = require("./graph-api"),
-  i18n = require("../i18n.config");
+  GraphAPi = require("./graph-api");
 
 module.exports = class Receive {
   constructor(user, webhookEvent) {
@@ -61,26 +58,16 @@ module.exports = class Receive {
     } else if (message.match(/(?:news|သတင်း|သတငျး|ဘာထူးလဲ)/)) {
       let news = new News(this.user, this.webhookEvent);
       response = news.handleNews();
-    } else if (message.includes("#")) {
-      response = Survey.handlePayload("CSAT_SUGGESTION");
-    } else if (message.includes(i18n.__("care.help").toLowerCase())) {
-      let care = new Care(this.user, this.webhookEvent);
-      response = care.handlePayload("CARE_HELP");
     } else {
       response = [
-        Response.genText(
-          i18n.__("fallback.any", {
-            message: this.webhookEvent.message.text,
-          })
-        ),
-        Response.genQuickReply(i18n.__("get_started.help"), [
+        Response.genQuickReply("ဘာများကူညီပေးရမလဲခင်ဗျ။", [
           {
-            title: i18n.__("menu.reporting_news"),
-            payload: "NEWS_REPORTING",
+            title: "သတင်းယူရန်",
+            payload: "NEWS_GETTING",
           },
           {
-            title: i18n.__("menu.getting_news"),
-            payload: "NEWS_GETTING",
+            title: "သတင်းပေး",
+            payload: "NEWS_REPORTING",
           },
         ]),
       ];
@@ -94,16 +81,15 @@ module.exports = class Receive {
     let response;
     let attachment = this.webhookEvent.message.attachments[0];
 
-    response = Response.genQuickReply(i18n.__("fallback.attachment"), [
-      {
-        title: i18n.__("menu.help"),
-        payload: "CARE_HELP",
-      },
-      {
-        title: i18n.__("menu.start_over"),
-        payload: "GET_STARTED",
-      },
-    ]);
+    response = Response.genQuickReply(
+      "အခုလိုဆက်သွယ်တဲ့အတွက် ကျေးဇူးတင်ရှိပါတယ်ခင်ဗျာ...",
+      [
+        {
+          title: "ပြန်လည်စတင်ရန်",
+          payload: "GET_STARTED",
+        },
+      ]
+    );
 
     return response;
   }
@@ -114,35 +100,25 @@ module.exports = class Receive {
     return this.handlePayload(payload);
   }
 
-  // Handles postbacks events
   handlePostback() {
-    let postback = this.webhookEvent.postback;
-    // Check for the special Get Starded with referral
     let payload;
+    let postback = this.webhookEvent.postback;
     if (postback.referral && postback.referral.type == "OPEN_THREAD") {
       payload = postback.referral.ref;
     } else {
-      // Get the payload of the postback
       payload = postback.payload;
     }
     return this.handlePayload(payload.toUpperCase());
   }
 
-  // Handles referral events
   handleReferral() {
-    // Get the payload of the postback
     let payload = this.webhookEvent.referral.ref.toUpperCase();
-
     return this.handlePayload(payload);
   }
 
   handlePayload(payload) {
-    // Log CTA event in FBA
     GraphAPi.callFBAEventsAPI(this.user.psid, payload);
-
     let response;
-
-    // Set the response based on the payload
     if (
       payload === "GET_STARTED" ||
       payload === "DEVDOCS" ||
@@ -154,19 +130,15 @@ module.exports = class Receive {
       response = news.handlePayload(payload);
     } else if (payload.includes("CHAT-PLUGIN")) {
       response = [
-        Response.genText(i18n.__("chat_plugin.prompt")),
-        Response.genQuickReply(i18n.__("get_started.help"), [
+        Response.genText("မင်္ဂလာပါ။"),
+        Response.genQuickReply("ဘာများကူညီပေးရမလဲခင်ဗျ။", [
           {
-            title: i18n.__("care.order"),
-            payload: "CARE_ORDER",
+            title: "သတင်းယူရန်",
+            payload: "NEWS_GETTING",
           },
           {
-            title: i18n.__("care.billing"),
-            payload: "CARE_BILLING",
-          },
-          {
-            title: i18n.__("care.other"),
-            payload: "CARE_OTHER",
+            title: "သတင်းပေးရန်",
+            payload: "NEWS_REPORTING",
           },
         ]),
       ];
@@ -175,22 +147,20 @@ module.exports = class Receive {
         text: `This is a default postback message for payload: ${payload}!`,
       };
     }
-
     return response;
   }
 
   handlePrivateReply(type, object_id) {
-    let welcomeMessage =
-      i18n.__("get_started.welcome") + ". " + i18n.__("get_started.help");
+    let welcomeMessage = "မင်္ဂလာပါ။ ဘာများကူညီပေးရမလဲခင်ဗျ။";
 
     let response = Response.genQuickReply(welcomeMessage, [
       {
-        title: i18n.__("menu.news"),
-        payload: "NEWS",
+        title: "သတင်းယူရန်",
+        payload: "NEWS_GETTING",
       },
       {
-        title: i18n.__("menu.help"),
-        payload: "HELP",
+        title: "သတင်းပေးရန်",
+        payload: "NEWS_REPORTING",
       },
     ]);
 
