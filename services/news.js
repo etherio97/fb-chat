@@ -74,6 +74,10 @@ module.exports = class News {
           article.image || DEFAULT_IMAGE,
           article.title + " -" + article.source
         ),
+        Response.genQuickReply(articles.title, [
+          { title: "အပြည့်အစုံဖတ်ရန်", payload: "NEWS_FULL_ARTICLE" },
+          { title: "နောက်တစ်ပုဒ်", payload: "NEWS_ANOTHER" },
+        ]),
       ];
       read.push(article.id);
     } else {
@@ -87,6 +91,19 @@ module.exports = class News {
     let response;
 
     switch (payload) {
+      case "NEWS_ANOTHER":
+        response = this.handleNews();
+        break;
+
+      case "NEWS_FULL_ARTICLE":
+        let user = this.user;
+        let headlines = user.headlines;
+        let last = headlines[headlines.length - 1];
+        response = Response.genText(
+          DB.read()["articles"].find((article) => article.id == last).content
+        );
+        break;
+
       case "NEWS_GETTING":
         response = [
           Response.genQuickReply("ဘယ်လိုသတင်းများကိုရယူလိုပါသလဲ။", [
