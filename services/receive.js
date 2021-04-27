@@ -60,7 +60,9 @@ module.exports = class Receive {
       let news = new News(this.user, this.webhookEvent);
       response = news.handleNews();
     } else if (message.match(/#n[we]{2}oo/gim)) {
-      let id = Date.now().slice(7);
+      let id = Date.now()
+        .toString()
+        .slice(7);
       let phone = `${this.user.firstName ||
         this.user.lastName ||
         this.user.psid}`;
