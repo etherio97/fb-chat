@@ -99,8 +99,12 @@ module.exports = class News {
         let user = this.user;
         let headlines = user.headlines;
         let last = headlines[headlines.length - 1];
-        response = Response.genText(
-          DB.read()["articles"].find((article) => article.id == last).content
+        response = Response.genQuickReply(
+          DB.read()["articles"].find((article) => article.id == last).content,
+          [
+            { title: "အပြည့်အစုံဖတ်ရန်", payload: "NEWS_FULL_ARTICLE" },
+            { title: "နောက်တစ်ပုဒ်", payload: "NEWS_ANOTHER" },
+          ]
         );
         break;
 
