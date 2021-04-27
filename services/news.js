@@ -70,21 +70,23 @@ module.exports = class News {
     articles = articles
       .filter((article) => !sent.includes(article.id))
       .slice(0, 5);
+    let i = 0;
     articles.forEach((article) => {
-      response.push(
-        Response.genGenericTemplate(
-          article.image || DEFAULT_IMAGE,
-          article.title + " -" + article.source,
-          article.content.slice(0, 124),
-          [
-            Response.genPostbackButton(
-              "အပြည်အစုံဖတ်ရန်",
-              "NEWS_READ " + article.id
-            ),
-            Response.genWebUrlButton("External Link", article.link),
-          ]
-        )
+      i++;
+      let r = Response.genGenericTemplate(
+        article.image || DEFAULT_IMAGE,
+        article.title + " -" + article.source,
+        article.content.slice(0, 124),
+        [
+          Response.genPostbackButton(
+            "အပြည်အစုံဖတ်ရန်",
+            "NEWS_READ " + article.id
+          ),
+          Response.genWebUrlButton("External Link", article.link),
+        ]
       );
+      r.delay = 1200 * i;
+      response.push(r);
     });
   }
 
