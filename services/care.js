@@ -48,8 +48,6 @@ module.exports = class Care {
         );
         break;
       case "CARE_ORDER":
-        // Send using the Persona for order issues
-
         response = [
           Response.genTextWithPersona(
             i18n.__("care.issue", {
@@ -68,8 +66,6 @@ module.exports = class Care {
         break;
 
       case "CARE_BILLING":
-        // Send using the Persona for billing issues
-
         response = [
           Response.genTextWithPersona(
             i18n.__("care.issue", {
@@ -88,8 +84,6 @@ module.exports = class Care {
         break;
 
       case "CARE_SALES":
-        // Send using the Persona for sales questions
-
         response = [
           Response.genTextWithPersona(
             i18n.__("care.style", {
@@ -107,8 +101,6 @@ module.exports = class Care {
         break;
 
       case "CARE_OTHER":
-        // Send using the Persona for customer care issues
-
         response = [
           Response.genTextWithPersona(
             i18n.__("care.default", {

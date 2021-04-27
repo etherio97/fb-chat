@@ -95,10 +95,7 @@ module.exports = class Receive {
   // Handles mesage events with attachments
   handleAttachmentMessage() {
     let response;
-
-    // Get the attachment
     let attachment = this.webhookEvent.message.attachments[0];
-    console.log("Received attachment:", `${attachment} for ${this.user.psid}`);
 
     response = Response.genQuickReply(i18n.__("fallback.attachment"), [
       {
@@ -114,9 +111,7 @@ module.exports = class Receive {
     return response;
   }
 
-  // Handles mesage events with quick replies
   handleQuickReply() {
-    // Get the payload of the quick reply
     let payload = this.webhookEvent.message.quick_reply.payload;
 
     return this.handlePayload(payload);
@@ -145,8 +140,6 @@ module.exports = class Receive {
   }
 
   handlePayload(payload) {
-    console.log("Received Payload:", `${payload} for ${this.user.psid}`);
-
     // Log CTA event in FBA
     GraphAPi.callFBAEventsAPI(this.user.psid, payload);
 
