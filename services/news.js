@@ -63,22 +63,23 @@ module.exports = class News {
     this.fetchAll();
     let response = [];
     let articles = DB.read()["articles"] || [];
-    articles.forEach((article) => {
-      let r = Response.genGenericTemplate(
-        article.image || DEFAULT_IMAGE,
-        article.title + " -" + article.source,
-        article.content.slice(0, 124),
-        [
-          Response.genPostbackButton(
-            "အပြည်အစုံဖတ်ရန်",
-            "NEWS_READ " + article.id
-          ),
-          Response.genWebUrlButton("External Link", article.link),
-        ]
+    for (let article of articles) {
+      response.push(
+        Response.genGenericTemplate(
+          article.image || DEFAULT_IMAGE,
+          article.title + " -" + article.source,
+          article.content.slice(0, 124),
+          [
+            Response.genPostbackButton(
+              "အပြည်အစုံဖတ်ရန်",
+              "NEWS_READ " + article.id
+            ),
+            Response.genWebUrlButton("External Link", article.link),
+          ]
+        )
       );
-      response.push(r);
-    });
-
+    }
+    console.log(response, response.length);
     return response;
   }
 
