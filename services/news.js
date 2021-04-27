@@ -1,6 +1,7 @@
 let updated_at = 0;
 const DEFAULT_IMAGE = "https://www.nweoo.com/images/cover.jpg";
 const { default: axios } = require("axios");
+const config = require("./config");
 const Response = require("./response"),
   DB = require("./db");
 
@@ -102,14 +103,17 @@ module.exports = class News {
         let article = DB.read()["articles"].find(
           (article) => article.id == last
         );
-        response = [
-          Response.genGenericTemplate(article.title, [
-            Response.genWebUrlButton(
-              "ဆက်လက်ဖတ်ရန်",
-              "https://www.facebook.com/113483134124452_" + article.id
-            ),
-          ]),
-        ];
+        let content = article.content.replace(/\n\n\n\n/gim, "\n");
+        response = Response.genQuickReply(
+          content.length > 300
+            ? content.slice(0, 250) +
+                "... read more at: https://facebook.com/" +
+                config.pageId +
+                "_" +
+                article.id
+            : content,
+          [{ title: "နောက်တစ်ပုဒ်", payload: "NEWS_ANOTHER" }]
+        );
         break;
 
       case "NEWS_GETTING":
