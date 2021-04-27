@@ -88,6 +88,7 @@ module.exports = class News {
       r.delay = 1200 * i;
       response.push(r);
     });
+    return response;
   }
 
   handlePayload(payload) {
