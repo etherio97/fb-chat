@@ -1,7 +1,7 @@
 const express = require("express"),
   { urlencoded, json } = require("body-parser"),
   crypto = require("crypto"),
-  path = require("path"),
+  News = require("./services/news"),
   Receive = require("./services/receive"),
   GraphAPi = require("./services/graph-api"),
   User = require("./services/user"),
@@ -60,6 +60,8 @@ app.post("/webhook", (req, res) => {
         }
       }
     }
+
+    new News().update();
 
     let webhookEvent = entry.messaging[0];
 
