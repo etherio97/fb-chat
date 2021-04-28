@@ -1,4 +1,5 @@
 import { Router } from "express";
+import DB from "./app/DB";
 import GraphAPI from "./app/GraphAPI";
 import News from "./app/News";
 import Profile from "./app/Profile";
@@ -81,8 +82,11 @@ router.post("/webhook", (req, res) => {
   });
 });
 
-router.get("/users", (req, res) => {
-  if (req.query["verify_token"] !== VERIFY_TOKEN) return res.sendStatus(403);
+router.get("/articles/:id", (req, res) => {
+  const id = req.params["id"];
+  const articles = DB.read()["articles"];
+  const article = articles.find((article) => article.id == id);
+  res.end();
 });
 
 router.get("/nweoo", (req, res) => {

@@ -72,10 +72,7 @@ export default class News {
           article.title,
           article.source,
           [
-            Response.genWebUrlButton(
-              "အပြည့်အစုံ",
-              `https://www.facebook.com/${article.post_id}`
-            ),
+            Response.genWebUrlButton("အပြည့်အစုံ", article.link),
             Response.genPostbackButton("နောက်ထပ်", "NEWS_ANOTHER"),
           ]
         ),

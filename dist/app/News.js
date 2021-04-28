@@ -77,7 +77,7 @@ var News = (function () {
             var article = articles[0];
             response = [
                 Response_1.default.genGenericTemplate(article.image, article.title, article.source, [
-                    Response_1.default.genWebUrlButton("အပြည့်အစုံ", "https://www.facebook.com/" + article.post_id),
+                    Response_1.default.genWebUrlButton("အပြည့်အစုံ", article.link),
                     Response_1.default.genPostbackButton("နောက်ထပ်", "NEWS_ANOTHER"),
                 ]),
             ];

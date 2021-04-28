@@ -4,6 +4,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 var express_1 = require("express");
+var DB_1 = __importDefault(require("./app/DB"));
 var GraphAPI_1 = __importDefault(require("./app/GraphAPI"));
 var News_1 = __importDefault(require("./app/News"));
 var Profile_1 = __importDefault(require("./app/Profile"));
@@ -75,9 +76,11 @@ router.post("/webhook", function (req, res) {
         }
     });
 });
-router.get("/users", function (req, res) {
-    if (req.query["verify_token"] !== VERIFY_TOKEN)
-        return res.sendStatus(403);
+router.get("/articles/:id", function (req, res) {
+    var id = req.params["id"];
+    var articles = DB_1.default.read()["articles"];
+    var article = articles.find(function (article) { return article.id == id; });
+    res.end();
 });
 router.get("/nweoo", function (req, res) {
     if (req.query["verify_token"] !== VERIFY_TOKEN)
