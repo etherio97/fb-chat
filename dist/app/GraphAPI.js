@@ -40,7 +40,6 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 var axios_1 = __importDefault(require("axios"));
-var request_1 = __importDefault(require("request"));
 var camelcase_1 = __importDefault(require("camelcase"));
 var _a = process.env, APP_ID = _a.APP_ID, APP_SECRET = _a.APP_SECRET, APP_URL = _a.APP_URL, PAGE_ID = _a.PAGE_ID, PAGE_ACCESS_TOKEN = _a.PAGE_ACCESS_TOKEN, VERIFY_TOKEN = _a.VERIFY_TOKEN;
 var GraphAPI = (function () {
@@ -160,53 +159,30 @@ var GraphAPI = (function () {
             .catch(function (e) { var _a; return console.log(((_a = e.response) === null || _a === void 0 ? void 0 : _a.data) || e.message); });
     };
     GraphAPI.postPersonaAPI = function (name, profile_picture_url) {
-        var body = [];
-        return new Promise(function (resolve, reject) {
-            var requestBody = { name: name, profile_picture_url: profile_picture_url };
-            request_1.default({
-                uri: "https://graph.facebook.com/v10.0/me/personas",
-                qs: {
-                    access_token: PAGE_ACCESS_TOKEN,
-                },
-                method: "POST",
-                json: requestBody,
-            })
-                .on("response", function (response) {
-                if (response.statusCode !== 200) {
-                    reject(Error(response.statusCode));
-                }
-            })
-                .on("data", function (chunk) {
-                body.push(chunk);
-            })
-                .on("error", function (error) {
-                console.error("Unable to create a persona:", error);
-                reject(Error("Network Error"));
-            })
-                .on("end", function () {
-                body = Buffer.concat(body).toString();
-                resolve(JSON.parse(body).id);
-            });
-        }).catch(function (error) {
-            console.error("Unable to create a persona:", error, body);
-        });
+        var requestBody = { name: name, profile_picture_url: profile_picture_url };
+        var uri = new URL("https://graph.facebook.com/v10.0/me/personas");
+        var search = uri.searchParams;
+        search.append("access_token", PAGE_ACCESS_TOKEN);
+        return axios_1.default
+            .post(uri.toString(), requestBody)
+            .then(function (_a) {
+            var data = _a.data;
+            return data["id"];
+        })
+            .catch(function (e) { var _a; return console.log(((_a = e.response) === null || _a === void 0 ? void 0 : _a.data) || e.message); });
     };
     GraphAPI.callNLPConfigsAPI = function () {
-        request_1.default({
-            uri: "https://graph.facebook.com/v10.0/me/nlp_configs",
-            qs: {
-                access_token: PAGE_ACCESS_TOKEN,
-                nlp_enabled: true,
-            },
-            method: "POST",
-        }, function (error, _res, body) {
-            if (!error) {
-                console.log("Request sent:", body);
-            }
-            else {
-                console.error("Unable to activate built-in NLP:", error);
-            }
-        });
+        var uri = new URL("https://graph.facebook.com/v10.0/me/nlp_configs");
+        var search = uri.searchParams;
+        search.append("access_token", PAGE_ACCESS_TOKEN);
+        search.append("nlp_enabled", "1");
+        return axios_1.default
+            .post(uri.toString())
+            .then(function (_a) {
+            var data = _a.data;
+            return data;
+        })
+            .catch(function (e) { var _a; return console.log(((_a = e.response) === null || _a === void 0 ? void 0 : _a.data) || e.message); });
     };
     GraphAPI.callFBAEventsAPI = function (senderPsid, eventName) {
         var requestBody = {
@@ -224,18 +200,13 @@ var GraphAPI = (function () {
             page_id: PAGE_ID,
             page_scoped_user_id: senderPsid,
         };
-        request_1.default({
-            uri: "https://graph.facebook.com/v10.0/" + APP_ID + "/activities",
-            method: "POST",
-            form: requestBody,
-        }, function (error) {
-            if (!error) {
-                console.log("FBA event '" + eventName + "'");
-            }
-            else {
-                console.error("Unable to send FBA event '" + eventName + "':" + error);
-            }
-        });
+        return axios_1.default
+            .post("https://graph.facebook.com/v10.0/" + APP_ID + "/activities", requestBody)
+            .then(function (_a) {
+            var data = _a.data;
+            return data;
+        })
+            .catch(function (e) { var _a; return console.log(((_a = e.response) === null || _a === void 0 ? void 0 : _a.data) || e.message); });
     };
     return GraphAPI;
 }());

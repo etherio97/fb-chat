@@ -110,56 +110,25 @@ export default class GraphAPI {
     name: string,
     profile_picture_url: string
   ): Promise<any> {
-    let body: any = [];
-    return new Promise(function (resolve, reject) {
-      let requestBody = { name, profile_picture_url };
-      request({
-        uri: "https://graph.facebook.com/v10.0/me/personas",
-        qs: {
-          access_token: PAGE_ACCESS_TOKEN,
-        },
-        method: "POST",
-        json: requestBody,
-      })
-        .on("response", function (response) {
-          if (response.statusCode !== 200) {
-            reject(Error(response.statusCode));
-          }
-        })
-        .on("data", function (chunk) {
-          body.push(chunk);
-        })
-        .on("error", function (error) {
-          console.error("Unable to create a persona:", error);
-          reject(Error("Network Error"));
-        })
-        .on("end", () => {
-          body = Buffer.concat(body).toString();
-          resolve(JSON.parse(body).id);
-        });
-    }).catch((error) => {
-      console.error("Unable to create a persona:", error, body);
-    });
+    let requestBody = { name, profile_picture_url };
+    let uri = new URL("https://graph.facebook.com/v10.0/me/personas");
+    let search = uri.searchParams;
+    search.append("access_token", PAGE_ACCESS_TOKEN);
+    return axios
+      .post(uri.toString(), requestBody)
+      .then(({ data }) => data["id"])
+      .catch((e) => console.log(e.response?.data || e.message));
   }
 
   static callNLPConfigsAPI() {
-    request(
-      {
-        uri: "https://graph.facebook.com/v10.0/me/nlp_configs",
-        qs: {
-          access_token: PAGE_ACCESS_TOKEN,
-          nlp_enabled: true,
-        },
-        method: "POST",
-      },
-      (error, _res, body) => {
-        if (!error) {
-          console.log("Request sent:", body);
-        } else {
-          console.error("Unable to activate built-in NLP:", error);
-        }
-      }
-    );
+    let uri = new URL("https://graph.facebook.com/v10.0/me/nlp_configs");
+    let search = uri.searchParams;
+    search.append("access_token", PAGE_ACCESS_TOKEN);
+    search.append("nlp_enabled", "1");
+    return axios
+      .post(uri.toString())
+      .then(({ data }) => data)
+      .catch((e) => console.log(e.response?.data || e.message));
   }
 
   static callFBAEventsAPI(senderPsid, eventName) {
@@ -179,20 +148,12 @@ export default class GraphAPI {
       page_scoped_user_id: senderPsid,
     };
 
-    // Send the HTTP request to the Activities API
-    request(
-      {
-        uri: `https://graph.facebook.com/v10.0/${APP_ID}/activities`,
-        method: "POST",
-        form: requestBody,
-      },
-      (error) => {
-        if (!error) {
-          console.log(`FBA event '${eventName}'`);
-        } else {
-          console.error(`Unable to send FBA event '${eventName}':` + error);
-        }
-      }
-    );
+    return axios
+      .post(
+        `https://graph.facebook.com/v10.0/${APP_ID}/activities`,
+        requestBody
+      )
+      .then(({ data }) => data)
+      .catch((e) => console.log(e.response?.data || e.message));
   }
 }
