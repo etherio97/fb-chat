@@ -1,9 +1,7 @@
 let updated_at = 0;
-const DEFAULT_IMAGE = "https://www.nweoo.com/images/cover.jpg";
 const { default: axios } = require("axios");
-const config = require("./config");
-const Response = require("./response"),
-  DB = require("./db");
+const Response = require("./response");
+const DB = require("./db");
 
 module.exports = class News {
   constructor(user, webhookEvent) {
@@ -70,16 +68,17 @@ module.exports = class News {
 
     if (articles.length) {
       let article = articles[0];
-      response = [
-        Response.genImageTemplate(
-          article.image || DEFAULT_IMAGE,
-          article.source
-        ),
-        Response.genQuickReply(article.title, [
-          { title: "အပြည့်အစုံဖတ်ရန်", payload: "NEWS_FULL_ARTICLE" },
-          { title: "နောက်တစ်ပုဒ်", payload: "NEWS_ANOTHER" },
-        ]),
-      ];
+      response = Response.genGenericTemplate(
+        article.image,
+        `${article.title} -${article.source}`,
+        [
+          Response.genWebUrlButton(
+            "အပြည့်အစုံ",
+            "https://www.facebook.com/" + article.post_id
+          ),
+          Response.genPostbackButton("နောက်ထပ်", "NEWS_ANOTHER"),
+        ]
+      );
       read.push(article.id);
     } else {
       response = Response.genText("သတင်းများနောက်ထပ်မရှိပါ။");
