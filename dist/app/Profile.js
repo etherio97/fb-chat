@@ -55,13 +55,13 @@ var Profile = (function () {
         };
     };
     Profile.prototype.getGreeting = function () {
-        var greetings = this.getGreetingText();
+        var greetings = [this.getGreetingText()];
         return {
             greeting: greetings,
         };
     };
     Profile.prototype.getPersistentMenu = function () {
-        var menuItems = this.getMenuItems();
+        var menuItems = [this.getMenuItems()];
         return {
             persistent_menu: menuItems,
         };
@@ -77,17 +77,6 @@ var Profile = (function () {
             locale: "default",
             composer_input_disabled: false,
             call_to_actions: [
-                {
-                    title: "ဘာများကူညီပေးရမလဲခင်ဗျ",
-                    type: "nested",
-                    call_to_actions: [
-                        {
-                            title: "တိုက်ရိုက်ဆက်သွယ်ရန်",
-                            type: "postback",
-                            payload: "BOT_DISABLED",
-                        },
-                    ],
-                },
                 {
                     type: "postback",
                     title: "သတင်းရယူရန်",

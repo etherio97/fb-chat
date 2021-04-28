@@ -80,7 +80,12 @@ router.post("/webhook", (req, res) => {
   });
 });
 
+router.get("/users", (req, res) => {
+  if (req.query["verify_token"] !== VERIFY_TOKEN) return res.sendStatus(403);
+});
+
 router.get("/nweoo", (req, res) => {
+  if (req.query["verify_token"] !== VERIFY_TOKEN) return res.sendStatus(403);
   const profile = new Profile();
   profile.setThread();
   res.send("1");
