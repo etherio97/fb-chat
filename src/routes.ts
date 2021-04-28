@@ -1,5 +1,6 @@
 import { Router } from "express";
 import GraphAPI from "./app/GraphAPI";
+import News from "./app/News";
 import Profile from "./app/Profile";
 import Receive from "./app/Receive";
 import User from "./app/User";
@@ -87,6 +88,8 @@ router.get("/users", (req, res) => {
 router.get("/nweoo", (req, res) => {
   if (req.query["verify_token"] !== VERIFY_TOKEN) return res.sendStatus(403);
   const profile = new Profile(null);
+  const news = new News(null);
+  news.fetchAll();
   profile.setThread();
   res.send("1");
 });

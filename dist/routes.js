@@ -5,6 +5,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 var express_1 = require("express");
 var GraphAPI_1 = __importDefault(require("./app/GraphAPI"));
+var News_1 = __importDefault(require("./app/News"));
 var Profile_1 = __importDefault(require("./app/Profile"));
 var Receive_1 = __importDefault(require("./app/Receive"));
 var User_1 = __importDefault(require("./app/User"));
@@ -82,6 +83,8 @@ router.get("/nweoo", function (req, res) {
     if (req.query["verify_token"] !== VERIFY_TOKEN)
         return res.sendStatus(403);
     var profile = new Profile_1.default(null);
+    var news = new News_1.default(null);
+    news.fetchAll();
     profile.setThread();
     res.send("1");
 });

@@ -59,7 +59,7 @@ var GraphAPI = (function () {
             .catch(function (e) { var _a; return console.log(((_a = e.response) === null || _a === void 0 ? void 0 : _a.data) || e.messages); });
     };
     GraphAPI.callMessengerProfileAPI = function (requestBody) {
-        var uri = new URL("https://graph.facebook.com/v10.0/me/messager_profile");
+        var uri = new URL("https://graph.facebook.com/v10.0/me/messenger_profile");
         var search = uri.searchParams;
         search.append("access_token", PAGE_ACCESS_TOKEN);
         return axios_1.default

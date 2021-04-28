@@ -23,7 +23,7 @@ export default class GraphAPI {
   }
 
   static callMessengerProfileAPI(requestBody) {
-    let uri = new URL("https://graph.facebook.com/v10.0/me/messager_profile");
+    let uri = new URL("https://graph.facebook.com/v10.0/me/messenger_profile");
     let search = uri.searchParams;
     search.append("access_token", PAGE_ACCESS_TOKEN);
     return axios
