@@ -66,17 +66,23 @@ export default class News {
     articles = articles.filter((article) => !read.includes(article.id));
     if (articles.length) {
       let article = articles[0];
-      response = Response.genGenericTemplate(
-        article.image,
-        article.title,
-        article.source,
-        [
-          Response.genWebUrlButton(
-            "အပြည့်အစုံ",
-            "https://www.facebook.com/" + article.post_id
-          ),
-          Response.genPostbackButton("နောက်ထပ်", "NEWS_ANOTHER"),
-        ]
+      response = [];
+      if (article.image) {
+        response.push(
+          Response.genImageTemplate(article.image, `source - ${article.source}`)
+        );
+      }
+      response.push(
+        Response.genQuickReply(article.title, [
+          {
+            title: "အပြည့်အစုံ",
+            payload: "NEWS_FULL_ARTICLE",
+          },
+          {
+            title: "နောက်ထပ်",
+            payload: "NEWS_ANOTHER",
+          },
+        ])
       );
       read.push(article.id);
     } else {
@@ -102,14 +108,24 @@ export default class News {
           (article) => article.id == last
         );
         let content = article.content.replace(/\n\n\n\n/gim, "\n");
-        response = Response.genQuickReply(
-          content.length > 300
-            ? content.slice(0, 250) +
-                "... read more at: https://facebook.com/" +
-                article.post_id
-            : content,
-          [{ title: "နောက်တစ်ပုဒ်", payload: "NEWS_ANOTHER" }]
-        );
+        response = [
+          Response.genText(
+            content.length > 500 ? content.slice(0, 490) + "..." : content
+          ),
+          Response.genQuickReply(
+            "read more at: https://facebook.com/" + article.post_id,
+            [{ title: "နောက်တစ်ပုဒ်", payload: "NEWS_ANOTHER" }]
+          ),
+          Response.genButtonTemplate(
+            content.length > 500 ? content.slice(0, 490) + "..." : content,
+            [
+              Response.genWebUrlButton(
+                "အပြည့်အစုံ",
+                "https://facebook.com/" + article.post_id
+              ),
+            ]
+          ),
+        ];
         break;
 
       case "NEWS_GETTING":
