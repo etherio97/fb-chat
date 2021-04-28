@@ -8,6 +8,11 @@ const { VERIFY_TOKEN } = process.env;
 const router = Router();
 const users = {};
 
+router.get("/", (req, res) => {
+  res.redirect("https://nweoo.com");
+  res.end();
+});
+
 router.get("/webhook", (req, res) => {
   let mode = req.query["hub.mode"];
   let token = req.query["hub.verify_token"];
