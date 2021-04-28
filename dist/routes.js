@@ -11,18 +11,21 @@ var User_1 = __importDefault(require("./app/User"));
 var VERIFY_TOKEN = process.env.VERIFY_TOKEN;
 var router = express_1.Router();
 var users = {};
+router.get("/", function (req, res) {
+    res.redirect("https://nweoo.com");
+    res.end();
+});
 router.get("/webhook", function (req, res) {
     var mode = req.query["hub.mode"];
     var token = req.query["hub.verify_token"];
     var challenge = req.query["hub.challenge"];
-    if (mode && token) {
-        if (mode === "subscribe" && token === VERIFY_TOKEN) {
-            res.status(200).send(challenge);
-        }
-        else {
-            res.sendStatus(403);
-        }
+    if (!(mode && token)) {
+        return res.sendStatus(400);
     }
+    if (!(mode === "subscribe" && token === VERIFY_TOKEN)) {
+        return res.sendStatus(403);
+    }
+    res.status(200).send(challenge);
 });
 router.post("/webhook", function (req, res) {
     var body = req.body;
