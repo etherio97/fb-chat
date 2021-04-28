@@ -1,5 +1,6 @@
 const GraphAPi = require("./graph-api"),
   config = require("./config");
+const Response = require("./response");
 
 module.exports = class Profile {
   setWebhook() {
@@ -86,7 +87,7 @@ module.exports = class Profile {
   }
 
   getGreeting() {
-    let greeting = [];
+    let greeting = ["မင်္ဂလာပါခင်ဗျာ"];
     return { greeting };
   }
 
