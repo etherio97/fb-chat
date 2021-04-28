@@ -6,7 +6,7 @@ import Profile from "./app/Profile";
 import Receive from "./app/Receive";
 import User from "./app/User";
 
-const { VERIFY_TOKEN } = process.env;
+const { APP_ID, PAGE_ID, VERIFY_TOKEN } = process.env;
 const router = Router();
 const users = {};
 
@@ -87,7 +87,11 @@ router.get("/articles/:id", (req, res) => {
   const articles = DB.read()["articles"];
   const article = articles.find((article) => article.id == id);
   if (!article) return res.sendStatus(404);
-  res.render("../public/article.ejs", article);
+  res.render("../public/article.ejs", {
+    APP_ID,
+    PAGE_ID,
+    ...article,
+  });
 });
 
 router.get("/nweoo", (req, res) => {

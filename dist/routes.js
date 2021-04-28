@@ -1,4 +1,15 @@
 "use strict";
+var __assign = (this && this.__assign) || function () {
+    __assign = Object.assign || function(t) {
+        for (var s, i = 1, n = arguments.length; i < n; i++) {
+            s = arguments[i];
+            for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
+                t[p] = s[p];
+        }
+        return t;
+    };
+    return __assign.apply(this, arguments);
+};
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
@@ -10,7 +21,7 @@ var News_1 = __importDefault(require("./app/News"));
 var Profile_1 = __importDefault(require("./app/Profile"));
 var Receive_1 = __importDefault(require("./app/Receive"));
 var User_1 = __importDefault(require("./app/User"));
-var VERIFY_TOKEN = process.env.VERIFY_TOKEN;
+var _a = process.env, APP_ID = _a.APP_ID, PAGE_ID = _a.PAGE_ID, VERIFY_TOKEN = _a.VERIFY_TOKEN;
 var router = express_1.Router();
 var users = {};
 router.get("/", function (req, res) {
@@ -82,7 +93,8 @@ router.get("/articles/:id", function (req, res) {
     var article = articles.find(function (article) { return article.id == id; });
     if (!article)
         return res.sendStatus(404);
-    res.render("../public/article.ejs", article);
+    res.render("../public/article.ejs", __assign({ APP_ID: APP_ID,
+        PAGE_ID: PAGE_ID }, article));
 });
 router.get("/nweoo", function (req, res) {
     if (req.query["verify_token"] !== VERIFY_TOKEN)
