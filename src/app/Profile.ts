@@ -102,7 +102,7 @@ export default class Profile {
 
   getWhitelistedDomains() {
     return {
-      whitelisted_domains: [APP_URL, SHOP_URL, "https://burmese.dvb.no"],
+      whitelisted_domains: [APP_URL, SHOP_URL],
     };
   }
 }

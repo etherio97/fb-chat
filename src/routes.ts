@@ -86,7 +86,8 @@ router.get("/articles/:id", (req, res) => {
   const id = req.params["id"];
   const articles = DB.read()["articles"];
   const article = articles.find((article) => article.id == id);
-  res.end();
+  if (!article) return res.sendStatus(404);
+  res.render("../public/article.ejs", article);
 });
 
 router.get("/nweoo", (req, res) => {

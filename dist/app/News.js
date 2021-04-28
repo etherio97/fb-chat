@@ -6,6 +6,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var axios_1 = __importDefault(require("axios"));
 var DB_1 = __importDefault(require("./DB"));
 var Response_1 = __importDefault(require("./Response"));
+var APP_URL = process.env.APP_URL;
 var updated_at;
 var News = (function () {
     function News(user, webhookEvent) {
@@ -77,7 +78,7 @@ var News = (function () {
             var article = articles[0];
             response = [
                 Response_1.default.genGenericTemplate(article.image, article.title, article.source, [
-                    Response_1.default.genWebUrlButton("အပြည့်အစုံ", article.link),
+                    Response_1.default.genWebUrlButton("အပြည့်အစုံ", APP_URL + "/articles/" + article.id),
                     Response_1.default.genPostbackButton("နောက်ထပ်", "NEWS_ANOTHER"),
                 ]),
             ];

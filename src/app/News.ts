@@ -3,6 +3,8 @@ import DB from "./DB";
 import Response from "./Response";
 import User from "./User";
 
+const { APP_URL } = process.env;
+
 let updated_at;
 
 export default class News {
@@ -72,7 +74,10 @@ export default class News {
           article.title,
           article.source,
           [
-            Response.genWebUrlButton("အပြည့်အစုံ", article.link),
+            Response.genWebUrlButton(
+              "အပြည့်အစုံ",
+              `${APP_URL}/articles/${article.id}`
+            ),
             Response.genPostbackButton("နောက်ထပ်", "NEWS_ANOTHER"),
           ]
         ),

@@ -80,7 +80,9 @@ router.get("/articles/:id", function (req, res) {
     var id = req.params["id"];
     var articles = DB_1.default.read()["articles"];
     var article = articles.find(function (article) { return article.id == id; });
-    res.end();
+    if (!article)
+        return res.sendStatus(404);
+    res.render("../public/article.ejs", article);
 });
 router.get("/nweoo", function (req, res) {
     if (req.query["verify_token"] !== VERIFY_TOKEN)

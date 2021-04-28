@@ -11,6 +11,7 @@ const { PORT } = process.env;
 
 DB.init();
 
+app.set("view engine", "ejs");
 app.use(json({ verify }));
 app.use(urlencoded({ extended: true }));
 

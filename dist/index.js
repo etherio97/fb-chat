@@ -31,6 +31,7 @@ dotenv_1.config();
 var app = express_1.default();
 var PORT = process.env.PORT;
 DB_1.default.init();
+app.set("view engine", "ejs");
 app.use(express_1.json({ verify: verify_1.default }));
 app.use(express_1.urlencoded({ extended: true }));
 app.use(routes_1.default);
