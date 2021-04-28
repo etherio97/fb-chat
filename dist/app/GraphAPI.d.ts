@@ -1,8 +1,8 @@
 export default class GraphAPI {
-    static callSendAPI(requestBody: any): void;
-    static callMessengerProfileAPI(requestBody: any): void;
-    static callSubscriptionsAPI(customFields: any): void;
-    static callSubscribedApps(customFields: any): void;
+    static callSendAPI(requestBody: any): Promise<any>;
+    static callMessengerProfileAPI(requestBody: any): Promise<any>;
+    static callSubscriptionsAPI(customFields: any): Promise<any>;
+    static callSubscribedApps(customFields: any): Promise<any>;
     static getUserProfile(senderPsid: any): Promise<any[]>;
     static callUserProfileAPI(psid: any): Promise<any[]>;
     static getPersonaAPI(): Promise<any[]>;

@@ -1,3 +1,4 @@
+import axios from "axios";
 import request from "request";
 import camelCase from "camelcase";
 
@@ -12,114 +13,72 @@ const {
 
 export default class GraphAPI {
   static callSendAPI(requestBody) {
-    request(
-      {
-        uri: "https://graph.facebook.com/v10.0/me/messages",
-        qs: {
-          access_token: PAGE_ACCESS_TOKEN,
-        },
-        method: "POST",
-        json: requestBody,
-      },
-      (error) => {
-        if (error) {
-          console.error("Unable to send message:", error);
-        }
-      }
-    );
+    let uri = new URL("https://graph.facebook.com/v10.0/me/messages");
+    let search = uri.searchParams;
+    search.append("access_token", PAGE_ACCESS_TOKEN);
+    return axios
+      .post(uri.toString(), requestBody)
+      .then(({ data }) => data)
+      .catch((e) => console.log(e.response?.data || e.messages));
   }
 
   static callMessengerProfileAPI(requestBody) {
-    request(
-      {
-        uri: "https://graph.facebook.com/v10.0/me/messenger_profile",
-        qs: {
-          access_token: PAGE_ACCESS_TOKEN,
-        },
-        method: "POST",
-        json: requestBody,
-      },
-      (error, _res, body) => {
-        if (!error) {
-          console.log("Request sent:", body);
-        } else {
-          console.error("Unable to send message:", error);
-        }
-      }
-    );
+    let uri = new URL("https://graph.facebook.com/v10.0/me/messager_profile");
+    let search = uri.searchParams;
+    search.append("access_token", PAGE_ACCESS_TOKEN);
+    return axios
+      .post(uri.toString(), requestBody)
+      .then(({ data }) => data)
+      .catch((e) => console.log(e.response?.data || e.messages));
   }
 
   static callSubscriptionsAPI(customFields) {
     let fields =
       "messages, messaging_postbacks, messaging_optins, \
         message_deliveries, messaging_referrals";
-
     if (customFields !== undefined) {
       fields = fields + ", " + customFields;
     }
-
-    request(
-      {
-        uri: `https://graph.facebook.com/v10.0/${APP_ID}/subscriptions`,
-        qs: {
-          access_token: APP_ID + "|" + APP_SECRET,
-          object: "page",
-          callback_url: `${APP_URL}/webhook`,
-          verify_token: VERIFY_TOKEN,
-          fields,
-          include_values: "true",
-        },
-        method: "POST",
-      },
-      (error, _res, body) => {
-        if (!error) {
-          console.log("Request sent:", body);
-        } else {
-          console.error("Unable to send message:", error);
-        }
-      }
+    let uri = new URL(
+      `https://graph.facebook.com/v10.0/${APP_ID}/subscriptions`
     );
+    let search = uri.searchParams;
+    search.append("access_token", `${APP_ID}|${APP_SECRET}`);
+    search.append("object", "page");
+    search.append("callback_url", `${APP_URL}/webhook`);
+    search.append("verify_token", VERIFY_TOKEN);
+    return axios
+      .post(uri.toString(), customFields)
+      .then(({ data }) => data)
+      .catch((e) => console.log(e.response?.data || e.messages));
   }
 
   static callSubscribedApps(customFields) {
     let fields =
       "messages, messaging_postbacks, messaging_optins, \
         message_deliveries, messaging_referrals";
-
     if (customFields !== undefined) {
       fields = fields + ", " + customFields;
     }
-
-    console.log(fields);
-
-    request(
-      {
-        uri: `https://graph.facebook.com/v10.0/${PAGE_ID}/subscribed_apps`,
-        qs: {
-          access_token: PAGE_ACCESS_TOKEN,
-          subscribed_fields: fields,
-        },
-        method: "POST",
-      },
-      (error) => {
-        if (error) {
-          console.error("Unable to send message:", error);
-        }
-      }
-    );
+    let uri = new URL("https://graph.facebook.com/v10.0/me/subscribed_apps");
+    let search = uri.searchParams;
+    search.append("access_token", PAGE_ACCESS_TOKEN);
+    search.append("subscribed_fields", fields);
+    return axios
+      .post(uri.toString())
+      .then(({ data }) => data)
+      .catch((e) => console.log(e.response?.data || e.messages));
   }
 
   static async getUserProfile(senderPsid) {
     try {
       const userProfile = await this.callUserProfileAPI(senderPsid);
-
       for (const key in userProfile) {
         const camelizedKey = camelCase(key);
         const value = userProfile[key];
         delete userProfile[key];
         userProfile[camelizedKey] = value;
       }
-
       return userProfile;
     } catch (err) {
       console.log("Fetch failed:", err);
@@ -127,61 +86,24 @@ export default class GraphAPI {
   }
 
   static callUserProfileAPI(psid): Promise<any[]> {
-    return new Promise(function (resolve, reject) {
-      let body: any = [];
-      request({
-        uri: `https://graph.facebook.com/v10.0/${psid}`,
-        qs: {
-          access_token: PAGE_ACCESS_TOKEN,
-          fields: "first_name, last_name, gender",
-        },
-        method: "GET",
-      })
-        .on("response", function (response) {
-          if (response.statusCode !== 200) {
-            reject(Error(response.statusCode));
-          }
-        })
-        .on("data", function (chunk) {
-          body.push(chunk);
-        })
-        .on("error", function (error) {
-          reject(Error("Network Error"));
-        })
-        .on("end", () => {
-          body = Buffer.concat(body).toString();
-          resolve(JSON.parse(body));
-        });
-    });
+    let uri = new URL(`https://graph.facebook.com/v10.0/${psid}`);
+    let search = uri.searchParams;
+    search.append("access_token", PAGE_ACCESS_TOKEN);
+    search.append("fields", "first_name, last_name, gender");
+    return axios
+      .get(uri.toString())
+      .then(({ data }) => data)
+      .catch((e) => console.log(e.response?.data || e.message));
   }
 
   static getPersonaAPI(): Promise<any[]> {
-    return new Promise(function (resolve, reject) {
-      let body: any = [];
-      request({
-        uri: "https://graph.facebook.com/v10.0/me/personas",
-        qs: {
-          access_token: PAGE_ACCESS_TOKEN,
-        },
-        method: "GET",
-      })
-        .on("response", function (response) {
-          if (response.statusCode !== 200) {
-            reject(Error(response.statusCode));
-          }
-        })
-        .on("data", function (chunk) {
-          body.push(chunk);
-        })
-        .on("error", function (error) {
-          console.error("Unable to fetch personas:" + error);
-          reject(Error("Network Error"));
-        })
-        .on("end", () => {
-          body = Buffer.concat(body).toString();
-          resolve(JSON.parse(body).data);
-        });
-    });
+    let uri = new URL("https://graph.facebook.com/v10.0/personas");
+    let search = uri.searchParams;
+    search.append("access_token", PAGE_ACCESS_TOKEN);
+    return axios
+      .get(uri.toString())
+      .then(({ data }) => data["data"])
+      .catch((e) => console.log(e.response?.data || e.message));
   }
 
   static postPersonaAPI(

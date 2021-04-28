@@ -39,6 +39,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+var axios_1 = __importDefault(require("axios"));
 var request_1 = __importDefault(require("request"));
 var camelcase_1 = __importDefault(require("camelcase"));
 var _a = process.env, APP_ID = _a.APP_ID, APP_SECRET = _a.APP_SECRET, APP_URL = _a.APP_URL, PAGE_ID = _a.PAGE_ID, PAGE_ACCESS_TOKEN = _a.PAGE_ACCESS_TOKEN, VERIFY_TOKEN = _a.VERIFY_TOKEN;
@@ -46,35 +47,28 @@ var GraphAPI = (function () {
     function GraphAPI() {
     }
     GraphAPI.callSendAPI = function (requestBody) {
-        request_1.default({
-            uri: "https://graph.facebook.com/v10.0/me/messages",
-            qs: {
-                access_token: PAGE_ACCESS_TOKEN,
-            },
-            method: "POST",
-            json: requestBody,
-        }, function (error) {
-            if (error) {
-                console.error("Unable to send message:", error);
-            }
-        });
+        var uri = new URL("https://graph.facebook.com/v10.0/me/messages");
+        var search = uri.searchParams;
+        search.append("access_token", PAGE_ACCESS_TOKEN);
+        return axios_1.default
+            .post(uri.toString(), requestBody)
+            .then(function (_a) {
+            var data = _a.data;
+            return data;
+        })
+            .catch(function (e) { var _a; return console.log(((_a = e.response) === null || _a === void 0 ? void 0 : _a.data) || e.messages); });
     };
     GraphAPI.callMessengerProfileAPI = function (requestBody) {
-        request_1.default({
-            uri: "https://graph.facebook.com/v10.0/me/messenger_profile",
-            qs: {
-                access_token: PAGE_ACCESS_TOKEN,
-            },
-            method: "POST",
-            json: requestBody,
-        }, function (error, _res, body) {
-            if (!error) {
-                console.log("Request sent:", body);
-            }
-            else {
-                console.error("Unable to send message:", error);
-            }
-        });
+        var uri = new URL("https://graph.facebook.com/v10.0/me/messager_profile");
+        var search = uri.searchParams;
+        search.append("access_token", PAGE_ACCESS_TOKEN);
+        return axios_1.default
+            .post(uri.toString(), requestBody)
+            .then(function (_a) {
+            var data = _a.data;
+            return data;
+        })
+            .catch(function (e) { var _a; return console.log(((_a = e.response) === null || _a === void 0 ? void 0 : _a.data) || e.messages); });
     };
     GraphAPI.callSubscriptionsAPI = function (customFields) {
         var fields = "messages, messaging_postbacks, messaging_optins, \
@@ -82,25 +76,19 @@ var GraphAPI = (function () {
         if (customFields !== undefined) {
             fields = fields + ", " + customFields;
         }
-        request_1.default({
-            uri: "https://graph.facebook.com/v10.0/" + APP_ID + "/subscriptions",
-            qs: {
-                access_token: APP_ID + "|" + APP_SECRET,
-                object: "page",
-                callback_url: APP_URL + "/webhook",
-                verify_token: VERIFY_TOKEN,
-                fields: fields,
-                include_values: "true",
-            },
-            method: "POST",
-        }, function (error, _res, body) {
-            if (!error) {
-                console.log("Request sent:", body);
-            }
-            else {
-                console.error("Unable to send message:", error);
-            }
-        });
+        var uri = new URL("https://graph.facebook.com/v10.0/" + APP_ID + "/subscriptions");
+        var search = uri.searchParams;
+        search.append("access_token", APP_ID + "|" + APP_SECRET);
+        search.append("object", "page");
+        search.append("callback_url", APP_URL + "/webhook");
+        search.append("verify_token", VERIFY_TOKEN);
+        return axios_1.default
+            .post(uri.toString(), customFields)
+            .then(function (_a) {
+            var data = _a.data;
+            return data;
+        })
+            .catch(function (e) { var _a; return console.log(((_a = e.response) === null || _a === void 0 ? void 0 : _a.data) || e.messages); });
     };
     GraphAPI.callSubscribedApps = function (customFields) {
         var fields = "messages, messaging_postbacks, messaging_optins, \
@@ -108,19 +96,17 @@ var GraphAPI = (function () {
         if (customFields !== undefined) {
             fields = fields + ", " + customFields;
         }
-        console.log(fields);
-        request_1.default({
-            uri: "https://graph.facebook.com/v10.0/" + PAGE_ID + "/subscribed_apps",
-            qs: {
-                access_token: PAGE_ACCESS_TOKEN,
-                subscribed_fields: fields,
-            },
-            method: "POST",
-        }, function (error) {
-            if (error) {
-                console.error("Unable to send message:", error);
-            }
-        });
+        var uri = new URL("https://graph.facebook.com/v10.0/me/subscribed_apps");
+        var search = uri.searchParams;
+        search.append("access_token", PAGE_ACCESS_TOKEN);
+        search.append("subscribed_fields", fields);
+        return axios_1.default
+            .post(uri.toString())
+            .then(function (_a) {
+            var data = _a.data;
+            return data;
+        })
+            .catch(function (e) { var _a; return console.log(((_a = e.response) === null || _a === void 0 ? void 0 : _a.data) || e.messages); });
     };
     GraphAPI.getUserProfile = function (senderPsid) {
         return __awaiter(this, void 0, void 0, function () {
@@ -149,60 +135,29 @@ var GraphAPI = (function () {
         });
     };
     GraphAPI.callUserProfileAPI = function (psid) {
-        return new Promise(function (resolve, reject) {
-            var body = [];
-            request_1.default({
-                uri: "https://graph.facebook.com/v10.0/" + psid,
-                qs: {
-                    access_token: PAGE_ACCESS_TOKEN,
-                    fields: "first_name, last_name, gender",
-                },
-                method: "GET",
-            })
-                .on("response", function (response) {
-                if (response.statusCode !== 200) {
-                    reject(Error(response.statusCode));
-                }
-            })
-                .on("data", function (chunk) {
-                body.push(chunk);
-            })
-                .on("error", function (error) {
-                reject(Error("Network Error"));
-            })
-                .on("end", function () {
-                body = Buffer.concat(body).toString();
-                resolve(JSON.parse(body));
-            });
-        });
+        var uri = new URL("https://graph.facebook.com/v10.0/" + psid);
+        var search = uri.searchParams;
+        search.append("access_token", PAGE_ACCESS_TOKEN);
+        search.append("fields", "first_name, last_name, gender");
+        return axios_1.default
+            .get(uri.toString())
+            .then(function (_a) {
+            var data = _a.data;
+            return data;
+        })
+            .catch(function (e) { var _a; return console.log(((_a = e.response) === null || _a === void 0 ? void 0 : _a.data) || e.message); });
     };
     GraphAPI.getPersonaAPI = function () {
-        return new Promise(function (resolve, reject) {
-            var body = [];
-            request_1.default({
-                uri: "https://graph.facebook.com/v10.0/me/personas",
-                qs: {
-                    access_token: PAGE_ACCESS_TOKEN,
-                },
-                method: "GET",
-            })
-                .on("response", function (response) {
-                if (response.statusCode !== 200) {
-                    reject(Error(response.statusCode));
-                }
-            })
-                .on("data", function (chunk) {
-                body.push(chunk);
-            })
-                .on("error", function (error) {
-                console.error("Unable to fetch personas:" + error);
-                reject(Error("Network Error"));
-            })
-                .on("end", function () {
-                body = Buffer.concat(body).toString();
-                resolve(JSON.parse(body).data);
-            });
-        });
+        var uri = new URL("https://graph.facebook.com/v10.0/personas");
+        var search = uri.searchParams;
+        search.append("access_token", PAGE_ACCESS_TOKEN);
+        return axios_1.default
+            .get(uri.toString())
+            .then(function (_a) {
+            var data = _a.data;
+            return data["data"];
+        })
+            .catch(function (e) { var _a; return console.log(((_a = e.response) === null || _a === void 0 ? void 0 : _a.data) || e.message); });
     };
     GraphAPI.postPersonaAPI = function (name, profile_picture_url) {
         var body = [];
