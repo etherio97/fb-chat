@@ -102,7 +102,14 @@ export default class Profile {
 
   getWhitelistedDomains() {
     return {
-      whitelisted_domains: [APP_URL, SHOP_URL, "https://facebook.com"],
+      whitelisted_domains: [
+        APP_URL,
+        SHOP_URL,
+        "https://facebook.com",
+        "https://m.facebook.com",
+        "https://www.facebook.com",
+        "https://web.facebook.com",
+      ],
     };
   }
 }

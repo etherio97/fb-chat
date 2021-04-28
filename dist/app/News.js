@@ -75,20 +75,12 @@ var News = (function () {
         articles = articles.filter(function (article) { return !read.includes(article.id); });
         if (articles.length) {
             var article = articles[0];
-            response = [];
-            if (article.image) {
-                response.push(Response_1.default.genImageTemplate(article.image, "source - " + article.source));
-            }
-            response.push(Response_1.default.genQuickReply(article.title, [
-                {
-                    title: "အပြည့်အစုံ",
-                    payload: "NEWS_FULL_ARTICLE",
-                },
-                {
-                    title: "နောက်ထပ်",
-                    payload: "NEWS_ANOTHER",
-                },
-            ]));
+            response = [
+                Response_1.default.genGenericTemplate(article.image, article.title, article.source, [
+                    Response_1.default.genWebUrlButton("အပြည့်အစုံ", "https://www.facebook.com/" + article.post_id),
+                    Response_1.default.genPostbackButton("နောက်ထပ်", "NEWS_ANOTHER"),
+                ]),
+            ];
             read.push(article.id);
         }
         else {
@@ -101,20 +93,6 @@ var News = (function () {
         switch (payload) {
             case "NEWS_ANOTHER":
                 response = this.handleNews();
-                break;
-            case "NEWS_FULL_ARTICLE":
-                var user = this.user;
-                var headlines = user.headlines;
-                var last_1 = headlines[headlines.length - 1];
-                var article = DB_1.default.read()["articles"].find(function (article) { return article.id == last_1; });
-                var content = article.content.replace(/\n\n\n\n/gim, "\n");
-                response = [
-                    Response_1.default.genText(content.length > 500 ? content.slice(0, 490) + "..." : content),
-                    Response_1.default.genQuickReply("read more at: https://facebook.com/" + article.post_id, [{ title: "နောက်တစ်ပုဒ်", payload: "NEWS_ANOTHER" }]),
-                    Response_1.default.genButtonTemplate(content.length > 500 ? content.slice(0, 490) + "..." : content, [
-                        Response_1.default.genWebUrlButton("အပြည့်အစုံ", "https://facebook.com/" + article.post_id),
-                    ]),
-                ];
                 break;
             case "NEWS_GETTING":
                 response = [

@@ -66,24 +66,20 @@ export default class News {
     articles = articles.filter((article) => !read.includes(article.id));
     if (articles.length) {
       let article = articles[0];
-      response = [];
-      if (article.image) {
-        response.push(
-          Response.genImageTemplate(article.image, `source - ${article.source}`)
-        );
-      }
-      response.push(
-        Response.genQuickReply(article.title, [
-          {
-            title: "အပြည့်အစုံ",
-            payload: "NEWS_FULL_ARTICLE",
-          },
-          {
-            title: "နောက်ထပ်",
-            payload: "NEWS_ANOTHER",
-          },
-        ])
-      );
+      response = [
+        Response.genGenericTemplate(
+          article.image,
+          article.title,
+          article.source,
+          [
+            Response.genWebUrlButton(
+              "အပြည့်အစုံ",
+              `https://www.facebook.com/${article.post_id}`
+            ),
+            Response.genPostbackButton("နောက်ထပ်", "NEWS_ANOTHER"),
+          ]
+        ),
+      ];
       read.push(article.id);
     } else {
       response = Response.genText("သတင်းများနောက်ထပ်မရှိပါ။");
@@ -98,34 +94,6 @@ export default class News {
     switch (payload) {
       case "NEWS_ANOTHER":
         response = this.handleNews();
-        break;
-
-      case "NEWS_FULL_ARTICLE":
-        let user = this.user;
-        let headlines = user.headlines;
-        let last = headlines[headlines.length - 1];
-        let article = DB.read()["articles"].find(
-          (article) => article.id == last
-        );
-        let content = article.content.replace(/\n\n\n\n/gim, "\n");
-        response = [
-          Response.genText(
-            content.length > 500 ? content.slice(0, 490) + "..." : content
-          ),
-          Response.genQuickReply(
-            "read more at: https://facebook.com/" + article.post_id,
-            [{ title: "နောက်တစ်ပုဒ်", payload: "NEWS_ANOTHER" }]
-          ),
-          Response.genButtonTemplate(
-            content.length > 500 ? content.slice(0, 490) + "..." : content,
-            [
-              Response.genWebUrlButton(
-                "အပြည့်အစုံ",
-                "https://facebook.com/" + article.post_id
-              ),
-            ]
-          ),
-        ];
         break;
 
       case "NEWS_GETTING":
