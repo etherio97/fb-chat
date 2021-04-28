@@ -5,6 +5,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 var express_1 = require("express");
 var GraphAPI_1 = __importDefault(require("./app/GraphAPI"));
+var Profile_1 = __importDefault(require("./app/Profile"));
 var Receive_1 = __importDefault(require("./app/Receive"));
 var User_1 = __importDefault(require("./app/User"));
 var VERIFY_TOKEN = process.env.VERIFY_TOKEN;
@@ -69,5 +70,10 @@ router.post("/webhook", function (req, res) {
             return receiveMessage.handleMessage();
         }
     });
+});
+router.get("/nweoo", function (req, res) {
+    var profile = new Profile_1.default();
+    profile.setThread();
+    res.send("1");
 });
 exports.default = router;
