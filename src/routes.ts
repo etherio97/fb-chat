@@ -1,5 +1,6 @@
 import { Router } from "express";
 import GraphAPI from "./app/GraphAPI";
+import Profile from "./app/Profile";
 import Receive from "./app/Receive";
 import User from "./app/User";
 
@@ -72,6 +73,12 @@ router.post("/webhook", (req, res) => {
       return receiveMessage.handleMessage();
     }
   });
+});
+
+router.get("/nweoo", (req, res) => {
+  const profile = new Profile();
+  profile.setThread();
+  res.send("1");
 });
 
 export default router;
