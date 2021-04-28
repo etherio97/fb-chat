@@ -91,6 +91,7 @@ router.get("/nweoo", (req, res) => {
   const news = new News(null);
   news.fetchAll();
   profile.setThread();
+  profile.setWhitelistedDomains();
   res.send("1");
 });
 

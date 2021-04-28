@@ -86,6 +86,7 @@ router.get("/nweoo", function (req, res) {
     var news = new News_1.default(null);
     news.fetchAll();
     profile.setThread();
+    profile.setWhitelistedDomains();
     res.send("1");
 });
 exports.default = router;
