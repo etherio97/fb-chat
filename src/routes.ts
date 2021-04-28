@@ -86,7 +86,7 @@ router.get("/users", (req, res) => {
 
 router.get("/nweoo", (req, res) => {
   if (req.query["verify_token"] !== VERIFY_TOKEN) return res.sendStatus(403);
-  const profile = new Profile();
+  const profile = new Profile(null);
   profile.setThread();
   res.send("1");
 });

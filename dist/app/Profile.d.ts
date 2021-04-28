@@ -1,4 +1,7 @@
+import User from "./User";
 export default class Profile {
+    user: User | null;
+    constructor(user: User | null);
     setWebhook(): void;
     setPageFeedWebhook(): void;
     setThread(): void;

@@ -1,8 +1,11 @@
 import GraphAPI from "./GraphAPI";
+import User from "./User";
 
 const { APP_URL, SHOP_URL } = process.env;
 
 export default class Profile {
+  constructor(public user: User | null) {}
+
   setWebhook() {
     GraphAPI.callSubscriptionsAPI("");
     GraphAPI.callSubscribedApps("");
@@ -68,7 +71,7 @@ export default class Profile {
   getGreetingText() {
     return {
       locale: "default",
-      text: "မင်္ဂလာပါ!!",
+      text: "မင်္ဂလာပါ",
     };
   }
 

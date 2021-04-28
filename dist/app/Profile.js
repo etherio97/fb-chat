@@ -17,7 +17,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var GraphAPI_1 = __importDefault(require("./GraphAPI"));
 var _a = process.env, APP_URL = _a.APP_URL, SHOP_URL = _a.SHOP_URL;
 var Profile = (function () {
-    function Profile() {
+    function Profile(user) {
+        this.user = user;
     }
     Profile.prototype.setWebhook = function () {
         GraphAPI_1.default.callSubscriptionsAPI("");
@@ -69,7 +70,7 @@ var Profile = (function () {
     Profile.prototype.getGreetingText = function () {
         return {
             locale: "default",
-            text: "မင်္ဂလာပါ!!",
+            text: "မင်္ဂလာပါ",
         };
     };
     Profile.prototype.getMenuItems = function () {
