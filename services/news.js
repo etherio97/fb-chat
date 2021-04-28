@@ -65,7 +65,6 @@ module.exports = class News {
     let read = user.headlines;
     let articles = DB.read()["articles"] || [];
     articles = articles.filter((article) => !read.includes(article.id));
-
     if (articles.length) {
       let article = articles[0];
       response = Response.genGenericTemplate(

@@ -87,7 +87,7 @@ module.exports = class Profile {
   }
 
   getGreeting() {
-    let greeting = ["မင်္ဂလာပါခင်ဗျာ"];
+    let greeting = [Response.genText("မင်္ဂလာပါ")];
     return { greeting };
   }
 
