@@ -79,28 +79,52 @@ module.exports = class Profile {
   }
 
   getGetStarted() {
-    return {
-      get_started: {
-        payload: "GET_STARTED",
-      },
+    let get_started = {
+      payload: "GET_STARTED",
     };
+    return { get_started };
   }
 
   getGreeting() {
-    return {
-      greeting: [""],
-    };
+    let greeting = [];
+    return { greeting };
   }
 
   getPersistentMenu() {
-    return {
-      persistent_menu: [],
-    };
+    let persistent_menu = [
+      {
+        locale: "default",
+        composer_input_disabled: false,
+        call_to_actions: [
+          {
+            type: "postback",
+            title: "မေးမြန်းစုံစမ်းရန်",
+            payload: "BOT_OFF",
+          },
+          {
+            type: "postback",
+            title: "သတင်းရယူရန်",
+            payload: "NEWS_GETTING",
+          },
+          {
+            type: "postback",
+            title: "သတင်းပေးပို့ရန်",
+            payload: "NEWS_REPORTING",
+          },
+          {
+            type: "web_url",
+            title: "Website",
+            url: "https://www.nweoo.com/",
+            webview_height_ratio: "full",
+          },
+        ],
+      },
+    ];
+    return { persistent_menu };
   }
 
   getWhitelistedDomains() {
-    return {
-      whitelisted_domains: config.whitelistedDomains,
-    };
+    let whitelisted_domains = config.whitelistedDomains;
+    return { whitelisted_domains };
   }
 };
