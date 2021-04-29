@@ -59,6 +59,9 @@ var Receive = (function () {
         var greeting = this.firstEntity(this.webhookEvent.message.nlp, "greetings");
         var message = this.webhookEvent.message.text.trim().toLowerCase();
         var response;
+        if (this.user.mode === "delete") {
+            return new News_1.default(this.user, this.webhookEvent).handlePayload("NEWS_REPORT_DELETE");
+        }
         if (message.match(/(?:news|သတင်း|သတငျး|ဘာထူးလဲ)/)) {
             var news = new News_1.default(this.user, this.webhookEvent);
             response = news.handleNews();

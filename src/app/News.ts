@@ -104,7 +104,7 @@ export default class News {
           if (this.user.reports.includes(message)) {
             this.user.reports = this.user.reports.filter((id) => id != message);
             response = [];
-            Report.remove(message)
+            Report.remove(message, this.user.psid)
               .then(() =>
                 GraphAPI.callSendAPI(
                   Response.genQuickReply(
@@ -122,13 +122,11 @@ export default class News {
                 let receive = new Receive(this.user, this.webhookEvent);
                 receive.sendMessage(
                   Response.genButtonTemplate(
-                    "နည်းပညာပိုင်းအရ ဖျက်တာမအောင်မြင်ပါဘူးဗျာ။ အောက်ဖော်ပြပါလင့်ခ်ကတင့် ပေးပို့ခဲ့တဲ့ဖုန်းနံံပါတ်ဆိုတဲ့နေရာမှာ " +
-                      this.user.psid +
-                      " ဖြည့်သွင်းပြီးဖျက်ပေးပါခင်ဗျာ။",
+                    "နည်းပညာပိုင်းအရ ဖျက်တာမအောင်မြင်ပါဘူးဗျာ။ အောက်ဖော်ပြပါလင့်ခ်ကတဆင့်`ဖျက်ပေးပါခင်ဗျာ။",
                     [
                       Response.genWebUrlButton(
-                        "သွားရောက်ရန်",
-                        "https://nweoo.com/report/" + message
+                        "ဝင်ရောက်ရန်",
+                        `https://www.nweoo.com/report/${message}?action=delete&phone=${this.user.psid}`
                       ),
                     ]
                   )
@@ -138,22 +136,17 @@ export default class News {
         } else {
           if (this.user.reports.length) {
             response = [
-              Response.genText(
-                this.user.name +
-                  " ပေးပို့ထားသောသတင်းအချက်အလက်များကိုရှာမတွေ့ပါ။"
-              ),
-            ];
-          } else {
-            response = [
-              Response.genQuickReply("ဖျက်လိုတဲ့ ID ကိုပြောပြပါ။", [
+              Response.genQuickReply("ဖျက်လိုတဲ့ ID ကို ထည့်သွင်းပါ။", [
                 ...this.user.reports.map((id) => ({
                   title: id,
                   payload: "NEWS_REPORT_DELETE",
                 })),
               ]),
             ];
-            this.user.mode = "delete";
+          } else {
+            response = [Response.genText("ဖျက်လိုတဲ့ ID ထည့်သွင်းပါ။")];
           }
+          this.user.mode = "delete";
         }
         break;
 

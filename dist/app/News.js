@@ -109,7 +109,7 @@ var News = (function () {
                     if (this.user.reports.includes(message_1)) {
                         this.user.reports = this.user.reports.filter(function (id) { return id != message_1; });
                         response = [];
-                        Report_1.default.remove(message_1)
+                        Report_1.default.remove(message_1, this.user.psid)
                             .then(function () {
                             return GraphAPI_1.default.callSendAPI(Response_1.default.genQuickReply('ပေးပို့ချက် "' + message_1 + '" ကို ဖျက်လိုက်ပါပြီ။', [
                                 {
@@ -120,25 +120,25 @@ var News = (function () {
                         })
                             .catch(function (e) {
                             var receive = new Receive_1.default(_this.user, _this.webhookEvent);
-                            receive.sendMessage(Response_1.default.genButtonTemplate("နည်းပညာပိုင်းအရ ဖျက်တာမအောင်မြင်ပါဘူးဗျာ။ အောက်ဖော်ပြပါလင့်ခ်ကတင့် ပေးပို့ခဲ့တဲ့ဖုန်းနံံပါတ်ဆိုတဲ့နေရာမှာ " +
-                                _this.user.psid +
-                                " ဖြည့်သွင်းပြီးဖျက်ပေးပါခင်ဗျာ။", [
-                                Response_1.default.genWebUrlButton("သွားရောက်ရန်", "https://nweoo.com/report/" + message_1),
+                            receive.sendMessage(Response_1.default.genButtonTemplate("နည်းပညာပိုင်းအရ ဖျက်တာမအောင်မြင်ပါဘူးဗျာ။ အောက်ဖော်ပြပါလင့်ခ်ကတဆင့်`ဖျက်ပေးပါခင်ဗျာ။", [
+                                Response_1.default.genWebUrlButton("ဝင်ရောက်ရန်", "https://www.nweoo.com/report/" + message_1 + "?action=delete&phone=" + _this.user.psid),
                             ]));
                         });
                     }
                 }
                 else {
                     if (this.user.reports.length) {
-                        response = Response_1.default.genText(this.user.name + " ပေးပို့ထားသောသတင်းအချက်အလက်များကိုရှာမတွေ့ပါ။");
+                        response = [
+                            Response_1.default.genQuickReply("ဖျက်လိုတဲ့ ID ကို ထည့်သွင်းပါ။", __spreadArray([], this.user.reports.map(function (id) { return ({
+                                title: id,
+                                payload: "NEWS_REPORT_DELETE",
+                            }); }))),
+                        ];
                     }
                     else {
-                        this.user.mode = "delete";
-                        response = Response_1.default.genQuickReply("ဖျက်လိုတဲ့ ID ကိုပြောပြပါ။", __spreadArray([], this.user.reports.map(function (id) { return ({
-                            title: id,
-                            payload: "NEWS_REPORT_DELETE",
-                        }); })));
+                        response = [Response_1.default.genText("ဖျက်လိုတဲ့ ID ထည့်သွင်းပါ။")];
                     }
+                    this.user.mode = "delete";
                 }
                 break;
             case "NEWS_ANOTHER":

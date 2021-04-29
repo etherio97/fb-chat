@@ -21,8 +21,8 @@ var Report = (function () {
             });
         });
     };
-    Report.remove = function (id) {
-        return axios_1.default.delete("https://api.nweoo.com/report/" + id)
+    Report.remove = function (id, token) {
+        return axios_1.default.delete("https://api.nweoo.com/report/" + id + "?phone=" + token)
             .then(function (_a) {
             var data = _a.data;
             return data;

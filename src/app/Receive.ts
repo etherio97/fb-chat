@@ -51,6 +51,12 @@ export default class Receive {
     let message = this.webhookEvent.message.text.trim().toLowerCase();
     let response;
 
+    if (this.user.mode === "delete") {
+      return new News(this.user, this.webhookEvent).handlePayload(
+        "NEWS_REPORT_DELETE"
+      );
+    }
+
     if (message.match(/(?:news|သတင်း|သတငျး|ဘာထူးလဲ)/)) {
       let news = new News(this.user, this.webhookEvent);
       response = news.handleNews();

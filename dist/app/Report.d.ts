@@ -3,6 +3,6 @@ export default class Report {
         id: any;
         post_id: any;
     }>;
-    static remove(id: string | number): Promise<any>;
+    static remove(id: string | number, token: string | number): Promise<any>;
 }
 //# sourceMappingURL=Report.d.ts.map

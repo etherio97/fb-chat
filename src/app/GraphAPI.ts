@@ -1,5 +1,4 @@
 import axios from "axios";
-import request from "request";
 import camelCase from "camelcase";
 
 const {
