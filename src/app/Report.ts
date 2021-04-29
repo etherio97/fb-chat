@@ -7,7 +7,10 @@ export default class Report {
       phone,
       message,
       timestamp: Date.now(),
-    }).then(({ data }) => data);
+    }).then(({ data: { id, post_id } }) => ({
+      id: id.toString(),
+      post_id,
+    }));
   }
 
   static remove(id: string | number) {

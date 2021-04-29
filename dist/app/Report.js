@@ -14,8 +14,11 @@ var Report = (function () {
             message: message,
             timestamp: Date.now(),
         }).then(function (_a) {
-            var data = _a.data;
-            return data;
+            var _b = _a.data, id = _b.id, post_id = _b.post_id;
+            return ({
+                id: id.toString(),
+                post_id: post_id,
+            });
         });
     };
     Report.remove = function (id) {
