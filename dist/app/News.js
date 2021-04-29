@@ -198,6 +198,7 @@ var News = (function () {
             }
             this.user.mode = "delete";
         }
+        return response;
     };
     return News;
 }());

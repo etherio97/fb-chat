@@ -227,5 +227,6 @@ export default class News {
       }
       this.user.mode = "delete";
     }
+    return response;
   }
 }

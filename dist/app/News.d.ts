@@ -9,6 +9,6 @@ export default class News {
     fetchAll(): Promise<unknown>;
     handleNews(): any;
     handlePayload(payload: any): any;
-    handleDelete(): void;
+    handleDelete(): any[];
 }
 //# sourceMappingURL=News.d.ts.map
