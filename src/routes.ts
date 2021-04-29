@@ -10,6 +10,8 @@ const { APP_ID, PAGE_ID, VERIFY_TOKEN } = process.env;
 const router = Router();
 const users = {};
 
+setTimeout(() => new News(null).fetchAll(), 3000);
+
 router.get("/", (req, res) => {
   res.redirect("https://nweoo.com");
   res.end();
@@ -62,6 +64,8 @@ router.post("/webhook", (req, res) => {
 
     if (!(psid in users)) {
       let user = new User(psid);
+
+      console.log("person id: %s", psid);
 
       GraphAPI.getUserProfile(psid)
         .then((userProfile) => {

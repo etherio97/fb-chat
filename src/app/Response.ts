@@ -1,3 +1,5 @@
+import User from "./User";
+
 export default class Response {
   static genQuickReply(text, quickReplies) {
     let response = {
@@ -110,8 +112,8 @@ export default class Response {
     return response;
   }
 
-  static genNuxMessage(user) {
-    let welcome = this.genText(`မင်္ဂလာပါ ${user.firstName}`);
+  static genNuxMessage(user: User) {
+    let welcome = this.genText(`မင်္ဂလာပါ ${user.name}`);
     let curation = this.genQuickReply("ဘာများကူညီပေးရမလဲဗျ။", [
       {
         title: "သတင်းယူရန်",

@@ -1,5 +1,7 @@
 import axios from "axios";
 import DB from "./DB";
+import GraphAPI from "./GraphAPI";
+import Report from "./Report";
 import Response from "./Response";
 import User from "./User";
 
@@ -94,6 +96,55 @@ export default class News {
     let response;
 
     switch (payload) {
+      case "NEWS_REPORT_DELETE":
+        if (this.user.mode === "delete") {
+          let message = this.webhookEvent.message.text;
+          this.user.mode = null;
+          if (this.user.reports.includes(message)) {
+            this.user.reports = this.user.reports.filter((id) => id != message);
+
+            response = [];
+
+            Report.remove(message)
+              .then(() =>
+                GraphAPI.callSendAPI(
+                  Response.genQuickReply(
+                    'ပေးပို့ချက် "' + message + '" ကို ဖျက်လိုက်ပါပြီ။',
+                    [
+                      {
+                        title: "ပြန်လည်စတင်ရန်",
+                        payload: "GETTING_START",
+                      },
+                    ]
+                  )
+                )
+              )
+              .catch((e) =>
+                GraphAPI.callSendAPI(
+                  Response.genText(
+                    "နည်းပညာပိုင်းအရ ဖျက်တာမအောင်မြင်ပါဘူးဗျာ။ တာဝန်ရှိသူများပြန်လည်ပြင်ပြီး ဆက်သွယ်ပေးပါမယ်ခင်ဗျာ...\n\n---\n" +
+                      e
+                  )
+                )
+              );
+          }
+        } else {
+          if (this.user.reports.length) {
+            response = Response.genText(
+              this.user.name + " ပေးပို့ထားသောသတင်းအချက်အလက်များကိုရှာမတွေ့ပါ။"
+            );
+          } else {
+            this.user.mode = "delete";
+            response = Response.genQuickReply("ဖျက်လိုတဲ့ ID ကိုပြောပြပါ။", [
+              ...this.user.reports.map((id) => ({
+                title: id,
+                payload: "NEWS_REPORT_DELETE",
+              })),
+            ]);
+          }
+        }
+        break;
+
       case "NEWS_ANOTHER":
         response = this.handleNews();
         break;

@@ -1,3 +1,4 @@
+import User from "./User";
 export default class Response {
     static genQuickReply(text: any, quickReplies: any): {
         text: any;
@@ -58,7 +59,7 @@ export default class Response {
         url: any;
         messenger_extensions: boolean;
     };
-    static genNuxMessage(user: any): {
+    static genNuxMessage(user: User): {
         text: any;
     }[];
 }

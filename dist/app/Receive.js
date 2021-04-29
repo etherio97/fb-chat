@@ -3,10 +3,10 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var axios_1 = __importDefault(require("axios"));
 var Response_1 = __importDefault(require("./Response"));
 var News_1 = __importDefault(require("./News"));
 var GraphAPI_1 = __importDefault(require("./GraphAPI"));
+var Report_1 = __importDefault(require("./Report"));
 var Receive = (function () {
     function Receive(user, webhookEvent) {
         if (webhookEvent === void 0) { webhookEvent = null; }
@@ -38,7 +38,7 @@ var Receive = (function () {
         }
         catch (error) {
             responses = {
-                text: "\u1014\u100A\u103A\u1038\u1015\u100A\u102C\u1015\u102D\u102F\u1004\u103A\u1038\u1021\u101B\u1001\u103B\u102D\u102F\u1037\u101A\u103D\u1004\u103A\u1038\u1019\u103E\u102F\u101B\u103E\u102D\u1014\u1031\u1015\u102B\u1010\u101A\u103A\u104B \n\n---\n" + error,
+                text: "\u1014\u100A\u103A\u1038\u1015\u100A\u102C\u1015\u102D\u102F\u1004\u103A\u1038\u1021\u101B\u1001\u103B\u102D\u102F\u1037\u101A\u103D\u1004\u103A\u1038\u1014\u1031\u1015\u102B\u1010\u101A\u103A\u104B \n\n---\n" + error,
             };
         }
         if (Array.isArray(responses)) {
@@ -54,36 +54,30 @@ var Receive = (function () {
         }
     };
     Receive.prototype.handleTextMessage = function () {
+        var _this = this;
         var greeting = this.firstEntity(this.webhookEvent.message.nlp, "greetings");
         var message = this.webhookEvent.message.text.trim().toLowerCase();
         var response;
-        if ((greeting && greeting.confidence > 0.8) ||
-            message.match(/(?:hello|hi|ဟယ်လို|ဟိုင်း|မင်္ဂလာ|mingala)/g)) {
-            response = Response_1.default.genNuxMessage(this.user);
-        }
-        else if (message.match(/(?:news|သတင်း|သတငျး|ဘာထူးလဲ)/)) {
+        if (message.match(/(?:news|သတင်း|သတငျး|ဘာထူးလဲ)/)) {
             var news = new News_1.default(this.user, this.webhookEvent);
             response = news.handleNews();
         }
         else if (message.match(/#n[we]{2}oo/gim)) {
-            var id = Date.now().toString().slice(7);
             var phone = "" + (this.user.firstName || this.user.lastName || this.user.psid);
-            message = message.replace(/#n[we]{2}oo/gim, "");
-            axios_1.default
-                .post("https://api.nweoo.com/report", {
-                id: id,
-                phone: phone,
-                message: message,
-                date: new Date().toLocaleString("my-MM"),
-            })
-                .then(function (_a) {
-                var data = _a.data;
-                console.log(data);
+            Report_1.default.send(phone, message).then(function (_a) {
+                var id = _a.id, post_id = _a.post_id;
+                _this.user.reports.push(id);
+                _this.user.last_report = new Date().getTime();
+                GraphAPI_1.default.callSendAPI(Response_1.default.genButtonTemplate("\u1015\u1031\u1038\u1015\u102D\u102F\u1037\u1001\u103B\u1000\u103A ID \u1019\u103E\u102C " + id + " \u1016\u103C\u1005\u103A\u1015\u102B\u1010\u101A\u103A\u104B https://www.facebook.com/" + post_id + " \u1019\u103E\u102C\u1040\u1004\u103A\u101B\u1031\u102C\u1000\u103A\u1000\u103C\u100A\u103A\u1037\u101B\u103E\u102F\u1014\u102D\u102F\u1004\u103A\u1015\u102B\u1010\u101A\u103A\u104B", [
+                    Response_1.default.genWebUrlButton("ကြည့်ရှုရန်", "https://nweoo.com/reports/" + id),
+                    Response_1.default.genPostbackButton("ပြန်ဖျက်ရန်", "NEWS_REPORT_DELETE"),
+                ]));
             });
-            response = [
-                Response_1.default.genText("အခုလိုသတင်းပေးတဲအတွက်ကျေးဇူးတင်ပါတယ်။"),
-                Response_1.default.genText("https://nweoo.com/reports/" + id + " ကနေတဆင့် ပြန်ဖျက်နိုင်ပါတယ်။"),
-            ];
+            response = Response_1.default.genText("အခုလိုသတင်းပေးတဲအတွက်ကျေးဇူးတင်ပါတယ်။");
+        }
+        else if ((greeting && greeting.confidence > 0.8) ||
+            message.match(/(?:hello|hi|ဟယ်လို|ဟိုင်း|မင်္ဂလာ|mingala)/g)) {
+            response = Response_1.default.genNuxMessage(this.user);
         }
         else {
             response = [
@@ -145,7 +139,7 @@ var Receive = (function () {
         }
         else if (payload.includes("CHAT-PLUGIN")) {
             response = [
-                Response_1.default.genText("မင်္ဂလာပါ။"),
+                Response_1.default.genText("မင်္ဂလာပါ " + this.user.name),
                 Response_1.default.genQuickReply("ဘာများကူညီပေးရမလဲခင်ဗျ။", [
                     {
                         title: "သတင်းယူရန်",

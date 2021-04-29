@@ -1,10 +1,17 @@
 "use strict";
+var __spreadArray = (this && this.__spreadArray) || function (to, from) {
+    for (var i = 0, il = from.length, j = to.length; i < il; i++, j++)
+        to[j] = from[i];
+    return to;
+};
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 var axios_1 = __importDefault(require("axios"));
 var DB_1 = __importDefault(require("./DB"));
+var GraphAPI_1 = __importDefault(require("./GraphAPI"));
+var Report_1 = __importDefault(require("./Report"));
 var Response_1 = __importDefault(require("./Response"));
 var APP_URL = process.env.APP_URL;
 var updated_at;
@@ -92,6 +99,41 @@ var News = (function () {
     News.prototype.handlePayload = function (payload) {
         var response;
         switch (payload) {
+            case "NEWS_REPORT_DELETE":
+                if (this.user.mode === "delete") {
+                    var message_1 = this.webhookEvent.message.text;
+                    this.user.mode = null;
+                    if (this.user.reports.includes(message_1)) {
+                        this.user.reports = this.user.reports.filter(function (id) { return id != message_1; });
+                        response = [];
+                        Report_1.default.remove(message_1)
+                            .then(function () {
+                            return GraphAPI_1.default.callSendAPI(Response_1.default.genQuickReply('ပေးပို့ချက် "' + message_1 + '" ကို ဖျက်လိုက်ပါပြီ။', [
+                                {
+                                    title: "ပြန်လည်စတင်ရန်",
+                                    payload: "GETTING_START",
+                                },
+                            ]));
+                        })
+                            .catch(function (e) {
+                            return GraphAPI_1.default.callSendAPI(Response_1.default.genText("နည်းပညာပိုင်းအရ ဖျက်တာမအောင်မြင်ပါဘူးဗျာ။ တာဝန်ရှိသူများပြန်လည်ပြင်ပြီး ဆက်သွယ်ပေးပါမယ်ခင်ဗျာ...\n\n---\n" +
+                                e));
+                        });
+                    }
+                }
+                else {
+                    if (this.user.reports.length) {
+                        response = Response_1.default.genText(this.user.name + " ပေးပို့ထားသောသတင်းအချက်အလက်များကိုရှာမတွေ့ပါ။");
+                    }
+                    else {
+                        this.user.mode = "delete";
+                        response = Response_1.default.genQuickReply("ဖျက်လိုတဲ့ ID ကိုပြောပြပါ။", __spreadArray([], this.user.reports.map(function (id) { return ({
+                            title: id,
+                            payload: "NEWS_REPORT_DELETE",
+                        }); })));
+                    }
+                }
+                break;
             case "NEWS_ANOTHER":
                 response = this.handleNews();
                 break;

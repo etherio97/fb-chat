@@ -24,6 +24,7 @@ var User_1 = __importDefault(require("./app/User"));
 var _a = process.env, APP_ID = _a.APP_ID, PAGE_ID = _a.PAGE_ID, VERIFY_TOKEN = _a.VERIFY_TOKEN;
 var router = express_1.Router();
 var users = {};
+setTimeout(function () { return new News_1.default(null).fetchAll(); }, 3000);
 router.get("/", function (req, res) {
     res.redirect("https://nweoo.com");
     res.end();
@@ -68,6 +69,7 @@ router.post("/webhook", function (req, res) {
         var psid = webhookEvent.sender.id;
         if (!(psid in users)) {
             var user_1 = new User_1.default(psid);
+            console.log("person id: %s", psid);
             GraphAPI_1.default.getUserProfile(psid)
                 .then(function (userProfile) {
                 user_1.setProfile(userProfile);

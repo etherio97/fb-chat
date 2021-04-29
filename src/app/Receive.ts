@@ -3,6 +3,7 @@ import Response from "./Response";
 import News from "./News";
 import GraphAPI from "./GraphAPI";
 import User from "./User";
+import Report from "./Report";
 
 export default class Receive {
   constructor(public user: User | null, public webhookEvent = null) {}
@@ -28,7 +29,7 @@ export default class Receive {
       }
     } catch (error) {
       responses = {
-        text: `နည်းပညာပိုင်းအရချို့ယွင်းမှုရှိနေပါတယ်။ \n\n---\n${error}`,
+        text: `နည်းပညာပိုင်းအရချို့ယွင်းနေပါတယ်။ \n\n---\n${error}`,
       };
     }
 
@@ -49,36 +50,36 @@ export default class Receive {
     let message = this.webhookEvent.message.text.trim().toLowerCase();
     let response;
 
-    if (
+    if (message.match(/(?:news|သတင်း|သတငျး|ဘာထူးလဲ)/)) {
+      let news = new News(this.user, this.webhookEvent);
+      response = news.handleNews();
+    } else if (message.match(/#n[we]{2}oo/gim)) {
+      let phone = `${
+        this.user.firstName || this.user.lastName || this.user.psid
+      }`;
+      Report.send(phone, message).then(({ id, post_id }) => {
+        this.user.reports.push(id);
+        this.user.last_report = new Date().getTime();
+        GraphAPI.callSendAPI(
+          Response.genButtonTemplate(
+            `ပေးပို့ချက် ID မှာ ${id} ဖြစ်ပါတယ်။ https://www.facebook.com/${post_id} မှာ၀င်ရောက်ကြည့်ရှုနိုင်ပါတယ်။`,
+            [
+              Response.genWebUrlButton(
+                "ကြည့်ရှုရန်",
+                `https://nweoo.com/reports/${id}`
+              ),
+              Response.genPostbackButton("ပြန်ဖျက်ရန်", "NEWS_REPORT_DELETE"),
+            ]
+          )
+        );
+      });
+
+      response = Response.genText("အခုလိုသတင်းပေးတဲအတွက်ကျေးဇူးတင်ပါတယ်။");
+    } else if (
       (greeting && greeting.confidence > 0.8) ||
       message.match(/(?:hello|hi|ဟယ်လို|ဟိုင်း|မင်္ဂလာ|mingala)/g)
     ) {
       response = Response.genNuxMessage(this.user);
-    } else if (message.match(/(?:news|သတင်း|သတငျး|ဘာထူးလဲ)/)) {
-      let news = new News(this.user, this.webhookEvent);
-      response = news.handleNews();
-    } else if (message.match(/#n[we]{2}oo/gim)) {
-      let id = Date.now().toString().slice(7);
-      let phone = `${
-        this.user.firstName || this.user.lastName || this.user.psid
-      }`;
-      message = message.replace(/#n[we]{2}oo/gim, "");
-      axios
-        .post("https://api.nweoo.com/report", {
-          id,
-          phone,
-          message,
-          date: new Date().toLocaleString("my-MM"),
-        })
-        .then(({ data }) => {
-          console.log(data);
-        });
-      response = [
-        Response.genText("အခုလိုသတင်းပေးတဲအတွက်ကျေးဇူးတင်ပါတယ်။"),
-        Response.genText(
-          "https://nweoo.com/reports/" + id + " ကနေတဆင့် ပြန်ဖျက်နိုင်ပါတယ်။"
-        ),
-      ];
     } else {
       response = [
         Response.genQuickReply("ဘာများကူညီပေးရမလဲခင်ဗျ။", [
@@ -151,7 +152,7 @@ export default class Receive {
       response = news.handlePayload(payload);
     } else if (payload.includes("CHAT-PLUGIN")) {
       response = [
-        Response.genText("မင်္ဂလာပါ။"),
+        Response.genText("မင်္ဂလာပါ " + this.user.name),
         Response.genQuickReply("ဘာများကူညီပေးရမလဲခင်ဗျ။", [
           {
             title: "သတင်းယူရန်",

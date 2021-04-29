@@ -100,7 +100,7 @@ var Response = (function () {
         return response;
     };
     Response.genNuxMessage = function (user) {
-        var welcome = this.genText("\u1019\u1004\u103A\u1039\u1002\u101C\u102C\u1015\u102B " + user.firstName);
+        var welcome = this.genText("\u1019\u1004\u103A\u1039\u1002\u101C\u102C\u1015\u102B " + user.name);
         var curation = this.genQuickReply("ဘာများကူညီပေးရမလဲဗျ။", [
             {
                 title: "သတင်းယူရန်",
