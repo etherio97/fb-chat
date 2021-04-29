@@ -60,7 +60,7 @@ export default class Receive {
       Report.send(phone, message).then(({ id, post_id }) => {
         this.user.reports.push(id);
         this.user.last_report = new Date().getTime();
-        GraphAPI.callSendAPI(
+        this.sendMessage(
           Response.genButtonTemplate(
             `ပေးပို့ချက် ID မှာ ${id} ဖြစ်ပါတယ်။ https://www.facebook.com/${post_id} မှာ၀င်ရောက်ကြည့်ရှုနိုင်ပါတယ်။`,
             [

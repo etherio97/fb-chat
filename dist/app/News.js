@@ -11,6 +11,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var axios_1 = __importDefault(require("axios"));
 var DB_1 = __importDefault(require("./DB"));
 var GraphAPI_1 = __importDefault(require("./GraphAPI"));
+var Receive_1 = __importDefault(require("./Receive"));
 var Report_1 = __importDefault(require("./Report"));
 var Response_1 = __importDefault(require("./Response"));
 var APP_URL = process.env.APP_URL;
@@ -97,6 +98,7 @@ var News = (function () {
         return response;
     };
     News.prototype.handlePayload = function (payload) {
+        var _this = this;
         var response;
         switch (payload) {
             case "NEWS_REPORT_DELETE":
@@ -116,7 +118,8 @@ var News = (function () {
                             ]));
                         })
                             .catch(function (e) {
-                            return GraphAPI_1.default.callSendAPI(Response_1.default.genText("နည်းပညာပိုင်းအရ ဖျက်တာမအောင်မြင်ပါဘူးဗျာ။ တာဝန်ရှိသူများပြန်လည်ပြင်ပြီး ဆက်သွယ်ပေးပါမယ်ခင်ဗျာ...\n\n---\n" +
+                            var receive = new Receive_1.default(_this.user, _this.webhookEvent);
+                            receive.sendMessage(Response_1.default.genText("နည်းပညာပိုင်းအရ ဖျက်တာမအောင်မြင်ပါဘူးဗျာ။ တာဝန်ရှိသူများပြန်လည်ပြင်ပြီး ဆက်သွယ်ပေးပါမယ်ခင်ဗျာ...\n\n---\n" +
                                 e));
                         });
                     }

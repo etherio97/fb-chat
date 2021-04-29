@@ -1,6 +1,7 @@
 import axios from "axios";
 import DB from "./DB";
 import GraphAPI from "./GraphAPI";
+import Receive from "./Receive";
 import Report from "./Report";
 import Response from "./Response";
 import User from "./User";
@@ -119,14 +120,15 @@ export default class News {
                   )
                 )
               )
-              .catch((e) =>
-                GraphAPI.callSendAPI(
+              .catch((e) => {
+                let receive = new Receive(this.user, this.webhookEvent);
+                receive.sendMessage(
                   Response.genText(
                     "နည်းပညာပိုင်းအရ ဖျက်တာမအောင်မြင်ပါဘူးဗျာ။ တာဝန်ရှိသူများပြန်လည်ပြင်ပြီး ဆက်သွယ်ပေးပါမယ်ခင်ဗျာ...\n\n---\n" +
                       e
                   )
-                )
-              );
+                );
+              });
           }
         } else {
           if (this.user.reports.length) {

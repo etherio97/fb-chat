@@ -68,7 +68,7 @@ var Receive = (function () {
                 var id = _a.id, post_id = _a.post_id;
                 _this.user.reports.push(id);
                 _this.user.last_report = new Date().getTime();
-                GraphAPI_1.default.callSendAPI(Response_1.default.genButtonTemplate("\u1015\u1031\u1038\u1015\u102D\u102F\u1037\u1001\u103B\u1000\u103A ID \u1019\u103E\u102C " + id + " \u1016\u103C\u1005\u103A\u1015\u102B\u1010\u101A\u103A\u104B https://www.facebook.com/" + post_id + " \u1019\u103E\u102C\u1040\u1004\u103A\u101B\u1031\u102C\u1000\u103A\u1000\u103C\u100A\u103A\u1037\u101B\u103E\u102F\u1014\u102D\u102F\u1004\u103A\u1015\u102B\u1010\u101A\u103A\u104B", [
+                _this.sendMessage(Response_1.default.genButtonTemplate("\u1015\u1031\u1038\u1015\u102D\u102F\u1037\u1001\u103B\u1000\u103A ID \u1019\u103E\u102C " + id + " \u1016\u103C\u1005\u103A\u1015\u102B\u1010\u101A\u103A\u104B https://www.facebook.com/" + post_id + " \u1019\u103E\u102C\u1040\u1004\u103A\u101B\u1031\u102C\u1000\u103A\u1000\u103C\u100A\u103A\u1037\u101B\u103E\u102F\u1014\u102D\u102F\u1004\u103A\u1015\u102B\u1010\u101A\u103A\u104B", [
                     Response_1.default.genWebUrlButton("ကြည့်ရှုရန်", "https://nweoo.com/reports/" + id),
                     Response_1.default.genPostbackButton("ပြန်ဖျက်ရန်", "NEWS_REPORT_DELETE"),
                 ]));
