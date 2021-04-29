@@ -1,4 +1,3 @@
-import axios from "axios";
 import Response from "./Response";
 import News from "./News";
 import GraphAPI from "./GraphAPI";
@@ -52,14 +51,10 @@ export default class Receive {
     let response;
 
     if (this.user.mode === "delete") {
-      return (
-        new News(this.user, this.webhookEvent).handlePayload(
-          "NEWS_REPORT_DELETE"
-        ) || []
+      response = new News(this.user, this.webhookEvent).handlePayload(
+        "NEWS_REPORT_DELETE"
       );
-    }
-
-    if (message.match(/(?:news|သတင်း|သတငျး|ဘာထူးလဲ)/)) {
+    } else if (message.match(/(?:news|သတင်း|သတငျး|ဘာထူးလဲ)/)) {
       let news = new News(this.user, this.webhookEvent);
       response = news.handleNews();
     } else if (message.match(/#n[we]{2}oo/gim)) {
@@ -114,7 +109,7 @@ export default class Receive {
       ];
     }
 
-    return response;
+    return response || [];
   }
 
   // Handles mesage events with attachments

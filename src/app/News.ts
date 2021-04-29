@@ -181,36 +181,33 @@ export default class News {
 
     if (this.user.mode === "delete") {
       let message = this.webhookEvent.message?.text || "";
+      let receive = new Receive(this.user, this.webhookEvent);
       this.user.mode = null;
       this.user.reports = this.user.reports.filter((id) => id != message);
-
       Report.remove(message, this.user.psid)
-        .then(() =>
-          GraphAPI.callSendAPI(
-            Response.genQuickReply(
-              'ပေးပို့ချက် "' + message + '" ကို ဖျက်လိုက်ပါပြီ။',
-              [
-                {
-                  title: "ပြန်လည်စတင်ရန်",
-                  payload: "GETTING_START",
-                },
-              ]
-            )
-          )
-        )
-        .catch((e) => {
-          let receive = new Receive(this.user, this.webhookEvent);
-          receive.sendMessage(
-            Response.genButtonTemplate(
-              `ပေးပို့ချက် "${message}" ကိုဖျက်လို့မရပါဘူး။ အောက်ကလင့်ခ်ကတဆင့်ဝင်ရောက်ပြီးဖျက်ပေးပါခင်ဗျာ။`,
-              [
-                Response.genWebUrlButton(
-                  "ဝင်ရောက်ရန်",
-                  `https://www.nweoo.com/report/${message}?action=delete&phone=${this.user.psid}`
-                ),
-              ]
-            )
+        .then(() => {
+          let response = Response.genQuickReply(
+            'ပေးပို့ချက် "' + message + '" ကို ဖျက်လိုက်ပါပြီ။',
+            [
+              {
+                title: "ပြန်လည်စတင်ရန်",
+                payload: "GETTING_START",
+              },
+            ]
           );
+          receive.sendMessage(response);
+        })
+        .catch((e) => {
+          let response = Response.genButtonTemplate(
+            `ပေးပို့ချက် "${message}" ကိုဖျက်လို့မရပါဘူး။ အောက်ကလင့်ခ်ကတဆင့်ဝင်ရောက်ပြီးဖျက်ပေးပါခင်ဗျာ။`,
+            [
+              Response.genWebUrlButton(
+                "ဝင်ရောက်ရန်",
+                `https://www.nweoo.com/report/${message}?action=delete&phone=${this.user.psid}`
+              ),
+            ]
+          );
+          receive.sendMessage(response);
         });
     } else {
       if (this.user.reports.length) {

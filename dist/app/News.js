@@ -10,7 +10,6 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 var axios_1 = __importDefault(require("axios"));
 var DB_1 = __importDefault(require("./DB"));
-var GraphAPI_1 = __importDefault(require("./GraphAPI"));
 var Receive_1 = __importDefault(require("./Receive"));
 var Report_1 = __importDefault(require("./Report"));
 var Response_1 = __importDefault(require("./Response"));
@@ -166,22 +165,24 @@ var News = (function () {
         var response = [];
         if (this.user.mode === "delete") {
             var message_1 = ((_a = this.webhookEvent.message) === null || _a === void 0 ? void 0 : _a.text) || "";
+            var receive_1 = new Receive_1.default(this.user, this.webhookEvent);
             this.user.mode = null;
             this.user.reports = this.user.reports.filter(function (id) { return id != message_1; });
             Report_1.default.remove(message_1, this.user.psid)
                 .then(function () {
-                return GraphAPI_1.default.callSendAPI(Response_1.default.genQuickReply('ပေးပို့ချက် "' + message_1 + '" ကို ဖျက်လိုက်ပါပြီ။', [
+                var response = Response_1.default.genQuickReply('ပေးပို့ချက် "' + message_1 + '" ကို ဖျက်လိုက်ပါပြီ။', [
                     {
                         title: "ပြန်လည်စတင်ရန်",
                         payload: "GETTING_START",
                     },
-                ]));
+                ]);
+                receive_1.sendMessage(response);
             })
                 .catch(function (e) {
-                var receive = new Receive_1.default(_this.user, _this.webhookEvent);
-                receive.sendMessage(Response_1.default.genButtonTemplate("\u1015\u1031\u1038\u1015\u102D\u102F\u1037\u1001\u103B\u1000\u103A \"" + message_1 + "\" \u1000\u102D\u102F\u1016\u103B\u1000\u103A\u101C\u102D\u102F\u1037\u1019\u101B\u1015\u102B\u1018\u1030\u1038\u104B \u1021\u1031\u102C\u1000\u103A\u1000\u101C\u1004\u103A\u1037\u1001\u103A\u1000\u1010\u1006\u1004\u103A\u1037\u101D\u1004\u103A\u101B\u1031\u102C\u1000\u103A\u1015\u103C\u102E\u1038\u1016\u103B\u1000\u103A\u1015\u1031\u1038\u1015\u102B\u1001\u1004\u103A\u1017\u103B\u102C\u104B", [
+                var response = Response_1.default.genButtonTemplate("\u1015\u1031\u1038\u1015\u102D\u102F\u1037\u1001\u103B\u1000\u103A \"" + message_1 + "\" \u1000\u102D\u102F\u1016\u103B\u1000\u103A\u101C\u102D\u102F\u1037\u1019\u101B\u1015\u102B\u1018\u1030\u1038\u104B \u1021\u1031\u102C\u1000\u103A\u1000\u101C\u1004\u103A\u1037\u1001\u103A\u1000\u1010\u1006\u1004\u103A\u1037\u101D\u1004\u103A\u101B\u1031\u102C\u1000\u103A\u1015\u103C\u102E\u1038\u1016\u103B\u1000\u103A\u1015\u1031\u1038\u1015\u102B\u1001\u1004\u103A\u1017\u103B\u102C\u104B", [
                     Response_1.default.genWebUrlButton("ဝင်ရောက်ရန်", "https://www.nweoo.com/report/" + message_1 + "?action=delete&phone=" + _this.user.psid),
-                ]));
+                ]);
+                receive_1.sendMessage(response);
             });
         }
         else {
