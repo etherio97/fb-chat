@@ -137,17 +137,22 @@ export default class News {
           }
         } else {
           if (this.user.reports.length) {
-            response = Response.genText(
-              this.user.name + " ပေးပို့ထားသောသတင်းအချက်အလက်များကိုရှာမတွေ့ပါ။"
-            );
+            response = [
+              Response.genText(
+                this.user.name +
+                  " ပေးပို့ထားသောသတင်းအချက်အလက်များကိုရှာမတွေ့ပါ။"
+              ),
+            ];
           } else {
+            response = [
+              Response.genQuickReply("ဖျက်လိုတဲ့ ID ကိုပြောပြပါ။", [
+                ...this.user.reports.map((id) => ({
+                  title: id,
+                  payload: "NEWS_REPORT_DELETE",
+                })),
+              ]),
+            ];
             this.user.mode = "delete";
-            response = Response.genQuickReply("ဖျက်လိုတဲ့ ID ကိုပြောပြပါ။", [
-              ...this.user.reports.map((id) => ({
-                title: id,
-                payload: "NEWS_REPORT_DELETE",
-              })),
-            ]);
           }
         }
         break;
