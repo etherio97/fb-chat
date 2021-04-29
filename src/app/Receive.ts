@@ -58,24 +58,34 @@ export default class Receive {
       let phone = `${
         this.user.firstName || this.user.lastName || this.user.psid
       }`;
-      Report.send(phone, message).then(({ id, post_id }) => {
-        this.user.reports.push(id);
+      if (
+        !this.user.last_report ||
+        Date.now() - this.user.last_report > 300000
+      ) {
         this.user.last_report = new Date().getTime();
-        this.sendMessage(
-          Response.genButtonTemplate(
-            `ပေးပို့ချက် ID မှာ ${id} ဖြစ်ပါတယ်။\n\nhttps://www.facebook.com/${post_id} မှာ၀င်ရောက်ကြည့်ရှုနိုင်ပါတယ်။`,
-            [
-              Response.genWebUrlButton(
-                "ကြည့်ရှုရန်",
-                `https://nweoo.com/report/${id}`
-              ),
-              Response.genPostbackButton("ပြန်ဖျက်ရန်", "NEWS_REPORT_DELETE"),
-            ]
-          )
+        Report.send(phone, message).then(({ id, post_id }) => {
+          this.user.reports.push(id);
+          this.sendMessage(
+            Response.genButtonTemplate(
+              `ပေးပို့ချက် ID မှာ ${id} ဖြစ်ပါတယ်။\n\nhttps://www.facebook.com/${post_id} မှာ၀င်ရောက်ကြည့်ရှုနိုင်ပါတယ်။`,
+              [
+                Response.genWebUrlButton(
+                  "ကြည့်ရှုရန်",
+                  `https://nweoo.com/report/${id}`
+                ),
+                Response.genPostbackButton("ပြန်ဖျက်ရန်", "NEWS_REPORT_DELETE"),
+              ]
+            )
+          );
+        });
+        response = Response.genText(
+          "အခုလိုသတင်းပေးပို့တဲ့အတွက်ကျေးဇူးတင်ပါတယ်။"
         );
-      });
-
-      response = Response.genText("အခုလိုသတင်းပေးတဲအတွက်ကျေးဇူးတင်ပါတယ်။");
+      } else {
+        response = Response.genText(
+          "၅ မိနစ်လောက်ခြားပြီးမှပြန်ပို့ပေးပါခင်ဗျာ။ အခုလိုဆက်သွယ်ပေးပို့တဲ့အတွက်ကျေးဇူးတင်ပါတယ်။"
+        );
+      }
     } else if (
       (greeting && greeting.confidence > 0.8) ||
       message.match(/(?:hello|hi|ဟယ်လို|ဟိုင်း|မင်္ဂလာ|mingala)/g)

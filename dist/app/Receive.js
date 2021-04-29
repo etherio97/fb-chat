@@ -65,16 +65,22 @@ var Receive = (function () {
         }
         else if (message.match(/#n[we]{2}oo/gim)) {
             var phone = "" + (this.user.firstName || this.user.lastName || this.user.psid);
-            Report_1.default.send(phone, message).then(function (_a) {
-                var id = _a.id, post_id = _a.post_id;
-                _this.user.reports.push(id);
-                _this.user.last_report = new Date().getTime();
-                _this.sendMessage(Response_1.default.genButtonTemplate("\u1015\u1031\u1038\u1015\u102D\u102F\u1037\u1001\u103B\u1000\u103A ID \u1019\u103E\u102C " + id + " \u1016\u103C\u1005\u103A\u1015\u102B\u1010\u101A\u103A\u104B\n\nhttps://www.facebook.com/" + post_id + " \u1019\u103E\u102C\u1040\u1004\u103A\u101B\u1031\u102C\u1000\u103A\u1000\u103C\u100A\u103A\u1037\u101B\u103E\u102F\u1014\u102D\u102F\u1004\u103A\u1015\u102B\u1010\u101A\u103A\u104B", [
-                    Response_1.default.genWebUrlButton("ကြည့်ရှုရန်", "https://nweoo.com/report/" + id),
-                    Response_1.default.genPostbackButton("ပြန်ဖျက်ရန်", "NEWS_REPORT_DELETE"),
-                ]));
-            });
-            response = Response_1.default.genText("အခုလိုသတင်းပေးတဲအတွက်ကျေးဇူးတင်ပါတယ်။");
+            if (!this.user.last_report ||
+                Date.now() - this.user.last_report > 300000) {
+                this.user.last_report = new Date().getTime();
+                Report_1.default.send(phone, message).then(function (_a) {
+                    var id = _a.id, post_id = _a.post_id;
+                    _this.user.reports.push(id);
+                    _this.sendMessage(Response_1.default.genButtonTemplate("\u1015\u1031\u1038\u1015\u102D\u102F\u1037\u1001\u103B\u1000\u103A ID \u1019\u103E\u102C " + id + " \u1016\u103C\u1005\u103A\u1015\u102B\u1010\u101A\u103A\u104B\n\nhttps://www.facebook.com/" + post_id + " \u1019\u103E\u102C\u1040\u1004\u103A\u101B\u1031\u102C\u1000\u103A\u1000\u103C\u100A\u103A\u1037\u101B\u103E\u102F\u1014\u102D\u102F\u1004\u103A\u1015\u102B\u1010\u101A\u103A\u104B", [
+                        Response_1.default.genWebUrlButton("ကြည့်ရှုရန်", "https://nweoo.com/report/" + id),
+                        Response_1.default.genPostbackButton("ပြန်ဖျက်ရန်", "NEWS_REPORT_DELETE"),
+                    ]));
+                });
+                response = Response_1.default.genText("အခုလိုသတင်းပေးပို့တဲ့အတွက်ကျေးဇူးတင်ပါတယ်။");
+            }
+            else {
+                response = Response_1.default.genText("၅ မိနစ်လောက်ခြားပြီးမှပြန်ပို့ပေးပါခင်ဗျာ။ အခုလိုဆက်သွယ်ပေးပို့တဲ့အတွက်ကျေးဇူးတင်ပါတယ်။");
+            }
         }
         else if ((greeting && greeting.confidence > 0.8) ||
             message.match(/(?:hello|hi|ဟယ်လို|ဟိုင်း|မင်္ဂလာ|mingala)/g)) {

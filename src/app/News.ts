@@ -99,7 +99,7 @@ export default class News {
     switch (payload) {
       case "NEWS_REPORT_DELETE":
         if (this.user.mode === "delete") {
-          let message = this.webhookEvent.message.text;
+          let message = this.webhookEvent.message?.text || "";
           this.user.mode = null;
           if (this.user.reports.includes(message)) {
             this.user.reports = this.user.reports.filter((id) => id != message);
@@ -121,9 +121,16 @@ export default class News {
               .catch((e) => {
                 let receive = new Receive(this.user, this.webhookEvent);
                 receive.sendMessage(
-                  Response.genText(
-                    "နည်းပညာပိုင်းအရ ဖျက်တာမအောင်မြင်ပါဘူးဗျာ။ တာဝန်ရှိသူများပြန်လည်ပြင်ပြီး ဆက်သွယ်ပေးပါမယ်ခင်ဗျာ...\n\n---\n" +
-                      e
+                  Response.genButtonTemplate(
+                    "နည်းပညာပိုင်းအရ ဖျက်တာမအောင်မြင်ပါဘူးဗျာ။ အောက်ဖော်ပြပါလင့်ခ်ကတင့် ပေးပို့ခဲ့တဲ့ဖုန်းနံံပါတ်ဆိုတဲ့နေရာမှာ " +
+                      this.user.psid +
+                      " ဖြည့်သွင်းပြီးဖျက်ပေးပါခင်ဗျာ။",
+                    [
+                      Response.genWebUrlButton(
+                        "သွားရောက်ရန်",
+                        "https://nweoo.com/report/" + message
+                      ),
+                    ]
                   )
                 );
               });

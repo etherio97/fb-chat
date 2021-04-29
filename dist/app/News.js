@@ -99,11 +99,12 @@ var News = (function () {
     };
     News.prototype.handlePayload = function (payload) {
         var _this = this;
+        var _a;
         var response;
         switch (payload) {
             case "NEWS_REPORT_DELETE":
                 if (this.user.mode === "delete") {
-                    var message_1 = this.webhookEvent.message.text;
+                    var message_1 = ((_a = this.webhookEvent.message) === null || _a === void 0 ? void 0 : _a.text) || "";
                     this.user.mode = null;
                     if (this.user.reports.includes(message_1)) {
                         this.user.reports = this.user.reports.filter(function (id) { return id != message_1; });
@@ -119,8 +120,11 @@ var News = (function () {
                         })
                             .catch(function (e) {
                             var receive = new Receive_1.default(_this.user, _this.webhookEvent);
-                            receive.sendMessage(Response_1.default.genText("နည်းပညာပိုင်းအရ ဖျက်တာမအောင်မြင်ပါဘူးဗျာ။ တာဝန်ရှိသူများပြန်လည်ပြင်ပြီး ဆက်သွယ်ပေးပါမယ်ခင်ဗျာ...\n\n---\n" +
-                                e));
+                            receive.sendMessage(Response_1.default.genButtonTemplate("နည်းပညာပိုင်းအရ ဖျက်တာမအောင်မြင်ပါဘူးဗျာ။ အောက်ဖော်ပြပါလင့်ခ်ကတင့် ပေးပို့ခဲ့တဲ့ဖုန်းနံံပါတ်ဆိုတဲ့နေရာမှာ " +
+                                _this.user.psid +
+                                " ဖြည့်သွင်းပြီးဖျက်ပေးပါခင်ဗျာ။", [
+                                Response_1.default.genWebUrlButton("သွားရောက်ရန်", "https://nweoo.com/report/" + message_1),
+                            ]));
                         });
                     }
                 }
