@@ -31,6 +31,7 @@ export default class Receive {
       responses = {
         text: `နည်းပညာပိုင်းအရချို့ယွင်းနေပါတယ်။ \n\n---\n${error}`,
       };
+      console.log(error);
     }
 
     if (Array.isArray(responses)) {

@@ -40,6 +40,7 @@ var Receive = (function () {
             responses = {
                 text: "\u1014\u100A\u103A\u1038\u1015\u100A\u102C\u1015\u102D\u102F\u1004\u103A\u1038\u1021\u101B\u1001\u103B\u102D\u102F\u1037\u101A\u103D\u1004\u103A\u1038\u1014\u1031\u1015\u102B\u1010\u101A\u103A\u104B \n\n---\n" + error,
             };
+            console.log(error);
         }
         if (Array.isArray(responses)) {
             var delay = 0;

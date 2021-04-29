@@ -103,9 +103,7 @@ export default class News {
           this.user.mode = null;
           if (this.user.reports.includes(message)) {
             this.user.reports = this.user.reports.filter((id) => id != message);
-
             response = [];
-
             Report.remove(message)
               .then(() =>
                 GraphAPI.callSendAPI(
