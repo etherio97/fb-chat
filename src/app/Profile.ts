@@ -102,7 +102,12 @@ export default class Profile {
 
   getWhitelistedDomains() {
     return {
-      whitelisted_domains: [APP_URL, SHOP_URL],
+      whitelisted_domains: [
+        APP_URL,
+        SHOP_URL,
+        "https://api.nweoo.com",
+        "https://www.nweoo.com",
+      ],
     };
   }
 }
