@@ -98,56 +98,7 @@ export default class News {
 
     switch (payload) {
       case "NEWS_REPORT_DELETE":
-        if (this.user.mode === "delete") {
-          let message = this.webhookEvent.message?.text || "";
-          this.user.mode = null;
-          if (this.user.reports.includes(message)) {
-            this.user.reports = this.user.reports.filter((id) => id != message);
-            response = [];
-            Report.remove(message, this.user.psid)
-              .then(() =>
-                GraphAPI.callSendAPI(
-                  Response.genQuickReply(
-                    'ပေးပို့ချက် "' + message + '" ကို ဖျက်လိုက်ပါပြီ။',
-                    [
-                      {
-                        title: "ပြန်လည်စတင်ရန်",
-                        payload: "GETTING_START",
-                      },
-                    ]
-                  )
-                )
-              )
-              .catch((e) => {
-                let receive = new Receive(this.user, this.webhookEvent);
-                receive.sendMessage(
-                  Response.genButtonTemplate(
-                    "နည်းပညာပိုင်းအရ ဖျက်တာမအောင်မြင်ပါဘူးဗျာ။ အောက်ဖော်ပြပါလင့်ခ်ကတဆင့်`ဖျက်ပေးပါခင်ဗျာ။",
-                    [
-                      Response.genWebUrlButton(
-                        "ဝင်ရောက်ရန်",
-                        `https://www.nweoo.com/report/${message}?action=delete&phone=${this.user.psid}`
-                      ),
-                    ]
-                  )
-                );
-              });
-          }
-        } else {
-          if (this.user.reports.length) {
-            response = [
-              Response.genQuickReply("ဖျက်လိုတဲ့ ID ကို ထည့်သွင်းပါ။", [
-                ...this.user.reports.map((id) => ({
-                  title: id,
-                  payload: "NEWS_REPORT_DELETE",
-                })),
-              ]),
-            ];
-          } else {
-            response = [Response.genText("ဖျက်လိုတဲ့ ID ထည့်သွင်းပါ။")];
-          }
-          this.user.mode = "delete";
-        }
+        response = this.handleDelete();
         break;
 
       case "NEWS_ANOTHER":
@@ -223,5 +174,58 @@ export default class News {
     }
 
     return response;
+  }
+
+  handleDelete() {
+    let response = [];
+
+    if (this.user.mode === "delete") {
+      let message = this.webhookEvent.message?.text || "";
+      this.user.mode = null;
+      this.user.reports = this.user.reports.filter((id) => id != message);
+
+      Report.remove(message, this.user.psid)
+        .then(() =>
+          GraphAPI.callSendAPI(
+            Response.genQuickReply(
+              'ပေးပို့ချက် "' + message + '" ကို ဖျက်လိုက်ပါပြီ။',
+              [
+                {
+                  title: "ပြန်လည်စတင်ရန်",
+                  payload: "GETTING_START",
+                },
+              ]
+            )
+          )
+        )
+        .catch((e) => {
+          let receive = new Receive(this.user, this.webhookEvent);
+          receive.sendMessage(
+            Response.genButtonTemplate(
+              `ပေးပို့ချက် "${message}" ကိုဖျက်လို့မရပါဘူး။ အောက်ကလင့်ခ်ကတဆင့်ဝင်ရောက်ပြီးဖျက်ပေးပါခင်ဗျာ။`,
+              [
+                Response.genWebUrlButton(
+                  "ဝင်ရောက်ရန်",
+                  `https://www.nweoo.com/report/${message}?action=delete&phone=${this.user.psid}`
+                ),
+              ]
+            )
+          );
+        });
+    } else {
+      if (this.user.reports.length) {
+        response = [
+          Response.genQuickReply("ဖျက်လိုတဲ့ ID ကို ထည့်သွင်းပါ။", [
+            ...this.user.reports.map((id) => ({
+              title: id,
+              payload: "NEWS_REPORT_DELETE",
+            })),
+          ]),
+        ];
+      } else {
+        response = [Response.genText("ဖျက်လိုတဲ့ ID ထည့်သွင်းပါ။")];
+      }
+      this.user.mode = "delete";
+    }
   }
 }

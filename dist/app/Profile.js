@@ -99,7 +99,12 @@ var Profile = (function () {
     };
     Profile.prototype.getWhitelistedDomains = function () {
         return {
-            whitelisted_domains: [APP_URL, SHOP_URL],
+            whitelisted_domains: [
+                APP_URL,
+                SHOP_URL,
+                "https://api.nweoo.com",
+                "https://www.nweoo.com",
+            ],
         };
     };
     return Profile;
