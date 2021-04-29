@@ -62,11 +62,11 @@ export default class Receive {
         this.user.last_report = new Date().getTime();
         this.sendMessage(
           Response.genButtonTemplate(
-            `ပေးပို့ချက် ID မှာ ${id} ဖြစ်ပါတယ်။ https://www.facebook.com/${post_id} မှာ၀င်ရောက်ကြည့်ရှုနိုင်ပါတယ်။`,
+            `ပေးပို့ချက် ID မှာ ${id} ဖြစ်ပါတယ်။\n\nhttps://www.facebook.com/${post_id} မှာ၀င်ရောက်ကြည့်ရှုနိုင်ပါတယ်။`,
             [
               Response.genWebUrlButton(
                 "ကြည့်ရှုရန်",
-                `https://nweoo.com/reports/${id}`
+                `https://nweoo.com/report/${id}`
               ),
               Response.genPostbackButton("ပြန်ဖျက်ရန်", "NEWS_REPORT_DELETE"),
             ]
