@@ -52,8 +52,10 @@ export default class Receive {
     let response;
 
     if (this.user.mode === "delete") {
-      return new News(this.user, this.webhookEvent).handlePayload(
-        "NEWS_REPORT_DELETE"
+      return (
+        new News(this.user, this.webhookEvent).handlePayload(
+          "NEWS_REPORT_DELETE"
+        ) || []
       );
     }
 
