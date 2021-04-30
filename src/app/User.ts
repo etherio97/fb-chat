@@ -21,9 +21,9 @@ export default class User {
   }
 
   setProfile(profile) {
-    this.firstName = profile.firstName;
-    this.lastName = profile.lastName;
-    this.name = profile.name;
+    this.firstName = profile.firstName || "";
+    this.lastName = profile.lastName || "";
+    this.name = profile.name || "";
     this.locale = profile.locale;
     if (profile.gender) {
       this.gender = profile.gender;
