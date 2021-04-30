@@ -4,6 +4,8 @@ import GraphAPI from "./GraphAPI";
 import User from "./User";
 import Report from "./Report";
 
+const { PAGE_ID } = process.env;
+
 export default class Receive {
   constructor(public user: User | null, public webhookEvent = null) {}
 
@@ -58,23 +60,20 @@ export default class Receive {
       let news = new News(this.user, this.webhookEvent);
       response = news.handleNews();
     } else if (message.match(/#n[we]{2}oo/gim)) {
-      let phone = `${
-        this.user.firstName || this.user.lastName || this.user.psid
-      }`;
       if (
         !this.user.last_report ||
         Date.now() - this.user.last_report > 300000
       ) {
         this.user.last_report = new Date().getTime();
-        Report.send(phone, message).then(({ id, post_id }) => {
+        Report.send(this.user.psid, message).then(({ id, post_id }) => {
           this.user.reports.push(id);
           this.sendMessage(
             Response.genButtonTemplate(
-              `ပေးပို့ချက် ID မှာ ${id} ဖြစ်ပါတယ်။\n\nhttps://www.facebook.com/${post_id} မှာ၀င်ရောက်ကြည့်ရှုနိုင်ပါတယ်။`,
+              `သင့်ပေးပို့ချက် ID မှာ ${id} ဖြစ်ပါတယ်။`,
               [
                 Response.genWebUrlButton(
                   "ကြည့်ရှုရန်",
-                  `https://nweoo.com/report/${id}`
+                  `https://m.facebook.com/story.php?src=${PAGE_ID}&story_fbid=${post_id}&refsrc=https%3A%2F%2Fm.me%2FNweOo22222%3Fmode%3Dbot`
                 ),
                 Response.genPostbackButton("ပြန်ဖျက်ရန်", "NEWS_REPORT_DELETE"),
               ]

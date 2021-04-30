@@ -1,6 +1,8 @@
 .DS_Store
 .*.json
 
+dist
+
 # Logs
 logs
 *.log
