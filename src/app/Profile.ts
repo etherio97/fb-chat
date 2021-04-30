@@ -107,6 +107,10 @@ export default class Profile {
         SHOP_URL,
         "https://api.nweoo.com",
         "https://www.nweoo.com",
+        "https://m.facebook.com",
+        "https://www.facebook.com",
+        "https://m.me",
+        "https://fb.com",
       ],
     };
   }

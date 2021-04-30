@@ -191,7 +191,7 @@ export default class News {
             [
               {
                 title: "ပြန်လည်စတင်ရန်",
-                payload: "GETTING_START",
+                payload: "GET_STARTED",
               },
             ]
           );
@@ -199,7 +199,7 @@ export default class News {
         })
         .catch((e) => {
           let response = Response.genButtonTemplate(
-            `ပေးပို့ချက် "${message}" ကိုဖျက်လို့မရပါဘူး။ အောက်ကလင့်ခ်ကတဆင့်ဝင်ရောက်ပြီးဖျက်ပေးပါခင်ဗျာ။`,
+            `လုပ်ဆောင်ချက်မအောင်မြင်ပါ။ အောက်ဖော်ပြပါလင့်ခ်ကဝင်ပြီး ဖျက်ပေးပါခင်ဗျာ...`,
             [
               Response.genWebUrlButton(
                 "ဝင်ရောက်ရန်",
@@ -212,7 +212,7 @@ export default class News {
     } else {
       if (this.user.reports.length) {
         response = [
-          Response.genQuickReply("ဖျက်လိုတဲ့ ID ကို ထည့်သွင်းပါ။", [
+          Response.genQuickReply("ဖျက်လိုတဲ့ ပေးပို့ချက် ID ကို ထည့်သွင်းပါ။", [
             ...this.user.reports.map((id) => ({
               title: id,
               payload: "NEWS_REPORT_DELETE",
@@ -220,7 +220,7 @@ export default class News {
           ]),
         ];
       } else {
-        response = [Response.genText("ဖျက်လိုတဲ့ ID ထည့်သွင်းပါ။")];
+        response = [Response.genText("ဖျက်လိုတဲ့ ပေးပို့ချက် ID ထည့်သွင်းပါ။")];
       }
       this.user.mode = "delete";
     }
