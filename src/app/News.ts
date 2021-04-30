@@ -208,10 +208,8 @@ export default class News {
           );
           receive.sendMessage(response, 1400);
         })
-        .finally(() =>
-          receive.sendAction(Response.genSenderAction("typing_off"), 1200)
-        );
-      receive.sendAction(Response.genSenderAction("typing_on"), 200);
+        .finally(() => receive.sendAction("typing_off", 1200));
+      receive.sendAction("typing_on", 200);
     } else {
       if (this.user.reports.length) {
         response = [

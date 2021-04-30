@@ -87,13 +87,11 @@ export default class Receive {
               1400
             );
           })
-          .finally(() =>
-            this.sendAction(Response.genSenderAction("typing_off"), 1200)
-          );
+          .finally(() => this.sendAction("typing_off", 1200));
         response = [
           Response.genText("အခုလိုသတင်းပေးပို့တဲ့အတွက်ကျေးဇူးတင်ပါတယ်။"),
         ];
-        this.sendAction(Response.genSenderAction("typing_on"), 200);
+        this.sendAction("typing_on", 200);
       } else {
         let text =
           "၅ မိနစ်လောက်ခြားပြီးမှပြန်ပို့ပေးပါခင်ဗျာ။ အခုလိုဆက်သွယ်ပေးပို့တဲ့အတွက်ကျေးဇူးတင်ပါတယ်။";
@@ -225,17 +223,12 @@ export default class Receive {
     GraphAPI.callSendAPI(requestBody);
   }
 
-  sendAction(sender_action, delay = 0) {
-    if ("delay" in sender_action) {
-      delay = sender_action["delay"];
-      delete sender_action["delay"];
-    }
-
+  sendAction(action, delay = 0) {
     let requestBody = {
       recipient: {
         id: this.user.psid,
       },
-      sender_action,
+      sender_action: action.toUpperCase(),
       persona_id: undefined,
     };
 
