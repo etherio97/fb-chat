@@ -59,6 +59,7 @@ export default class Receive {
     } else if (message.match(/(?:news|သတင်း|သတငျး|ဘာထူးလဲ)/)) {
       let news = new News(this.user, this.webhookEvent);
       response = news.handleNews();
+      this.user.mode = null;
     } else if (message.match(/#n[we]{2}oo/gim)) {
       if (
         !this.user.last_report ||
@@ -81,21 +82,25 @@ export default class Receive {
             )
           );
         });
-        response = Response.genText(
-          "အခုလိုသတင်းပေးပို့တဲ့အတွက်ကျေးဇူးတင်ပါတယ်။"
-        );
+        response = [
+          ...Response.genTypingAction(),
+          Response.genText("အခုလိုသတင်းပေးပို့တဲ့အတွက်ကျေးဇူးတင်ပါတယ်။"),
+        ];
       } else {
-        response = Response.genText(
-          "၅ မိနစ်လောက်ခြားပြီးမှပြန်ပို့ပေးပါခင်ဗျာ။ အခုလိုဆက်သွယ်ပေးပို့တဲ့အတွက်ကျေးဇူးတင်ပါတယ်။"
-        );
+        let text =
+          "၅ မိနစ်လောက်ခြားပြီးမှပြန်ပို့ပေးပါခင်ဗျာ။ အခုလိုဆက်သွယ်ပေးပို့တဲ့အတွက်ကျေးဇူးတင်ပါတယ်။";
+        response = [...Response.genTypingAction(), Response.genText(text)];
       }
+      this.user.mode = null;
     } else if (
       (greeting && greeting.confidence > 0.8) ||
       message.match(/(?:hello|hi|ဟယ်လို|ဟိုင်း|မင်္ဂလာ|mingala)/g)
     ) {
       response = Response.genNuxMessage(this.user);
+      this.user.mode = null;
     } else {
       response = [
+        ...Response.genTypingAction(),
         Response.genQuickReply("ဘာများကူညီပေးရမလဲခင်ဗျ။", [
           {
             title: "သတင်းယူ",
@@ -107,6 +112,7 @@ export default class Receive {
           },
         ]),
       ];
+      this.user.mode = null;
     }
 
     return response || [];
@@ -117,15 +123,18 @@ export default class Receive {
     let response;
     let attachment = this.webhookEvent.message.attachments[0];
 
-    response = Response.genQuickReply(
-      "အခုလိုဆက်သွယ်တဲ့အတွက် ကျေးဇူးတင်ရှိပါတယ်ခင်ဗျာ...",
-      [
-        {
-          title: "ပြန်လည်စတင်ရန်",
-          payload: "GET_STARTED",
-        },
-      ]
-    );
+    response = [
+      ...Response.genTypingAction(),
+      Response.genQuickReply(
+        "အခုလိုဆက်သွယ်တဲ့အတွက် ကျေးဇူးတင်ရှိပါတယ်ခင်ဗျာ...",
+        [
+          {
+            title: "ပြန်လည်စတင်ရန်",
+            payload: "GET_STARTED",
+          },
+        ]
+      ),
+    ];
 
     return response;
   }
@@ -167,6 +176,7 @@ export default class Receive {
     } else if (payload.includes("CHAT-PLUGIN")) {
       response = [
         Response.genText("မင်္ဂလာပါ " + this.user.name),
+        ...Response.genTypingAction(),
         Response.genQuickReply("ဘာများကူညီပေးရမလဲခင်ဗျ။", [
           {
             title: "သတင်းယူရန်",

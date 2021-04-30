@@ -1,6 +1,22 @@
 import User from "./User";
 
+type SenderAction = "typing_on" | "typing_off" | "mark_seen";
+
 export default class Response {
+  static genTypingAction() {
+    return [
+      this.genSenderAction("typing_on"),
+      this.genSenderAction("typing_off"),
+    ];
+  }
+
+  static genSenderAction(sender_action: SenderAction) {
+    let response = {
+      sender_action,
+    };
+    return response;
+  }
+
   static genQuickReply(text, quickReplies) {
     let response = {
       text: text,
