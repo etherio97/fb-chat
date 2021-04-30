@@ -178,16 +178,15 @@ export default class News {
 
   handleDelete() {
     let response = [];
-
-    if (this.user.mode === "delete") {
-      let message = this.webhookEvent.message?.text || "";
+    let message = this.webhookEvent.message?.text || "";
+    if (message != "" && this.user.mode === "delete") {
       let receive = new Receive(this.user, this.webhookEvent);
       this.user.mode = null;
       this.user.reports = this.user.reports.filter((id) => id != message);
       Report.remove(message, this.user.psid)
         .then(() => {
           let response = Response.genQuickReply(
-            'ပေးပို့ချက် "' + message + '" ကို ဖျက်လိုက်ပါပြီ။',
+            "ပေးပို့ချက် ID #" + message + " ကို ဖျက်လိုက်ပါပြီးခင်ဗျ...",
             [
               {
                 title: "ပြန်လည်စတင်ရန်",
@@ -199,11 +198,11 @@ export default class News {
         })
         .catch((e) => {
           let response = Response.genButtonTemplate(
-            `လုပ်ဆောင်ချက်မအောင်မြင်ပါ။ အောက်ဖော်ပြပါလင့်ခ်ကဝင်ပြီး ဖျက်ပေးပါခင်ဗျာ...`,
+            "လုပ်ဆောင်ချက်မအောင်မြင်ပါ။ အောက်ဖော်ပြပါလင့်ခ်ကဝင်ပြီး ဖျက်ပေးပါခင်ဗျာ...",
             [
               Response.genWebUrlButton(
                 "ဝင်ရောက်ရန်",
-                `https://www.nweoo.com/report/${message}?action=delete&phone=${this.user.psid}`
+                `https://www.nweoo.com/report/${message}?phone=${this.user.psid}`
               ),
             ]
           );
