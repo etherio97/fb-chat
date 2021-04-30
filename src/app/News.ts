@@ -71,16 +71,17 @@ export default class News {
     articles = articles.filter((article) => !read.includes(article.id));
     if (articles.length) {
       let article = articles[0];
+      let [__page, __post] = article.post_id.split("_");
+      // let url=`${APP_URL}/articles/${article.id}`
+      let url = `https://m.facebook.com/${__page}/posts/${__post}`;
+
       response = [
         Response.genGenericTemplate(
           article.image,
           article.title,
           article.source,
           [
-            Response.genWebUrlButton(
-              "အပြည့်အစုံ",
-              `${APP_URL}/articles/${article.id}`
-            ),
+            Response.genWebUrlButton("အပြည့်အစုံ", url),
             Response.genPostbackButton("နောက်ထပ်", "NEWS_ANOTHER"),
           ]
         ),
