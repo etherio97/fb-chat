@@ -66,7 +66,7 @@ export default class Receive {
       ) {
         this.user.last_report = new Date().getTime();
         Report.send(this.user.psid, message).then(({ id, post_id }) => {
-          let [__pageid, __postid] = post_id.split(".");
+          let [__pageid, __postid] = post_id.split("_");
           this.user.reports.push(id);
           this.sendMessage(
             Response.genButtonTemplate(
@@ -74,7 +74,7 @@ export default class Receive {
               [
                 Response.genWebUrlButton(
                   "ကြည့်ရှုရန်",
-                  `https://m.facebook.com/nweoo22222/posts/${__postid}`
+                  `https://m.facebook.com/${__pageid}/posts/${__postid}`
                 ),
                 Response.genPostbackButton("ပြန်ဖျက်ရန်", "NEWS_REPORT_DELETE"),
               ]
