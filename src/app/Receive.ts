@@ -69,6 +69,7 @@ export default class Receive {
         Report.send(this.user.psid, message).then(({ id, post_id }) => {
           let [__pageid, __postid] = post_id.split("_");
           this.user.reports.push(id);
+          this.sendMessage(Response.genSenderAction("typing_off"), 1200);
           this.sendMessage(
             Response.genButtonTemplate(
               `သင့်ပေးပို့ချက် ID မှာ ${id} ဖြစ်ပါတယ်။`,
@@ -79,17 +80,18 @@ export default class Receive {
                 ),
                 Response.genPostbackButton("ပြန်ဖျက်ရန်", "NEWS_REPORT_DELETE"),
               ]
-            )
+            ),
+            1400
           );
         });
         response = [
-          ...Response.genTypingAction(),
           Response.genText("အခုလိုသတင်းပေးပို့တဲ့အတွက်ကျေးဇူးတင်ပါတယ်။"),
+          Response.genSenderAction("typing_on"),
         ];
       } else {
         let text =
           "၅ မိနစ်လောက်ခြားပြီးမှပြန်ပို့ပေးပါခင်ဗျာ။ အခုလိုဆက်သွယ်ပေးပို့တဲ့အတွက်ကျေးဇူးတင်ပါတယ်။";
-        response = [...Response.genTypingAction(), Response.genText(text)];
+        response = [Response.genText(text)];
       }
       this.user.mode = null;
     } else if (
@@ -100,7 +102,6 @@ export default class Receive {
       this.user.mode = null;
     } else {
       response = [
-        ...Response.genTypingAction(),
         Response.genQuickReply("ဘာများကူညီပေးရမလဲခင်ဗျ။", [
           {
             title: "သတင်းယူ",
@@ -124,7 +125,6 @@ export default class Receive {
     let attachment = this.webhookEvent.message.attachments[0];
 
     response = [
-      ...Response.genTypingAction(),
       Response.genQuickReply(
         "အခုလိုဆက်သွယ်တဲ့အတွက် ကျေးဇူးတင်ရှိပါတယ်ခင်ဗျာ...",
         [
