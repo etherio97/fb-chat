@@ -66,28 +66,34 @@ export default class Receive {
         Date.now() - this.user.last_report > 300000
       ) {
         this.user.last_report = new Date().getTime();
-        Report.send(this.user.psid, message).then(({ id, post_id }) => {
-          let [__pageid, __postid] = post_id.split("_");
-          this.user.reports.push(id);
-          this.sendMessage(Response.genSenderAction("typing_off"), 1200);
-          this.sendMessage(
-            Response.genButtonTemplate(
-              `သင့်ပေးပို့ချက် ID မှာ ${id} ဖြစ်ပါတယ်။`,
-              [
-                Response.genWebUrlButton(
-                  "ကြည့်ရှုရန်",
-                  `https://m.facebook.com/${__pageid}/posts/${__postid}`
-                ),
-                Response.genPostbackButton("ပြန်ဖျက်ရန်", "NEWS_REPORT_DELETE"),
-              ]
-            ),
-            1400
+        Report.send(this.user.psid, message)
+          .then(({ id, post_id }) => {
+            let [__pageid, __postid] = post_id.split("_");
+            this.user.reports.push(id);
+            this.sendMessage(
+              Response.genButtonTemplate(
+                `သင့်ပေးပို့ချက် ID မှာ ${id} ဖြစ်ပါတယ်။`,
+                [
+                  Response.genWebUrlButton(
+                    "ကြည့်ရှုရန်",
+                    `https://m.facebook.com/${__pageid}/posts/${__postid}`
+                  ),
+                  Response.genPostbackButton(
+                    "ပြန်ဖျက်ရန်",
+                    "NEWS_REPORT_DELETE"
+                  ),
+                ]
+              ),
+              1400
+            );
+          })
+          .finally(() =>
+            this.sendAction(Response.genSenderAction("typing_off"), 1200)
           );
-        });
         response = [
           Response.genText("အခုလိုသတင်းပေးပို့တဲ့အတွက်ကျေးဇူးတင်ပါတယ်။"),
-          Response.genSenderAction("typing_on"),
         ];
+        this.sendAction(Response.genSenderAction("typing_on"), 200);
       } else {
         let text =
           "၅ မိနစ်လောက်ခြားပြီးမှပြန်ပို့ပေးပါခင်ဗျာ။ အခုလိုဆက်သွယ်ပေးပို့တဲ့အတွက်ကျေးဇူးတင်ပါတယ်။";
@@ -176,7 +182,6 @@ export default class Receive {
     } else if (payload.includes("CHAT-PLUGIN")) {
       response = [
         Response.genText("မင်္ဂလာပါ " + this.user.name),
-        ...Response.genTypingAction(),
         Response.genQuickReply("ဘာများကူညီပေးရမလဲခင်ဗျ။", [
           {
             title: "သတင်းယူရန်",
@@ -218,6 +223,23 @@ export default class Receive {
     };
 
     GraphAPI.callSendAPI(requestBody);
+  }
+
+  sendAction(sender_action, delay = 0) {
+    if ("delay" in sender_action) {
+      delay = sender_action["delay"];
+      delete sender_action["delay"];
+    }
+
+    let requestBody = {
+      recipient: {
+        id: this.user.psid,
+      },
+      sender_action,
+      persona_id: undefined,
+    };
+
+    setTimeout(() => GraphAPI.callSendAPI(requestBody), delay);
   }
 
   sendMessage(response, delay = 0) {

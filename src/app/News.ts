@@ -206,10 +206,12 @@ export default class News {
               ),
             ]
           );
-          receive.sendMessage(Response.genSenderAction("typing_off"), 1200);
           receive.sendMessage(response, 1400);
-        });
-      receive.sendMessage(Response.genSenderAction("typing_on"));
+        })
+        .finally(() =>
+          receive.sendAction(Response.genSenderAction("typing_off"), 1200)
+        );
+      receive.sendAction(Response.genSenderAction("typing_on"), 200);
     } else {
       if (this.user.reports.length) {
         response = [
