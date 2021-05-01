@@ -4,15 +4,30 @@ type SenderAction = "typing_on" | "typing_off" | "mark_seen";
 
 interface QuickReply {
   content_type?: "text" | "user_phone_number" | "user_email";
-  title?: string;
-  payload?: string;
+  title: string;
+  payload: string;
 }
 
 interface Button {
-  content_type?: "web_url" | "postback" | "phone_number";
-  title?: string;
-  subtitle?: string;
+  type?: "web_url" | "postback" | "phone_number";
+  title: string;
+  url?: string;
+  payload?: string;
   image_url?: string;
+  messenger_extensions?: Boolean;
+}
+
+interface GenericTemplate {
+  image_url: string;
+  title: string;
+  subtitle: string;
+  buttons: Button[];
+}
+
+interface ImageTemplate {
+  image_url: string;
+  title: string;
+  subtitle: string;
 }
 
 export default class Response {
@@ -24,10 +39,7 @@ export default class Response {
   }
 
   static genSenderAction(sender_action: SenderAction) {
-    let response = {
-      sender_action,
-    };
-    return response;
+    return { sender_action };
   }
 
   static genQuickReply(text: string, quickReplies: QuickReply[]) {
@@ -47,54 +59,58 @@ export default class Response {
     return response;
   }
 
-  static genGenericTemplate(
+  static genGenericTemplate(elements: GenericTemplate[]) {
+    return {
+      attachment: {
+        type: "template",
+        payload: {
+          template_type: "generic",
+          elements,
+        },
+      },
+    };
+  }
+
+  static GenericTemplate(
     image_url: string,
     title: string,
     subtitle: string,
     buttons: Button[]
-  ) {
-    let response = {
-      attachment: {
-        type: "template",
-        payload: {
-          template_type: "generic",
-          elements: [
-            {
-              title,
-              image_url,
-              subtitle,
-              buttons,
-            },
-          ],
-        },
-      },
+  ): GenericTemplate {
+    return {
+      title,
+      image_url,
+      subtitle,
+      buttons,
     };
-
-    return response;
   }
 
-  static genImageTemplate(image_url: string, title: string, subtitle?: string) {
-    let response = {
+  static genImageTemplate(elements: ImageTemplate[]) {
+    return {
       attachment: {
         type: "template",
         payload: {
           template_type: "generic",
-          elements: [
-            {
-              title,
-              image_url,
-              subtitle: subtitle || "",
-            },
-          ],
+          elements,
         },
       },
     };
+  }
 
-    return response;
+  static ImageTemplate(
+    image_url: string,
+    title: string,
+    subtitle?: string
+  ): ImageTemplate {
+    return {
+      image_url,
+      title,
+      subtitle: subtitle || "",
+    };
   }
 
   static genButtonTemplate(title: string, buttons: Button[]) {
-    let response = {
+    return {
       attachment: {
         type: "template",
         payload: {
@@ -104,46 +120,34 @@ export default class Response {
         },
       },
     };
-
-    return response;
   }
 
   static genText(text: string) {
-    let response = {
-      text,
-    };
-
-    return response;
+    return { text };
   }
 
   static genTextWithPersona(text: string, persona_id: string) {
-    let response = {
+    return {
       text,
       persona_id,
     };
-
-    return response;
   }
 
-  static genPostbackButton(title: string, payload: string) {
-    let response = {
+  static genPostbackButton(title: string, payload: string): Button {
+    return {
       type: "postback",
       title,
       payload,
     };
-
-    return response;
   }
 
-  static genWebUrlButton(title: string, url: string) {
-    let response = {
+  static genWebUrlButton(title: string, url: string): Button {
+    return {
       type: "web_url",
       title: title,
       url: url,
       messenger_extensions: true,
     };
-
-    return response;
   }
 
   static genNuxMessage(user: User) {

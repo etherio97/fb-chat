@@ -64,29 +64,39 @@ export default class News {
 
   handleNews() {
     this.fetchAll();
-    let response;
-    let user = this.user;
-    let read = user.headlines;
-    let articles = DB.read()["articles"] || [];
-    articles = articles.filter((article) => !read.includes(article.id));
-    if (articles.length) {
-      let article = articles[0];
-      let [__page, __post] = article.post_id.split("_");
-      // let url=`${APP_URL}/articles/${article.id}`
-      let url = `https://m.facebook.com/${__page}/posts/${__post}`;
 
-      response = [
-        Response.genGenericTemplate(
-          article.image,
-          article.title,
-          article.source,
-          [
-            Response.genWebUrlButton("အပြည့်အစုံ", url),
-            Response.genPostbackButton("နောက်ထပ်", "NEWS_ANOTHER"),
-          ]
-        ),
-      ];
+    let response,
+      remain,
+      max = 5,
+      user = this.user,
+      read = user.headlines,
+      articles = DB.read()["articles"] || [],
+      templates = [];
+
+    articles = articles.filter((article) => !read.includes(article.id));
+    remain = articles.length - max;
+    articles = articles.slice(0, max);
+
+    for (let article of articles) {
+      let [__page, __post] = article.post_id.split("_");
+      let url = `https://m.facebook.com/${__page}/posts/${__post}`;
+      let template = Response.GenericTemplate(
+        article.image,
+        article.title,
+        article.source,
+        [Response.genWebUrlButton("အပြည့်အစုံ", url)]
+      );
       read.push(article.id);
+      templates.push(template);
+    }
+    if (templates.length) {
+      response = [Response.genGenericTemplate(templates)];
+      remain > 0 &&
+        response.push(
+          Response.genQuickReply("နောက်ထပ်သတင်းများရယူလိုပါသလား။", [
+            { title: "သတင်း", payload: "NEWS_ANOTHER" },
+          ])
+        );
     } else {
       response = Response.genText("သတင်းများနောက်ထပ်မရှိပါ။");
     }
