@@ -10,6 +10,7 @@ interface QuickReply {
 
 interface Button {
   type?: "web_url" | "postback" | "phone_number";
+  webview_height_ratio?: "compact" | "tall" | "full";
   title: string;
   url?: string;
   payload?: string;
@@ -21,6 +22,7 @@ interface GenericTemplate {
   image_url: string;
   title: string;
   subtitle: string;
+  default_action?: Button;
   buttons: Button[];
 }
 
@@ -75,13 +77,15 @@ export default class Response {
     image_url: string,
     title: string,
     subtitle: string,
-    buttons: Button[]
+    buttons: Button[],
+    default_action?: Button
   ): GenericTemplate {
     return {
       title,
       image_url,
       subtitle,
       buttons,
+      default_action,
     };
   }
 

@@ -79,13 +79,14 @@ export default class News {
 
     for (let article of articles) {
       let [__page, __post] = article.post_id.split("_");
-      let url = `https://m.facebook.com/${__page}/posts/${__post}`;
+      let url = `https://facebook.com/${__page}/posts/${__post}`;
       let template = Response.GenericTemplate(
         article.image,
         article.title,
         article.source,
-        [Response.genWebUrlButton("အပြည့်အစုံ", url)]
-      );
+        []
+      Response.genWebUrlButton('အပြည့်အစုံဖတ်ရန်',url)
+        );
       read.push(article.id);
       templates.push(template);
     }
