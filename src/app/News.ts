@@ -64,14 +64,12 @@ export default class News {
 
   latestNews() {
     this.fetchAll();
-
-    let response,
-      remain,
-      max = 12,
-      user = this.user,
-      read = user.headlines,
-      articles = DB.read()["articles"] || [],
-      templates = [];
+    let remain;
+    let max = 12;
+    let user = this.user;
+    let read = user.headlines;
+    let articles = DB.read()["articles"] || [];
+    let templates = [];
 
     articles = articles.filter((article) => !read.includes(article.id));
     remain = articles.length - max;

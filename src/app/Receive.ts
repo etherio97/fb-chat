@@ -45,7 +45,6 @@ export default class Receive {
   }
 
   handleTextMessage() {
-    let greeting = this.firstEntity(this.webhookEvent.message.nlp, "greetings");
     let message = this.webhookEvent.message.text.trim();
     let user = this.user;
     let response;

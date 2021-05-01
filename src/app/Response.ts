@@ -13,7 +13,7 @@ interface QuickReply {
   payload: string;
 }
 
-interface Button {
+export interface Button {
   type?: ButtonType;
   webview_height_ratio?: WebviewHeightRatio;
   title?: string;
@@ -23,7 +23,7 @@ interface Button {
   messenger_extensions?: Boolean;
 }
 
-interface GenericTemplate {
+export interface GenericTemplate {
   image_url: string;
   title: string;
   subtitle: string;
@@ -31,7 +31,7 @@ interface GenericTemplate {
   buttons?: Button[];
 }
 
-interface ImageTemplate {
+export interface ImageTemplate {
   image_url: string;
   title: string;
   subtitle: string;
