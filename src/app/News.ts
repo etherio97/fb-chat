@@ -84,9 +84,9 @@ export default class News {
         article.image,
         article.title,
         article.source,
-        []
-      Response.genWebUrlButton('အပြည့်အစုံဖတ်ရန်',url)
-        );
+        [],
+        Response.genWebUrlButton("အပြည့်အစုံဖတ်ရန်", url)
+      );
       read.push(article.id);
       templates.push(template);
     }
