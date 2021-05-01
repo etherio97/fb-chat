@@ -12,10 +12,7 @@ const users = {};
 
 setTimeout(() => new News(null).fetchAll(), 3000);
 
-router.get("/", (req, res) => {
-  res.redirect("https://nweoo.com");
-  res.end();
-});
+router.get("/", (req, res) => res.send("STATUS_OK"));
 
 router.get("/webhook", (req, res) => {
   let mode = req.query["hub.mode"];
