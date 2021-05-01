@@ -88,9 +88,7 @@ export default class Receive {
             );
           })
           .finally(() => this.sendAction("typing_off", 1200));
-        response = [
-          Response.genText("အခုလိုသတင်းပေးပို့တဲ့အတွက်ကျေးဇူးတင်ပါတယ်။"),
-        ];
+        response = [];
         this.sendAction("typing_on", 200);
       } else {
         let text =
