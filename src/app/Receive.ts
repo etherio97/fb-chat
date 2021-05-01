@@ -51,6 +51,11 @@ export default class Receive {
 
     switch (user.mode) {
       case "agent":
+        if (message.match(/(?:bye)/i)) {
+          return new Care(this.user, this.webhookEvent).handlePayload(
+            "CARE_AGENT_STOP"
+          );
+        }
         return [];
 
       case "delete":
@@ -59,8 +64,16 @@ export default class Receive {
         );
     }
 
-    if (message.match(/(?:news|သတင်း|သတငျး|ဘာထူးလဲ)/)) {
-      return new News(this.user, this.webhookEvent).latestNews();
+    if ("answer" in user.store) {
+      if (user.store["answer"] === "text") {
+        switch (user.store["class"]) {
+          case "care":
+            let care = new Care(this.user, this.webhookEvent);
+            let callback = this.user.store["callback"];
+            return care[callback](message);
+        }
+      }
+      user.store = {};
     }
 
     if (message.match(/#n[we]{2}oo/gi)) {
@@ -104,10 +117,20 @@ export default class Receive {
       return response;
     }
 
+    if (message.match(/(?:news|သတင်း|သတငျး|ဘာထူးလဲ)/)) {
+      return new News(this.user, this.webhookEvent).latestNews();
+    }
+
     if (message.match(/my id/i)) {
       return [
         Response.genText(`သင်ရဲ့ ID မှာ ${this.user.psid} ဖြစ်ပါတယ်ခင်ဗျာ။`),
       ];
+    }
+
+    if (message.match(/i(?:'m| am) agent/i)) {
+      return new Care(this.user, this.webhookEvent).handlePayload(
+        "CARE_AGENT_REGISTER"
+      );
     }
     // if (message.match(/(?:hello|hi|ဟယ်လို|ဟိုင်း|မင်္ဂလာ|mingala)/gi)) {
     //   return Response.genNuxMessage(this.user);
@@ -128,12 +151,19 @@ export default class Receive {
 
   handlePayload(payload) {
     GraphAPI.callFBAEventsAPI(this.user.psid, payload);
-    if (payload.includes("NEWS")) {
-      return new News(this.user, this.webhookEvent).handlePayload(payload);
-    }
 
     if (payload.includes("CARE")) {
       return new Care(this.user, this.webhookEvent).handlePayload(payload);
+    }
+
+    if (this.user.mode === "agent") {
+      return new Care(this.user, this.webhookEvent).handlePayload(payload);
+    }
+
+    this.user.mode = "default";
+
+    if (payload.includes("NEWS")) {
+      return new News(this.user, this.webhookEvent).handlePayload(payload);
     }
 
     switch (payload) {
@@ -146,7 +176,20 @@ export default class Receive {
   }
 
   handleAttachmentMessage() {
+    let user = this.user;
     let attachment = this.webhookEvent.message.attachments[0];
+
+    if ("answer" in user.store) {
+      if (user.store["answer"].includes("attachment")) {
+        switch (user.store["class"]) {
+          case "care":
+            let care = new Care(this.user, this.webhookEvent);
+            let callback = this.user.store["callback"];
+            return care[callback](attachment);
+        }
+      }
+      user.store = {};
+    }
 
     return [
       Response.genQuickReply(

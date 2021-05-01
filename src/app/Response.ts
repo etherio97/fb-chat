@@ -69,6 +69,23 @@ export default class Response {
     return { sender_action };
   }
 
+  static genOneTimeNotification(title: string, payload: string) {
+    return {
+      attachment: {
+        type: "template",
+        payload: {
+          template_type: "one_time_notif_req",
+          title,
+          payload,
+        },
+      },
+    };
+  }
+
+  static followUpOneTimeNotifcation(message: string) {
+    return this.genText(message);
+  }
+
   static genQuickReply(text: string, quickReplies: QuickReply[]) {
     let response = {
       text: text,
