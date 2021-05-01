@@ -38,7 +38,7 @@ export default class Receive {
     if (Array.isArray(responses)) {
       let delay = 0;
       for (let response of responses) {
-        this.sendMessage(response, delay * 2000);
+        this.sendMessage(response, delay * 1200);
         delay++;
       }
     } else {
