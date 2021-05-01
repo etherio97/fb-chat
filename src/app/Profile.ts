@@ -74,7 +74,7 @@ export default class Profile {
     return {
       locale: "default",
       text:
-        "မင်္ဂလာပါ {{user_full_name}}! ကျွန်တော်တို့နဲ့ ဆက်သွယ်လိုပါက Get Started Button ကိုနှိပ်ပြီး ဆက်သွယ်နိုင်ပါတယ်။",
+        "မင်္ဂလာပါ {{user_full_name}}! သတင်းယူ၊ သတင်းပေးလိုရင်တော့ Get Started ကိုနှိပ်ပြီး ချက်ချင်းလုပ်ဆောင်နိုင်ပါတယ်။",
     };
   }
 
@@ -85,8 +85,8 @@ export default class Profile {
       call_to_actions: [
         {
           type: "postback",
-          title: "သတင်း",
-          payload: "NEWS_ANOTHER",
+          title: "အေးဂျင့်နှင့်ဆက်သွယ်ရန်",
+          payload: "CARE_AGENT_START",
         },
       ],
     };

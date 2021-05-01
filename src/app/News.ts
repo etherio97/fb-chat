@@ -11,7 +11,7 @@ const { APP_URL } = process.env;
 let updated_at;
 
 export default class News {
-  constructor(public user: User | null, public webhookEvent = null) {}
+  constructor(public user?: User, public webhookEvent?: any) {}
 
   update() {
     return this.updateHeadlines().then((headlines) =>
@@ -62,12 +62,12 @@ export default class News {
     });
   }
 
-  handleNews() {
+  latestNews() {
     this.fetchAll();
 
     let response,
       remain,
-      max = 5,
+      max = 12,
       user = this.user,
       read = user.headlines,
       articles = DB.read()["articles"] || [],
@@ -84,40 +84,28 @@ export default class News {
         article.image,
         article.title,
         article.source,
-        { type: "web_url", url, webview_height_ratio: "tall" }
+        { type: "web_url", url, webview_height_ratio: "tall" },
+        [Response.genWebUrlButton("အပြည့်အစုံ", url, "tall")]
       );
       read.push(article.id);
       templates.push(template);
     }
-    if (templates.length) {
-      response = [Response.genGenericTemplate(templates)];
-      remain > 0 &&
-        response.push(
-          Response.genQuickReply("နောက်ထပ်သတင်းများရယူလိုပါသလား။", [
-            { title: "သတင်း", payload: "NEWS_ANOTHER" },
-          ])
-        );
-    } else {
-      response = Response.genText("သတင်းများနောက်ထပ်မရှိပါ။");
+    if (!templates.length) {
+      return Response.genText("သတင်းများနောက်ထပ်မရှိပါ။");
     }
-
-    return response;
+    return [Response.genGenericTemplate(templates)];
   }
 
   handlePayload(payload) {
-    let response;
-
     switch (payload) {
       case "NEWS_REPORT_DELETE":
-        response = this.handleDelete();
-        break;
+        return this.handleDelete();
 
       case "NEWS_ANOTHER":
-        response = this.handleNews();
-        break;
+        return this.latestNews();
 
       case "NEWS_GETTING":
-        response = [
+        return [
           Response.genQuickReply("ဘယ်လိုသတင်းများကိုရယူလိုပါသလဲ။", [
             {
               title: "SMS",
@@ -129,10 +117,9 @@ export default class News {
             },
           ]),
         ];
-        break;
 
       case "NEWS_REPORTING":
-        response = [
+        return [
           Response.genQuickReply("ဘယ်လိုသတင်းပေးလိုပါသလဲ။", [
             {
               title: "SMS",
@@ -144,19 +131,17 @@ export default class News {
             },
           ]),
         ];
-        break;
 
       case "NEWS_GETTING_SMS":
-        response = [
+        return [
           Response.genQuickReply(
             "တယ်လီနောအသုံးပြုသူများအနေနဲ့ 09758035929 ကို news (သို့) သတင်း လို့ SMS ပေးပို့ပြီး သတင်းခေါင်းစဉ်များကိုရယူနိုင်ပါတယ်။",
             [{ title: "Messenger", payload: "NEWS_GETTING_MESSENGER" }]
           ),
         ];
-        break;
 
       case "NEWS_GETTING_MESSENGER":
-        response = [
+        return [
           Response.genQuickReply(
             "ဒီကနေ news (သို့) သတင်း လို့ပို့ပြီး သတင်းများကိုရယူနိုင်ပါတယ်။",
             [
@@ -165,26 +150,23 @@ export default class News {
             ]
           ),
         ];
-        break;
 
       case "NEWS_REPORTING_SMS":
-        response = [
+        return [
           Response.genText(
             "ဖုန်းနံပါတ် 09758035929 ကို #nweoo ထည့်ပြီး သတင်းအချက်အလက်တွေကို SMS နဲ့ပေးပို့လိုက်တာနဲ့ အမြန်ဆုံးကျွန်တော်တို့ Page ပေါ်တင်ပေးသွားမှာဖြစ်ပါတယ်။"
           ),
         ];
-        break;
 
       case "NEWS_REPORTING_MESSENGER":
-        response = [
+        return [
           Response.genText(
             "ဒီကနေ #nweoo ထည့်ပြီး သတင်းအချက်အလက်တွေကို ပို့လိုက်တာနဲ့ ချက်ချင်းကျွန်တော်တို့ရဲ့ Page ပေါ်တင်ပေးသွားမှာဖြစ်ပါတယ်။"
           ),
         ];
-        break;
     }
 
-    return response;
+    return [];
   }
 
   handleDelete() {

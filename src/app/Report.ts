@@ -17,10 +17,8 @@ export default class Report {
   }
 
   static remove(id: string | number, token: string | number) {
-    return Axios.delete(`https://api.nweoo.com/report/${id}?phone=${token}`)
-      .then(({ data }) => data)
-      .catch((e) => {
-        throw new Error(e.response?.data || e.message);
-      });
+    return Axios.delete(
+      `https://api.nweoo.com/report/${id}?phone=${token}`
+    ).then(({ data }) => data);
   }
 }

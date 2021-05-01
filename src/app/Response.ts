@@ -1,16 +1,21 @@
 import User from "./User";
 
 type SenderAction = "typing_on" | "typing_off" | "mark_seen";
+type QuickReplyType = "text" | "user_phone_number" | "user_email";
+type AttachmentType = "template";
+type TemplateType = "one_time_notif_req" | "button";
+type ButtonType = "web_url" | "postback" | "phone_number";
+type WebviewHeightRatio = "compact" | "tall" | "full";
 
 interface QuickReply {
-  content_type?: "text" | "user_phone_number" | "user_email";
+  content_type?: QuickReplyType;
   title: string;
   payload: string;
 }
 
 interface Button {
-  type?: "web_url" | "postback" | "phone_number";
-  webview_height_ratio?: "compact" | "tall" | "full";
+  type?: ButtonType;
+  webview_height_ratio?: WebviewHeightRatio;
   title?: string;
   url?: string;
   payload?: string;
@@ -30,6 +35,26 @@ interface ImageTemplate {
   image_url: string;
   title: string;
   subtitle: string;
+}
+
+interface Payload {
+  template_type?: TemplateType;
+  title?: string;
+  subtitle?: string;
+  image_url?: string;
+  text?: string;
+  payload?: string;
+  buttons?: Button[];
+  default_action?: Button;
+}
+
+interface Attachment {
+  type?: AttachmentType;
+  payload: Payload;
+}
+
+export interface ButtonTemplate {
+  attachment: Attachment;
 }
 
 export default class Response {
@@ -77,7 +102,8 @@ export default class Response {
     image_url: string,
     title: string,
     subtitle: string,
-    buttons: Button | Button[]
+    default_action?: Button | Button[],
+    buttons?: Button[]
   ) {
     let response: GenericTemplate = {
       title,
@@ -85,10 +111,14 @@ export default class Response {
       subtitle,
     };
 
-    if (Array.isArray(buttons)) {
+    if (Array.isArray(default_action)) {
       response.buttons = buttons;
     } else {
-      response.default_action = buttons;
+      response.default_action = default_action;
+    }
+
+    if (buttons) {
+      response.buttons = buttons;
     }
 
     return response;
@@ -118,7 +148,7 @@ export default class Response {
     };
   }
 
-  static genButtonTemplate(title: string, buttons: Button[]) {
+  static genButtonTemplate(title: string, buttons: Button[]): ButtonTemplate {
     return {
       attachment: {
         type: "template",
@@ -150,11 +180,16 @@ export default class Response {
     };
   }
 
-  static genWebUrlButton(title: string, url: string): Button {
+  static genWebUrlButton(
+    title: string,
+    url: string,
+    webview_height_ratio?: WebviewHeightRatio
+  ): Button {
     return {
       type: "web_url",
-      title: title,
-      url: url,
+      title,
+      url,
+      webview_height_ratio: webview_height_ratio || "full",
       messenger_extensions: true,
     };
   }

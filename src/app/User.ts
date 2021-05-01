@@ -1,21 +1,22 @@
+type Mode = "delete" | "agent" | "default";
+
 export default class User {
   public name: string;
   public firstName: string;
   public lastName: string;
-  public locale: string | null;
-  public gender: string | null;
-  public mode: null | "delete";
+  public locale?: string;
+  public gender?: string;
+  public mode: Mode;
   public headlines: string[];
   public reports: string[];
-  public last_report: number | null;
+  public talk_to_agent?: number;
+  public last_report?: number;
 
   constructor(public psid: string) {
     this.name = "";
     this.firstName = "";
     this.lastName = "";
-    this.locale = null;
-    this.gender = null;
-    this.last_report = null;
+    this.mode = "default";
     this.headlines = [];
     this.reports = [];
   }

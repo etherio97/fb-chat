@@ -3,11 +3,10 @@ import News from "./News";
 import GraphAPI from "./GraphAPI";
 import User from "./User";
 import Report from "./Report";
-
-const { PAGE_ID } = process.env;
+import Care from "./Care";
 
 export default class Receive {
-  constructor(public user: User | null, public webhookEvent = null) {}
+  constructor(public user?: User, public webhookEvent?: any) {}
 
   handleMessage() {
     let responses;
@@ -32,7 +31,6 @@ export default class Receive {
       responses = {
         text: `နည်းပညာပိုင်းအရချို့ယွင်းနေပါတယ်။ \n\n---\n${error}`,
       };
-      console.log(error);
     }
 
     if (Array.isArray(responses)) {
@@ -46,21 +44,27 @@ export default class Receive {
     }
   }
 
-  // Handles messages events with text
   handleTextMessage() {
     let greeting = this.firstEntity(this.webhookEvent.message.nlp, "greetings");
-    let message = this.webhookEvent.message.text.trim().toLowerCase();
+    let message = this.webhookEvent.message.text.trim();
+    let user = this.user;
     let response;
 
-    if (this.user.mode === "delete") {
-      response = new News(this.user, this.webhookEvent).handlePayload(
-        "NEWS_REPORT_DELETE"
-      );
-    } else if (message.match(/(?:news|သတင်း|သတငျး|ဘာထူးလဲ)/)) {
-      let news = new News(this.user, this.webhookEvent);
-      response = news.handleNews();
-      this.user.mode = null;
-    } else if (message.match(/#n[we]{2}oo/gim)) {
+    switch (user.mode) {
+      case "agent":
+        return [];
+
+      case "delete":
+        return new News(this.user, this.webhookEvent).handlePayload(
+          "NEWS_REPORT_DELETE"
+        );
+    }
+
+    if (message.match(/(?:news|သတင်း|သတငျး|ဘာထူးလဲ)/)) {
+      return new News(this.user, this.webhookEvent).latestNews();
+    }
+
+    if (message.match(/#n[we]{2}oo/gi)) {
       if (
         !this.user.last_report ||
         Date.now() - this.user.last_report > 300000
@@ -72,13 +76,13 @@ export default class Receive {
             this.user.reports.push(id);
             this.sendMessage(
               Response.genButtonTemplate(
-                `သတင်းပေးပို့တဲ့အတွက်ကျေးဇူးတင်ပါခင်ဗျာ။ သင့်ပေးပို့ချက် ID မှာ #${id} ဖြစ်ပါတယ်။`,
+                `သတင်းပေးပို့တဲ့အတွက်ကျေးဇူးတင်ပါတယ်ခင်ဗျာ။ သင့်ပေးပို့ချက် ID မှာ #${id} ဖြစ်ပါတယ်။`,
                 [
                   {
                     type: "web_url",
                     title: "ကြည့်ရှုရန်",
                     url: `https://facebook.com/${__pageid}/posts/${__postid}`,
-                    webview_height_ratio: "compact",
+                    webview_height_ratio: "tall",
                   },
                   Response.genPostbackButton(
                     "ပြန်ဖျက်ရန်",
@@ -98,37 +102,54 @@ export default class Receive {
         response = [Response.genText(text)];
       }
       this.user.mode = null;
-    } else if (
-      (greeting && greeting.confidence > 0.8) ||
-      message.match(/(?:hello|hi|ဟယ်လို|ဟိုင်း|မင်္ဂလာ|mingala)/g)
-    ) {
-      response = Response.genNuxMessage(this.user);
-      this.user.mode = null;
-    } else {
-      response = [
-        Response.genQuickReply("ဘာများကူညီပေးရမလဲခင်ဗျ။", [
-          {
-            title: "သတင်းယူ",
-            payload: "NEWS_GETTING",
-          },
-          {
-            title: "သတင်းပေး",
-            payload: "NEWS_REPORTING",
-          },
-        ]),
-      ];
-      this.user.mode = null;
+      return response;
     }
 
-    return response || [];
+    if (message.match(/my id/i)) {
+      return [
+        Response.genText(`သင်ရဲ့ ID မှာ ${this.user.psid} ဖြစ်ပါတယ်ခင်ဗျာ။`),
+      ];
+    }
+    // if (message.match(/(?:hello|hi|ဟယ်လို|ဟိုင်း|မင်္ဂလာ|mingala)/gi)) {
+    //   return Response.genNuxMessage(this.user);
+    // }
+    return [
+      Response.genQuickReply("ဘာများကူညီပေးရမလဲခင်ဗျ။", [
+        {
+          title: "သတင်းယူ",
+          payload: "NEWS_GETTING",
+        },
+        {
+          title: "သတင်းပေး",
+          payload: "NEWS_REPORTING",
+        },
+      ]),
+    ];
   }
 
-  // Handles mesage events with attachments
+  handlePayload(payload) {
+    GraphAPI.callFBAEventsAPI(this.user.psid, payload);
+    if (payload.includes("NEWS")) {
+      return new News(this.user, this.webhookEvent).handlePayload(payload);
+    }
+
+    if (payload.includes("CARE")) {
+      return new Care(this.user, this.webhookEvent).handlePayload(payload);
+    }
+
+    switch (payload) {
+      case "GET_STARTED":
+      case "CHAT-PLUGIN":
+        return Response.genNuxMessage(this.user);
+    }
+
+    return [];
+  }
+
   handleAttachmentMessage() {
-    let response;
     let attachment = this.webhookEvent.message.attachments[0];
 
-    response = [
+    return [
       Response.genQuickReply(
         "အခုလိုဆက်သွယ်တဲ့အတွက် ကျေးဇူးတင်ရှိပါတယ်ခင်ဗျာ...",
         [
@@ -139,8 +160,6 @@ export default class Receive {
         ]
       ),
     ];
-
-    return response;
   }
 
   handleQuickReply() {
@@ -163,40 +182,6 @@ export default class Receive {
   handleReferral() {
     let payload = this.webhookEvent.referral.ref.toUpperCase();
     return this.handlePayload(payload);
-  }
-
-  handlePayload(payload) {
-    GraphAPI.callFBAEventsAPI(this.user.psid, payload);
-    let response;
-    if (
-      payload === "GET_STARTED" ||
-      payload === "DEVDOCS" ||
-      payload === "GITHUB"
-    ) {
-      response = Response.genNuxMessage(this.user);
-    } else if (payload.includes("NEWS")) {
-      let news = new News(this.user, this.webhookEvent);
-      response = news.handlePayload(payload);
-    } else if (payload.includes("CHAT-PLUGIN")) {
-      response = [
-        Response.genText("မင်္ဂလာပါ " + this.user.name),
-        Response.genQuickReply("ဘာများကူညီပေးရမလဲခင်ဗျ။", [
-          {
-            title: "သတင်းယူရန်",
-            payload: "NEWS_GETTING",
-          },
-          {
-            title: "သတင်းပေးရန်",
-            payload: "NEWS_REPORTING",
-          },
-        ]),
-      ];
-    } else {
-      response = {
-        text: `This is a default postback message for payload: ${payload}!`,
-      };
-    }
-    return response;
   }
 
   handlePrivateReply(type, object_id) {
