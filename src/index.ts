@@ -19,7 +19,10 @@ app.use(urlencoded({ extended: true }));
 app.use(router);
 
 mongoose
-  .connect(DATABASE_URL)
+  .connect(DATABASE_URL, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+  })
   .then(() => console.log("database (mongodb) is connected"));
 
 app.listen(PORT || 3000, () => console.log("server (express) is serving"));
