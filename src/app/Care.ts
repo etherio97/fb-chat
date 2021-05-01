@@ -29,7 +29,7 @@ export default class Care {
   }
 
   askName() {
-    this.user.store["className"] = "care";
+    this.user.store["class"] = "care";
     this.user.store["answer"] = "text";
     this.user.store["callback"] = "answerName";
 
@@ -45,7 +45,7 @@ export default class Care {
   }
 
   askProfilePic() {
-    this.user.store["className"] = "care";
+    this.user.store["class"] = "care";
     this.user.store["answer"] = "attachment:image";
     this.user.store["callback"] = "sendImage";
 
