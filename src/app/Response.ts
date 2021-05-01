@@ -11,7 +11,7 @@ interface QuickReply {
 interface Button {
   type?: "web_url" | "postback" | "phone_number";
   webview_height_ratio?: "compact" | "tall" | "full";
-  title: string;
+  title?: string;
   url?: string;
   payload?: string;
   image_url?: string;
@@ -23,7 +23,7 @@ interface GenericTemplate {
   title: string;
   subtitle: string;
   default_action?: Button;
-  buttons: Button[];
+  buttons?: Button[];
 }
 
 interface ImageTemplate {
@@ -77,16 +77,21 @@ export default class Response {
     image_url: string,
     title: string,
     subtitle: string,
-    buttons: Button[],
-    default_action?: Button
-  ): GenericTemplate {
-    return {
+    buttons: Button | Button[]
+  ) {
+    let response: GenericTemplate = {
       title,
       image_url,
       subtitle,
-      buttons,
-      default_action,
     };
+
+    if (Array.isArray(buttons)) {
+      response.buttons = buttons;
+    } else {
+      response.default_action = buttons;
+    }
+
+    return response;
   }
 
   static genImageTemplate(elements: ImageTemplate[]) {

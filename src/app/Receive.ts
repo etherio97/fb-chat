@@ -72,12 +72,14 @@ export default class Receive {
             this.user.reports.push(id);
             this.sendMessage(
               Response.genButtonTemplate(
-                `သင့်ပေးပို့ချက် ID မှာ ${id} ဖြစ်ပါတယ်။`,
+                `သတင်းပေးပို့တဲ့အတွက်ကျေးဇူးတင်ပါခင်ဗျာ။ သင့်ပေးပို့ချက် ID မှာ #${id} ဖြစ်ပါတယ်။`,
                 [
-                  Response.genWebUrlButton(
-                    "ကြည့်ရှုရန်",
-                    `https://m.facebook.com/${__pageid}/posts/${__postid}`
-                  ),
+                  {
+                    type: "web_url",
+                    title: "ကြည့်ရှုရန်",
+                    url: `https://facebook.com/${__pageid}/posts/${__postid}`,
+                    webview_height_ratio: "compact",
+                  },
                   Response.genPostbackButton(
                     "ပြန်ဖျက်ရန်",
                     "NEWS_REPORT_DELETE"
