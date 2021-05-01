@@ -7,13 +7,15 @@ export default class Profile {
   constructor(public user: User | null) {}
 
   setWebhook() {
-    GraphAPI.callSubscriptionsAPI("");
-    GraphAPI.callSubscribedApps("");
+    return GraphAPI.callSubscriptionsAPI("").then(() =>
+      GraphAPI.callSubscribedApps("")
+    );
   }
 
   setPageFeedWebhook() {
-    GraphAPI.callSubscriptionsAPI("feed");
-    GraphAPI.callSubscribedApps("feed");
+    return GraphAPI.callSubscriptionsAPI("feed").then(() =>
+      GraphAPI.callSubscribedApps("feed")
+    );
   }
 
   setThread() {
@@ -23,27 +25,27 @@ export default class Profile {
       ...this.getPersistentMenu(),
     };
 
-    GraphAPI.callMessengerProfileAPI(profilePayload);
+    return GraphAPI.callMessengerProfileAPI(profilePayload);
   }
 
   setGetStarted() {
     let getStartedPayload = this.getGetStarted();
-    GraphAPI.callMessengerProfileAPI(getStartedPayload);
+    return GraphAPI.callMessengerProfileAPI(getStartedPayload);
   }
 
   setGreeting() {
     let greetingPayload = this.getGreeting();
-    GraphAPI.callMessengerProfileAPI(greetingPayload);
+    return GraphAPI.callMessengerProfileAPI(greetingPayload);
   }
 
   setPersistentMenu() {
     let menuPayload = this.getPersistentMenu();
-    GraphAPI.callMessengerProfileAPI(menuPayload);
+    return GraphAPI.callMessengerProfileAPI(menuPayload);
   }
 
   setWhitelistedDomains() {
     let domainPayload = this.getWhitelistedDomains();
-    GraphAPI.callMessengerProfileAPI(domainPayload);
+    return GraphAPI.callMessengerProfileAPI(domainPayload);
   }
 
   getGetStarted() {
@@ -71,7 +73,8 @@ export default class Profile {
   getGreetingText() {
     return {
       locale: "default",
-      text: "မင်္ဂလာပါ",
+      text:
+        "မင်္ဂလာပါ {{user_full_name}}! ကျွန်တော်တို့နဲ့ ဆက်သွယ်လိုပါက Get Started Button ကိုနှိပ်ပြီး ဆက်သွယ်နိုင်ပါတယ်။",
     };
   }
 
@@ -82,19 +85,8 @@ export default class Profile {
       call_to_actions: [
         {
           type: "postback",
-          title: "သတင်းရယူရန်",
-          payload: "NEWS_GETTING",
-        },
-        {
-          type: "postback",
-          title: "သတင်းပေးပို့ရန်",
-          payload: "NEWS_REPORTING",
-        },
-        {
-          type: "web_url",
-          title: "Website",
-          url: SHOP_URL,
-          webview_height_ratio: "full",
+          title: "သတင်း",
+          payload: "NEWS_ANOTHER",
         },
       ],
     };

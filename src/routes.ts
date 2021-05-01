@@ -105,10 +105,17 @@ router.get("/nweoo", (req, res) => {
   if (req.query["verify_token"] !== VERIFY_TOKEN) return res.sendStatus(403);
   const profile = new Profile(null);
   const news = new News(null);
-  news.fetchAll();
-  profile.setThread();
-  profile.setWhitelistedDomains();
   res.send("1");
+  news.fetchAll();
+  profile
+    .setWebhook()
+    .then(() =>
+      profile
+        .setPageFeedWebhook()
+        .then(() =>
+          profile.setThread().then(() => profile.setWhitelistedDomains())
+        )
+    );
 });
 
 export default router;
