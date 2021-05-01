@@ -41,14 +41,16 @@ router.post("/webhook", (req, res) => {
         let change = entry.changes[0].value;
         switch (change.item) {
           case "post":
-            return receiveMessage.handlePrivateReply("post_id", change.post_id);
+            console.log("post", change);
+            return /*receiveMessage.handlePrivateReply("post_id", change.post_id)*/;
           case "comment":
-            return receiveMessage.handlePrivateReply(
+            console.log("post", change);
+            return /* receiveMessage.handlePrivateReply(
               "comment_id",
               change.comment_id
-            );
+            )*/;
           default:
-            console.log("Unsupported feed change type.");
+            console.log("Unsupported feed change type.", change);
             return;
         }
       }
@@ -91,12 +93,16 @@ router.get("/articles/:id", (req, res) => {
   const articles = DB.read()["articles"];
   const article = articles.find((article) => article.id == id);
   if (!article) return res.sendStatus(404);
-  res.render("../public/article.ejs", {
+  res.render("../static/article.ejs", {
     APP_ID,
     PAGE_ID,
     ...article,
   });
 });
+
+router.get("/data/feed", (req, res) => res.json(DB.read()["posts"]));
+
+router.get("/data/comment", (req, res) => res.json(DB.read()["comments"]));
 
 router.get("/nweoo", (req, res) => {
   if (req.query["verify_token"] !== VERIFY_TOKEN) return res.sendStatus(403);

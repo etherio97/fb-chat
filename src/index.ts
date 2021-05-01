@@ -1,13 +1,14 @@
 import { config } from "dotenv";
-import DB from "./app/DB";
 import express, { json, urlencoded } from "express";
+import mongoose from "mongoose";
+import DB from "./app/DB";
 import verify from "./functions/verify";
 import router from "./routes";
 
 config();
 
 const app = express();
-const { PORT } = process.env;
+const { PORT, DATABASE_URL } = process.env;
 
 DB.init();
 
@@ -17,6 +18,8 @@ app.use(urlencoded({ extended: true }));
 
 app.use(router);
 
-app.listen(PORT || 3000, () =>
-  console.log("server is running on http://localhost:%s", PORT || 3000)
-);
+mongoose
+  .connect(DATABASE_URL)
+  .then(() => console.log("database (mongodb) is connected"));
+
+app.listen(PORT || 3000, () => console.log("server (express) is serving"));
