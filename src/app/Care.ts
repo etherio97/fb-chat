@@ -8,7 +8,7 @@ const { APP_URL } = process.env;
 export default class Care {
   constructor(public user?: User, public webhookEvent?: any) {}
 
-  handlePayload(payload: string): Array<T> {
+  handlePayload(payload: string): Array<object> {
     switch (payload) {
       case "CARE_HELP":
         return this.defaultFallback(this.webhookEvent.message?.text?.trim());
