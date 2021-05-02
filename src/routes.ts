@@ -87,19 +87,17 @@ router.post("/webhook", (req, res) => {
 
 router.get("/stop/:psid", (req, res) => {
   let psid = req.params.psid;
-  if (!(psid in users)) {
-    return res.sendStatus(400);
-  }
+  res.redirect(
+    `https://www.messenger.com/closeWindow/?image_url=https%3A%2F%2Fstorage.googleapis.com%2Fnwe-oo.appspot.com%2Fpublic%2F2021%2F05%2Fnweoo-bot-avatar.jpg&display_text=closing`
+  );
+  res.end();
+  if (!(psid in users)) return;
   let user = users[psid];
   let recieve = new Receive(user[psid], {
     postback: {
       payload: "CARE_AGENT_STOP",
     },
   });
-  res.redirect(
-    `https://www.messenger.com/closeWindow/?image_url=https%3A%2F%2Fstorage.googleapis.com%2Fnwe-oo.appspot.com%2Fpublic%2F2021%2F05%2Fnweoo-bot-avatar.jpg&display_text=closing`
-  );
-  res.send("redirecting");
   recieve.handleMessage();
 });
 
