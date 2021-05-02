@@ -38,12 +38,10 @@ export default class Receive {
     if (Array.isArray(responses)) {
       let delay = 0;
       for (let response of responses) {
-        response["persona_id"] = NWEOO_BOT;
         this.sendMessage(response, delay * 1200);
         delay++;
       }
     } else {
-      responses["persona_id"] = NWEOO_BOT;
       this.sendMessage(responses);
     }
   }
@@ -197,7 +195,6 @@ export default class Receive {
 
   handleQuickReply() {
     let payload = this.webhookEvent.message.quick_reply.payload;
-
     return this.handlePayload(payload);
   }
 
@@ -264,7 +261,7 @@ export default class Receive {
         id: this.user.psid,
       },
       message: response,
-      persona_id: undefined,
+      persona_id: NWEOO_BOT,
     };
 
     if ("persona_id" in response) {

@@ -20,6 +20,7 @@ app.use(router);
 
 mongoose
   .connect(DATABASE_URL, {
+    useCreateIndex: true,
     useNewUrlParser: true,
     useUnifiedTopology: true,
   })
