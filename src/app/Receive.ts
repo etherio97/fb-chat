@@ -54,6 +54,20 @@ export default class Receive {
     switch (user.mode) {
       case "agent":
         let care = new Care(this.user, this.webhookEvent);
+        if (Date.now() - this.user.talk_to_agent < 432000000) {
+          return [
+            Response.genQuickReply(
+              "သတ်မှတ်ထားသောအချိန် ၂ နာရီပြည့်သွားပါပြီး။",
+              [
+                {
+                  title: "ထပ်မံဆက်သွယ်ရန်",
+                  payload: "CARE_AGENT_START",
+                },
+              ]
+            ),
+            ...care.stopAgent(),
+          ];
+        }
         return [];
 
       case "delete":

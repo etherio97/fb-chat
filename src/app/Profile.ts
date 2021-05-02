@@ -85,12 +85,12 @@ export default class Profile {
       call_to_actions: [
         {
           type: "postback",
-          title: "မူလအညွှန်း",
+          title: "အကူအညီ",
           payload: "CARE_HELP",
         },
         {
           type: "postback",
-          title: "အေးဂျင့်နှင့်ဆက်သွယ်ရန်",
+          title: "ဆက်သွယ်ရန်",
           payload: "CARE_AGENT_START",
         },
       ],
