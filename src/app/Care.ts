@@ -3,6 +3,8 @@ import Receive from "./Receive";
 import Response from "./Response";
 import User from "./User";
 
+const { APP_URL } = process.env;
+
 export default class Care {
   constructor(public user?: User, public webhookEvent?: any) {}
 
@@ -92,7 +94,11 @@ export default class Care {
     this.user.mode = "agent";
     this.user.talk_to_agent = Date.now();
     return Response.genButtonTemplate(
-      "အေဂျင့်နှင့်ဆက်သွယ်ပေးနေပါတယ်ခင်ဗျာ။ အောက်ကခလုတ်ကိုနှိပ်ပြီး ဒီဆက်သွယ်မှုကိုရပ်တန့်နိုင်ပါတယ်။",
+      "အေဂျင့်နှင့်ဆက်သွယ်ပေးနေပါတယ်။ ဆက်သွယ်မှုကိုရပ်တန့်လိုပါက အောက်ကခလုတ်ကိုနှိပ်ပါ။",
+      {
+        type: "web_url",
+        url: `${APP_URL}/stop/${this.user.psid}`,
+      },
       [Response.genPostbackButton("ရပ်တန့်ရန်", "CARE_AGENT_STOP")]
     );
   }
@@ -102,16 +108,18 @@ export default class Care {
     this.user.talk_to_agent = undefined;
     /* Heroku Server Timezone (UTC) + GMT+6:30 (Myanmar) */
     let hour = new Date(Date.now() + 23400000).getHours();
-    let text = "မင်္ဂလာရှိသောမနက်ခင်း ဖြစ်ပါစေခင်ဗျာ...";
-    if (hour >= 10) {
-      text = "မင်္ဂလာရှိသောနေ့ရက် ဖြစ်ပါစေခင်ဗျာ...";
+    let text: string;
+    if (hour >= 4) {
+      text = "မင်္ဂလာရှိသောမနက်ခင်းဖြစ်ပါစေခင်ဗျာ...";
+    } else if (hour >= 9) {
+      text = "မင်္ဂလာရှိသောနေ့ရက်ဖြစ်ပါစေခင်ဗျာ...";
     } else if (hour >= 14) {
-      text = "သာယာသောနေ့ရက် ဖြစ်ပါစေခင်ဗျာ...";
+      text = "သာယာသောညနေခင်းဖြစ်ပါစေခင်ဗျာ...";
     } else if (hour >= 18) {
-      text = "သာယာသောညချမ်း ဖြစ်ပါစေခင်ဗျာ...";
+      text = "သာယာသောညချမ်းအခါသမယဖြစ်ပါစေခင်ဗျာ...";
     }
     return [
-      Response.genText("အေးဂျင့်နှင့်ဆက်သွယ်မှုကို ရပ်တန့်လိုက်ပါပြီ။"),
+      Response.genText("ဆက်သွယ်မှုကိုရပ်တန့်လိုက်ပါပြီ။"),
       Response.genQuickReply(text, [
         {
           title: "သတင်း",

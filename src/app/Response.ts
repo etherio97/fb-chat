@@ -28,13 +28,15 @@ export interface GenericTemplate {
   title: string;
   subtitle: string;
   default_action?: Button;
-  buttons?: Button[];
+  buttons?: Array<Button>;
 }
 
 export interface ImageTemplate {
   image_url: string;
   title: string;
   subtitle: string;
+  default_action?: Button;
+  buttons?: Array<Button>;
 }
 
 interface Payload {
@@ -44,7 +46,7 @@ interface Payload {
   image_url?: string;
   text?: string;
   payload?: string;
-  buttons?: Button[];
+  buttons?: Array<Button>;
   default_action?: Button;
 }
 
@@ -86,7 +88,7 @@ export default class Response {
     return this.genText(message);
   }
 
-  static genQuickReply(text: string, quickReplies: QuickReply[]) {
+  static genQuickReply(text: string, quickReplies: Array<QuickReply>) {
     let response = {
       text: text,
       quick_replies: [],
@@ -103,7 +105,7 @@ export default class Response {
     return response;
   }
 
-  static genGenericTemplate(elements: GenericTemplate[]) {
+  static genGenericTemplate(elements: Array<GenericTemplate>) {
     return {
       attachment: {
         type: "template",
@@ -119,8 +121,8 @@ export default class Response {
     image_url: string,
     title: string,
     subtitle: string,
-    default_action?: Button | Button[],
-    buttons?: Button[]
+    default_action?: Button | Array<Button>,
+    buttons?: Array<Button>
   ) {
     let response: GenericTemplate = {
       title,
@@ -141,7 +143,7 @@ export default class Response {
     return response;
   }
 
-  static genImageTemplate(elements: ImageTemplate[]) {
+  static genImageTemplate(elements: Array<ImageTemplate>) {
     return {
       attachment: {
         type: "template",
@@ -158,22 +160,39 @@ export default class Response {
     title: string,
     subtitle?: string
   ): ImageTemplate {
-    return {
+    let response = {
       image_url,
       title,
       subtitle: subtitle || "",
     };
+
+    return response;
   }
 
-  static genButtonTemplate(title: string, buttons: Button[]): ButtonTemplate {
+  static genButtonTemplate(
+    title: string,
+    default_action: Button | Array<Button>,
+    buttons?: Button[]
+  ): ButtonTemplate {
+    let payload: Payload = {
+      template_type: "button",
+      text: title,
+    };
+
+    if (Array.isArray(default_action)) {
+      payload.buttons = buttons;
+    } else {
+      payload.default_action = default_action;
+    }
+
+    if (buttons) {
+      payload.buttons = buttons;
+    }
+
     return {
       attachment: {
         type: "template",
-        payload: {
-          template_type: "button",
-          text: title,
-          buttons,
-        },
+        payload,
       },
     };
   }

@@ -185,7 +185,7 @@ export default class Receive {
   }
 
   handlePostback() {
-    let payload;
+    let payload: string = "";
     let postback = this.webhookEvent.postback;
     if (postback.referral && postback.referral.type == "OPEN_THREAD") {
       payload = postback.referral.ref;
