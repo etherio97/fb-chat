@@ -169,7 +169,7 @@ export default class Response {
   }
 
   static genButtonTemplate(
-    title: string,
+    text: string,
     buttons: Array<Button>
   ): ButtonTemplate {
     return {
@@ -177,7 +177,7 @@ export default class Response {
         type: "template",
         payload: {
           template_type: "button",
-          title,
+          text,
           buttons,
         },
       },
