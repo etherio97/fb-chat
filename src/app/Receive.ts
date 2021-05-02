@@ -5,7 +5,7 @@ import User from "./User";
 import Report from "./Report";
 import Care from "./Care";
 
-const NWEOO_BOT = "508511420175152";
+const NWEOO_BOT = "278599793960429";
 
 export default class Receive {
   constructor(public user?: User, public webhookEvent?: any) {}
