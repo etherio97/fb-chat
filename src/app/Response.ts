@@ -46,8 +46,7 @@ interface Payload {
   image_url?: string;
   text?: string;
   payload?: string;
-  buttons?: Array<Button>;
-  default_action?: Button;
+  buttons: Array<Button>;
 }
 
 interface Attachment {
@@ -171,28 +170,16 @@ export default class Response {
 
   static genButtonTemplate(
     title: string,
-    default_action: Button | Array<Button>,
-    buttons?: Button[]
+    buttons: Array<Button>
   ): ButtonTemplate {
-    let payload: Payload = {
-      template_type: "button",
-      text: title,
-    };
-
-    if (Array.isArray(default_action)) {
-      payload.buttons = buttons;
-    } else {
-      payload.default_action = default_action;
-    }
-
-    if (buttons) {
-      payload.buttons = buttons;
-    }
-
     return {
       attachment: {
         type: "template",
-        payload,
+        payload: {
+          template_type: "button",
+          title,
+          buttons,
+        },
       },
     };
   }

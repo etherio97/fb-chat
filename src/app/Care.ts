@@ -8,7 +8,7 @@ const { APP_URL } = process.env;
 export default class Care {
   constructor(public user?: User, public webhookEvent?: any) {}
 
-  handlePayload(payload: string) {
+  handlePayload(payload: string): Array<T> {
     switch (payload) {
       case "CARE_HELP":
         return this.defaultFallback(this.webhookEvent.message?.text?.trim());
@@ -18,23 +18,12 @@ export default class Care {
 
       case "CARE_AGENT_STOP":
         return this.stopAgent();
-
-      case "CARE_AGENT_REGISTER":
-        return this.registerAgent();
-
-      case "CARE_AGENT_NAME":
-        return this.askName();
-
-      case "CARE_AGENT_CANCEL":
-        this.user.store["stage"] = null;
-        return [];
     }
 
     return [];
   }
 
-  defaultFallback(message: string | undefined | null) {
-    console.log(this.user);
+  defaultFallback(message?: string) {
     return [
       Response.genQuickReply("ဘာများကူညီပေးရမလဲခင်ဗျ။", [
         {
@@ -49,58 +38,20 @@ export default class Care {
     ];
   }
 
-  askName() {
-    this.user.store["class"] = "care";
-    this.user.store["answer"] = "text";
-    this.user.store["callback"] = "answerName";
-
-    return Response.genText("အသစ်ပြုလုပ်မည့် အေဂျင့်နာမည်ကိုထည့်သွင်းပါ။");
-  }
-
-  answerName(name: string) {
-    this.user.store["agent"] = {
-      name,
-      profile_pic: null,
-    };
-    return this.askProfilePic();
-  }
-
-  askProfilePic() {
-    this.user.store["class"] = "care";
-    this.user.store["answer"] = "attachment:image";
-    this.user.store["callback"] = "sendImage";
-
-    return Response.genText(
-      "အေဂျင့်အကောင့်အတွက် အသုံးပြုလိုသည့် ပရိုဖိုင်ဓာတ်ပုံကို ပို့ပေးပါ။"
-    );
-  }
-
-  sendImage(payload: object) {
-    let recieve = new Receive(this.user, this.webhookEvent);
-    recieve.sendAction(Response.genSenderAction("typing_on"), 100);
-    GraphAPI.postPersonaAPI(
-      this.user.store["agent"]["name"],
-      payload["url"]
-    ).then((id) => {
-      this.user.store["agent"]["id"] = id;
-      recieve.sendMessage(
-        Response.genQuickReply(`သင့်အေဂျင့်အကောင့် ID မှာ ${id} ဖြစ်ပါတယ်။`, [])
-      );
-    });
-    return [];
-  }
-
   talkToAgent() {
     this.user.mode = "agent";
     this.user.talk_to_agent = Date.now();
-    return Response.genButtonTemplate(
-      "အေဂျင့်နှင့်ဆက်သွယ်ပေးနေပါတယ်။ ဆက်သွယ်မှုကိုရပ်တန့်လိုပါက အောက်ကခလုတ်ကိုနှိပ်ပါ။",
-      {
-        type: "web_url",
-        url: `${APP_URL}/stop/${this.user.psid}`,
-      },
-      [Response.genPostbackButton("ရပ်တန့်ရန်", "CARE_AGENT_STOP")]
-    );
+    return [
+      Response.genButtonTemplate(
+        "အေဂျင့်နှင့်ဆက်သွယ်ပေးနေပါတယ်။ ဆက်သွယ်မှုကိုရပ်တန့်လိုပါက အောက်ကခလုတ်ကိုနှိပ်ပါ။",
+        [
+          Response.genWebUrlButton(
+            "ရပ်တန့်ရန်",
+            `${APP_URL}/stop/${this.user.psid}`
+          ),
+        ]
+      ),
+    ];
   }
 
   stopAgent() {
