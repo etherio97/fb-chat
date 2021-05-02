@@ -1,5 +1,6 @@
 import { Router } from "express";
 import DB from "./app/DB";
+import Response from "./app/Response";
 import GraphAPI from "./app/GraphAPI";
 import News from "./app/News";
 import Profile from "./app/Profile";
@@ -91,14 +92,16 @@ router.get("/stop/:psid", (req, res) => {
     `https://www.messenger.com/closeWindow/?image_url=https%3A%2F%2Fstorage.googleapis.com%2Fnwe-oo.appspot.com%2Fpublic%2F2021%2F05%2Fnweoo-bot-avatar.jpg&display_text=closing`
   );
   res.end();
-  if (!(psid in users)) return;
-  let user = users[psid];
-  let recieve = new Receive(user[psid], {
-    postback: {
-      payload: "CARE_AGENT_STOP",
-    },
+  if (!(psid in users)) {
+    let recieve = new Receive(new User(psid), {
+      postback: { payload: "CARE_HELP" },
+    });
+    return recieve.handleMessage();
+  }
+  let recieve = new Receive(users[psid], {
+    postback: { payload: "CARE_AGENT_STOP" },
   });
-  recieve.handleMessage();
+  return recieve.handleMessage();
 });
 
 router.get("/articles/:id", (req, res) => {
