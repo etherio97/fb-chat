@@ -125,15 +125,10 @@ router.get("/nweoo", (req, res) => {
   const news = new News(null);
   res.send("1");
   news.fetchAll();
-  profile
-    .setWebhook()
-    .then(() =>
-      profile
-        .setPageFeedWebhook()
-        .then(() =>
-          profile.setThread().then(() => profile.setWhitelistedDomains())
-        )
-    );
+  profile.setThread();
+  profile.setWebhook();
+  profile.setPageFeedWebhook();
+  profile.setWhitelistedDomains();
 });
 
 export default router;
