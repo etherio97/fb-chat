@@ -1,13 +1,13 @@
 import { User as UserModel } from "../models/User";
 
 type Mode = "delete" | "agent" | "default";
+type Gender = "netural" | "male" | "female";
 
 export default class User {
-  public name: string;
   public firstName: string;
   public lastName: string;
   public profileURL: string;
-  public gender?: string;
+  public gender: Gender;
   public mode: Mode;
   public persona_id?: string;
   public headlines: string[];
@@ -20,10 +20,10 @@ export default class User {
   public existing: Boolean;
 
   constructor(public psid: string) {
-    this.name = "";
     this.firstName = "";
     this.lastName = "";
     this.profileURL = "";
+    this.gender = "netural";
     this.role = "user";
     this.mode = "default";
     this.credit_score = 80;
@@ -36,7 +36,6 @@ export default class User {
     this.firstName = profile.first_name || "";
     this.lastName = profile.last_name || "";
     this.profileURL = profile.profile_pic || "";
-    this.name = profile.name || `${profile.first_name} ${profile.last_name}`;
     if (profile.gender) {
       this.gender = profile.gender;
     }
@@ -49,6 +48,30 @@ export default class User {
     this.headlines = props.headlines || [];
     this.talk_to_agent = props.talk_to_agent;
     this.last_report = props.last_report;
+  }
+
+  get thirdPerson() {
+    if (this.gender === "netural") {
+      return "သင်";
+    }
+    return this.gender === "male" ? "အကို" : "အမ";
+  }
+
+  get name() {
+    let name: string = "";
+    if (!(this.firstName || this.lastName)) {
+      return name;
+    }
+    if (this.gender !== "netural") {
+      name += this.gender === "male" ? "ကို" : "မ";
+    }
+    if (this.firstName) {
+      name += " " + this.firstName;
+    }
+    if (this.lastName) {
+      name += " " + this.lastName;
+    }
+    return name;
   }
 
   static find(user: User) {

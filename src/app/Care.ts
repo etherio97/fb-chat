@@ -8,6 +8,9 @@ export default class Care {
 
   handlePayload(payload: string) {
     switch (payload) {
+      case "CARE_HELP":
+        return this.defaultFallback(this.webhookEvent.message?.text?.trim());
+
       case "CARE_AGENT_START":
         return this.talkToAgent();
 
@@ -26,6 +29,22 @@ export default class Care {
     }
 
     return [];
+  }
+
+  defaultFallback(message: string | undefined | null) {
+    console.log(this.user);
+    return [
+      Response.genQuickReply("ဘာများကူညီပေးရမလဲခင်ဗျ။", [
+        {
+          title: "သတင်းယူ",
+          payload: "NEWS_GETTING",
+        },
+        {
+          title: "သတင်းပေး",
+          payload: "NEWS_REPORTING",
+        },
+      ]),
+    ];
   }
 
   askName() {
@@ -81,7 +100,29 @@ export default class Care {
   stopAgent() {
     this.user.mode = "default";
     this.user.talk_to_agent = undefined;
-    return Response.genText("အေးဂျင့်နှင့်ဆက်သွယ်မှုကို ရပ်တန့်လိုက်ပါပြီ။");
+    /* Heroku Server Timezone (UTC) + GMT+6:30 (Myanmar) */
+    let hour = new Date(Date.now() + 23400000).getHours();
+    let text = "မင်္ဂလာရှိသောမနက်ခင်း ဖြစ်ပါစေခင်ဗျာ...";
+    if (hour >= 10) {
+      text = "မင်္ဂလာရှိသောနေ့ရက် ဖြစ်ပါစေခင်ဗျာ...";
+    } else if (hour >= 14) {
+      text = "သာယာသောနေ့ရက် ဖြစ်ပါစေခင်ဗျာ...";
+    } else if (hour >= 18) {
+      text = "သာယာသောညချမ်း ဖြစ်ပါစေခင်ဗျာ...";
+    }
+    return [
+      Response.genText("အေးဂျင့်နှင့်ဆက်သွယ်မှုကို ရပ်တန့်လိုက်ပါပြီ။"),
+      Response.genQuickReply(text, [
+        {
+          title: "သတင်း",
+          payload: "NEWS_ANOTHER",
+        },
+        {
+          title: "အကူအညီ",
+          payload: "CARE_HELP",
+        },
+      ]),
+    ];
   }
 
   registerAgent() {

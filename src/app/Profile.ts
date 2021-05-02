@@ -74,7 +74,7 @@ export default class Profile {
     return {
       locale: "default",
       text:
-        "မင်္ဂလာပါ {{user_full_name}}! သတင်းယူ၊ သတင်းပေးလိုရင်တော့ Get Started ကိုနှိပ်ပြီး ချက်ချင်းလုပ်ဆောင်နိုင်ပါတယ်။",
+        "မင်္ဂလာပါ {{user_full_name}}။\nသတင်းမှန်များကို အချိန်နဲ့တပြေးညီ သိရှိနိုင်အောင် ဆောင်ရွက်ပေးနေပါတယ်။",
     };
   }
 
@@ -86,7 +86,7 @@ export default class Profile {
         {
           type: "postback",
           title: "မူလအညွှန်း",
-          payload: "GET_STARTED",
+          payload: "CARE_HELP",
         },
         {
           type: "postback",

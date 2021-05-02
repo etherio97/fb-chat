@@ -47,7 +47,7 @@ export default class Receive {
   }
 
   handleTextMessage() {
-    let message = this.webhookEvent.message.text.trim();
+    let message = this.webhookEvent.message?.text?.trim();
     let user = this.user;
     let response;
 
@@ -112,21 +112,7 @@ export default class Receive {
       ];
     }
 
-    // if (message.match(/(?:hello|hi|ဟယ်လို|ဟိုင်း|မင်္ဂလာ|mingala)/gi)) {
-    //   return Response.genNuxMessage(this.user);
-    // }
-    return [
-      Response.genQuickReply("ဘာများကူညီပေးရမလဲခင်ဗျ။", [
-        {
-          title: "သတင်းယူ",
-          payload: "NEWS_GETTING",
-        },
-        {
-          title: "သတင်းပေး",
-          payload: "NEWS_REPORTING",
-        },
-      ]),
-    ];
+    return new Care(this.user, this.webhookEvent).defaultFallback(message);
   }
 
   handlePayload(payload) {
@@ -244,7 +230,6 @@ export default class Receive {
         id: this.user.psid,
       },
       sender_action: action.toUpperCase(),
-      persona_id: undefined,
     };
 
     setTimeout(() => GraphAPI.callSendAPI(requestBody), delay);
