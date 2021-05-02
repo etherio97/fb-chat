@@ -147,11 +147,15 @@ export default class Receive {
   handlePayload(payload) {
     GraphAPI.callFBAEventsAPI(this.user.psid, payload);
 
-    if (this.user.mode === "agent") {
-      if (payload.includes("CARE")) {
-        return new Care(this.user, this.webhookEvent).handlePayload(payload);
-      }
-      return [];
+    switch (this.user.mode) {
+      case "agent":
+        if (payload.includes("CARE")) {
+          return new Care(this.user, this.webhookEvent).handlePayload(payload);
+        }
+        return [];
+
+      case "delete":
+        return new News(this.user, this.webhookEvent).handlePayload(payload);
     }
 
     if (payload.includes("CARE")) {
