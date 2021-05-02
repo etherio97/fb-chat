@@ -29,7 +29,7 @@ export default class Receive {
       }
     } catch (error) {
       responses = {
-        text: `နည်းပညာပိုင်းအရချို့ယွင်းနေပါတယ်။ \n\n---\n${error}`,
+        text: `နည်းပညာပိုင်းအရချို့ယွင်းမှုရှိနေပါတယ်။ \n\n---\n${error}`,
       };
     }
 
@@ -51,17 +51,12 @@ export default class Receive {
 
     switch (user.mode) {
       case "agent":
-        if (message.match(/(?:bye)/i)) {
-          return new Care(this.user, this.webhookEvent).handlePayload(
-            "CARE_AGENT_STOP"
-          );
-        }
+        let care = new Care(this.user, this.webhookEvent);
         return [];
 
       case "delete":
-        return new News(this.user, this.webhookEvent).handlePayload(
-          "NEWS_REPORT_DELETE"
-        );
+        let news = new News(this.user, this.webhookEvent);
+        return news.handlePayload("NEWS_REPORT_DELETE");
     }
 
     if ("answer" in user.store) {
@@ -152,11 +147,14 @@ export default class Receive {
   handlePayload(payload) {
     GraphAPI.callFBAEventsAPI(this.user.psid, payload);
 
-    if (payload.includes("CARE")) {
-      return new Care(this.user, this.webhookEvent).handlePayload(payload);
+    if (this.user.mode === "agent") {
+      if (payload.includes("CARE")) {
+        return new Care(this.user, this.webhookEvent).handlePayload(payload);
+      }
+      return [];
     }
 
-    if (this.user.mode === "agent") {
+    if (payload.includes("CARE")) {
       return new Care(this.user, this.webhookEvent).handlePayload(payload);
     }
 
@@ -177,15 +175,17 @@ export default class Receive {
 
   handleAttachmentMessage() {
     let user = this.user;
+    let store = user.store;
     let attachment = this.webhookEvent.message.attachments[0];
 
-    if ("answer" in user.store) {
-      if (user.store["answer"].includes("attachment")) {
-        switch (user.store["class"]) {
+    if ("answer" in store) {
+      if (store["answer"].includes("attachment")) {
+        switch (store["class"]) {
           case "care":
             let care = new Care(this.user, this.webhookEvent);
-            let callback = this.user.store["callback"];
-            return care[callback](attachment);
+            if (attachment.payload.type == store["answer"].split(":").pop()) {
+              return care[store["callback"]](attachment.payload);
+            }
         }
       }
       user.store = {};

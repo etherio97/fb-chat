@@ -65,7 +65,7 @@ export default class News {
   latestNews() {
     this.fetchAll();
     let remain;
-    let max = 12;
+    let max = 10;
     let user = this.user;
     let read = user.headlines;
     let articles = DB.read()["articles"] || [];

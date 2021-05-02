@@ -85,10 +85,22 @@ export default class Profile {
       call_to_actions: [
         {
           type: "postback",
+          title: "မူလအညွှန်း",
+          payload: "GET_STARTED",
+        },
+        {
+          type: "postback",
           title: "အေးဂျင့်နှင့်ဆက်သွယ်ရန်",
           payload: "CARE_AGENT_START",
         },
       ],
+    };
+  }
+
+  getPageManagers() {
+    let page_managers = process.env.PAGE_MANAGERS || "";
+    return {
+      page_managers: page_managers.split(","),
     };
   }
 

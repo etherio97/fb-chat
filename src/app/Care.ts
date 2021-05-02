@@ -54,35 +54,23 @@ export default class Care {
     );
   }
 
-  sendImage(profile_pic) {
+  sendImage(payload: object) {
     let recieve = new Receive(this.user, this.webhookEvent);
     recieve.sendAction(Response.genSenderAction("typing_on"), 100);
-    GraphAPI.postPersonaAPI(this.user.store["agent"]["name"], profile_pic).then(
-      (id) => {
-        this.user.store["agent"]["id"] = id;
-        recieve.sendMessage(
-          Response.genText(`သင့်အေဂျင့်အကောင့် ID မှာ ${id} ဖြစ်ပါတယ်။`)
-        );
-      }
-    );
-    return [];
-  }
-
-  handleTextMessage(message: string) {
-    let user = this.user;
-    let stage = user.store["stage"] || "0";
-    switch (stage) {
-      case "0":
-        user.store["stage"] = "1";
-        return;
-      case "1":
-        user.store["stage"] = "2";
-        return;
-    }
+    GraphAPI.postPersonaAPI(
+      this.user.store["agent"]["name"],
+      payload["url"]
+    ).then((id) => {
+      this.user.store["agent"]["id"] = id;
+      recieve.sendMessage(
+        Response.genQuickReply(`သင့်အေဂျင့်အကောင့် ID မှာ ${id} ဖြစ်ပါတယ်။`, [])
+      );
+    });
     return [];
   }
 
   talkToAgent() {
+    this.user.mode = "agent";
     this.user.talk_to_agent = Date.now();
     return Response.genButtonTemplate(
       "အေဂျင့်နှင့်ဆက်သွယ်ပေးနေပါတယ်ခင်ဗျာ။ အောက်ကခလုတ်ကိုနှိပ်ပြီး ဒီဆက်သွယ်မှုကိုရပ်တန့်နိုင်ပါတယ်။",
@@ -91,6 +79,7 @@ export default class Care {
   }
 
   stopAgent() {
+    this.user.mode = "default";
     this.user.talk_to_agent = undefined;
     return Response.genText("အေးဂျင့်နှင့်ဆက်သွယ်မှုကို ရပ်တန့်လိုက်ပါပြီ။");
   }
