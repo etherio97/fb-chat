@@ -5,6 +5,8 @@ import User from "./User";
 import Report from "./Report";
 import Care from "./Care";
 
+const NWEOO_BOT = "508511420175152";
+
 export default class Receive {
   constructor(public user?: User, public webhookEvent?: any) {}
 
@@ -36,10 +38,12 @@ export default class Receive {
     if (Array.isArray(responses)) {
       let delay = 0;
       for (let response of responses) {
+        response["persona_id"] = NWEOO_BOT;
         this.sendMessage(response, delay * 1200);
         delay++;
       }
     } else {
+      responses["persona_id"] = NWEOO_BOT;
       this.sendMessage(responses);
     }
   }
@@ -57,18 +61,6 @@ export default class Receive {
       case "delete":
         let news = new News(this.user, this.webhookEvent);
         return news.handlePayload("NEWS_REPORT_DELETE");
-    }
-
-    if ("answer" in user.store) {
-      if (user.store["answer"] === "text") {
-        switch (user.store["class"]) {
-          case "care":
-            let care = new Care(this.user, this.webhookEvent);
-            let callback = this.user.store["callback"];
-            return care[callback](message);
-        }
-      }
-      user.store = {};
     }
 
     if (message.match(/#n[we]{2}oo/gi)) {
@@ -122,11 +114,6 @@ export default class Receive {
       ];
     }
 
-    if (message.match(/i(?:'m| am) agent/i)) {
-      return new Care(this.user, this.webhookEvent).handlePayload(
-        "CARE_AGENT_REGISTER"
-      );
-    }
     // if (message.match(/(?:hello|hi|ဟယ်လို|ဟိုင်း|မင်္ဂလာ|mingala)/gi)) {
     //   return Response.genNuxMessage(this.user);
     // }
