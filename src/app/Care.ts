@@ -12,8 +12,7 @@ export default class Care {
     let user = this.user;
 
     if (user.mode !== "agent") {
-      user.mode = "default";
-      return [];
+      return this.defaultFallback();
     }
 
     if (Date.now() > user.talk_to_agent) {
@@ -26,7 +25,7 @@ export default class Care {
     }
 
     if (this.webhookEvent.postback?.payload) {
-      return this.handlePayload(this.webhookEvent.postpack.payload);
+      return this.handlePayload(this.webhookEvent.postback.payload);
     }
 
     return [];
