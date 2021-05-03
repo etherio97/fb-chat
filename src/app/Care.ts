@@ -68,7 +68,7 @@ export default class Care {
         [
           Response.genWebUrlButton(
             "ရပ်တန့်ရန်",
-            `${APP_URL}/stop/${this.user.psid}?expired=${this.user.talk_to_agent}`,
+            `${APP_URL}/stop/${this.user.psid}?start_time=${this.user.talk_to_agent}`,
             "compact"
           ),
         ]

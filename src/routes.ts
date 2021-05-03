@@ -88,9 +88,8 @@ router.post("/webhook", (req, res) => {
 
 router.get("/stop/:psid", (req, res) => {
   let psid = req.params.psid;
-
+  closeInAppBrowser(res);
   if (!(psid in users)) {
-    closeInAppBrowser(res);
     return [];
   }
   let user = users[psid];
@@ -99,7 +98,6 @@ router.get("/stop/:psid", (req, res) => {
       let recieve = new Receive(user, {
         postback: { payload: "CARE_AGENT_STOP" },
       });
-      closeInAppBrowser(res);
       return recieve.handleMessage();
     }
   }
