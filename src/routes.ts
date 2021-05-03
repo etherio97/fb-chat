@@ -88,19 +88,20 @@ router.post("/webhook", (req, res) => {
 
 router.get("/stop/:psid", (req, res) => {
   let psid = req.params.psid;
-  res.redirect(
-    `https://www.messenger.com/closeWindow/?image_url=https%3A%2F%2Fstorage.googleapis.com%2Fnwe-oo.appspot.com%2Fpublic%2F2021%2F05%2Fnweoo-bot-avatar.jpg&display_text=closing`
-  );
-  res.end();
+
   if (!(psid in users)) {
+    closeInAppBrowser(res);
     return [];
   }
   let user = users[psid];
   if (user.mode === "agent") {
-    let recieve = new Receive(user, {
-      postback: { payload: "CARE_AGENT_STOP" },
-    });
-    return recieve.handleMessage();
+    if (user.talk_to_agent && Date.now() - user.talk_to_agent > 10000) {
+      let recieve = new Receive(user, {
+        postback: { payload: "CARE_AGENT_STOP" },
+      });
+      closeInAppBrowser(res);
+      return recieve.handleMessage();
+    }
   }
   return [];
 });
@@ -132,5 +133,12 @@ router.get("/nweoo", (req, res) => {
   profile.setPageFeedWebhook();
   profile.setWhitelistedDomains();
 });
+
+function closeInAppBrowser(res) {
+  res.redirect(
+    `https://www.messenger.com/closeWindow/?image_url=https%3A%2F%2Fstorage.googleapis.com%2Fnwe-oo.appspot.com%2Fpublic%2F2021%2F05%2Fnweoo-bot-avatar.jpg&display_text=closing`
+  );
+  res.end();
+}
 
 export default router;
