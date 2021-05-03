@@ -38,16 +38,19 @@ export default class Care {
   }
 
   defaultFallback() {
+    if (this.user.mode === "agent") {
+      return [];
+    }
     this.clearSession();
     return [
       Response.genQuickReply("ဘာများကူညီပေးရမလဲခင်ဗျ။", [
         {
-          title: "သတင်းယူ",
-          payload: "NEWS_GETTING",
-        },
-        {
           title: "သတင်းပေး",
           payload: "NEWS_REPORTING",
+        },
+        {
+          title: "သတင်းယူ",
+          payload: "NEWS_GETTING",
         },
       ]),
     ];
@@ -61,7 +64,7 @@ export default class Care {
     this.extendSession();
     return [
       Response.genButtonTemplate(
-        "အေဂျင့်နှင့်ဆက်သွယ်ပေးနေပါတယ်။ ဆက်သွယ်မှုကိုရပ်တန့်လိုပါက အောက်ကခလုတ်ကိုနှိပ်ပါ။",
+        "အေဂျင့်နှင့် ဆက်သွယ်ပေးနေပါတယ်။ အမြန်ဆုံးပြန်လည်ဆက်သွယ်ပေးပါ့မယ်။",
         [
           Response.genWebUrlButton(
             "ရပ်တန့်ရန်",
