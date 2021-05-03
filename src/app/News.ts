@@ -181,34 +181,36 @@ export default class News {
   }
 
   update() {
-    return this.updateHeadlines().then((headlines) =>
-      this.updateArticles().then((articles) => {
+    return this.updateHeadlines().then((headlines: Array<object>) =>
+      this.updateArticles().then((articles: Array<object>) => {
         updated_at = Date.now();
         articles.forEach((article) => {
           let headline = headlines.find(
-            (headline) => headline["title"] == article.title
+            (headline) => headline["title"] == article["title"]
           );
           if (headline) {
-            article.datetime = headline["datetime"];
-            article.timestamp = headline["timestamp"];
+            article["datetime"] = headline["datetime"];
+            article["timestamp"] = headline["timestamp"];
           } else {
-            article.datetime = new Date();
-            article.timestamp = Date.now();
+            article["datetime"] = new Date();
+            article["timestamp"] = Date.now();
           }
         });
-        return articles;
+        return articles.reverse();
       })
     );
   }
 
   updateHeadlines() {
     return axios
-      .get("https://api.nweoo.com/news/headlines")
+      .get("https://api.nweoo.com/news/headlines?limit=20")
       .then(({ data }) => Object.values(data));
   }
 
   updateArticles() {
-    return axios.get("https://api.nweoo.com/articles").then(({ data }) => data);
+    return axios
+      .get("https://api.nweoo.com/articles?limit=20")
+      .then(({ data }) => data);
   }
 
   fetchAll() {
