@@ -93,15 +93,16 @@ router.get("/stop/:psid", (req, res) => {
   );
   res.end();
   if (!(psid in users)) {
-    let recieve = new Receive(new User(psid), {
-      postback: { payload: "CARE_HELP" },
+    return [];
+  }
+  let user = users[psid];
+  if (user.mode === "agent") {
+    let recieve = new Receive(user, {
+      postback: { payload: "CARE_AGENT_STOP" },
     });
     return recieve.handleMessage();
   }
-  let recieve = new Receive(users[psid], {
-    postback: { payload: "CARE_AGENT_STOP" },
-  });
-  return recieve.handleMessage();
+  return [];
 });
 
 router.get("/articles/:id", (req, res) => {

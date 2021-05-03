@@ -8,10 +8,34 @@ const { APP_URL } = process.env;
 export default class Care {
   constructor(public user?: User, public webhookEvent?: any) {}
 
+  handleMessage() {
+    let user = this.user;
+
+    if (user.mode !== "agent") {
+      user.mode = "default";
+      return [];
+    }
+
+    if (Date.now() > user.talk_to_agent) {
+      return [
+        Response.genText(
+          "သတ်မှတ်ထားသောအချိန်ပြည့်သွားပါလို့ ဆက်သွယ်မှုကိုရပ်တန့်လိုက်ပါတယ်။"
+        ),
+        ...this.stopAgent(),
+      ];
+    }
+
+    if (this.webhookEvent.postback?.payload) {
+      return this.handlePayload(this.webhookEvent.postpack.payload);
+    }
+
+    return [];
+  }
+
   handlePayload(payload: string): Array<object> {
     switch (payload) {
       case "CARE_HELP":
-        return this.defaultFallback(this.webhookEvent.message?.text?.trim());
+        return this.defaultFallback();
 
       case "CARE_AGENT_START":
         return this.talkToAgent();
@@ -23,7 +47,8 @@ export default class Care {
     return [];
   }
 
-  defaultFallback(message?: string) {
+  defaultFallback() {
+    this.clearSession();
     return [
       Response.genQuickReply("ဘာများကူညီပေးရမလဲခင်ဗျ။", [
         {
@@ -39,15 +64,18 @@ export default class Care {
   }
 
   talkToAgent() {
-    this.user.mode = "agent";
-    this.user.talk_to_agent = Date.now();
+    if (this.user.mode === "agent") {
+      this.extendSession();
+      return [];
+    }
+    this.extendSession();
     return [
       Response.genButtonTemplate(
         "အေဂျင့်နှင့်ဆက်သွယ်ပေးနေပါတယ်။ ဆက်သွယ်မှုကိုရပ်တန့်လိုပါက အောက်ကခလုတ်ကိုနှိပ်ပါ။",
         [
           Response.genWebUrlButton(
             "ရပ်တန့်ရန်",
-            `${APP_URL}/stop/${this.user.psid}`,
+            `${APP_URL}/stop/${this.user.psid}?expired=${this.user.talk_to_agent}`,
             "compact"
           ),
         ]
@@ -56,42 +84,35 @@ export default class Care {
   }
 
   stopAgent() {
-    this.user.mode = "default";
-    this.user.talk_to_agent = undefined;
-    /* Heroku Server Timezone (UTC) + GMT+6:30 (Myanmar) */
-    let hour = new Date(Date.now() + 23400000).getHours();
-    let text: string;
-    if (hour >= 4) {
-      text = "မင်္ဂလာရှိသောမနက်ခင်းဖြစ်ပါစေခင်ဗျာ...";
-    } else if (hour >= 9) {
-      text = "မင်္ဂလာရှိသောနေ့ရက်ဖြစ်ပါစေခင်ဗျာ...";
-    } else if (hour >= 14) {
-      text = "သာယာသောညနေခင်းဖြစ်ပါစေခင်ဗျာ...";
-    } else if (hour >= 18) {
-      text = "သာယာသောညချမ်းအခါသမယဖြစ်ပါစေခင်ဗျာ...";
-    }
-    return [
-      Response.genText("ဆက်သွယ်မှုကိုရပ်တန့်လိုက်ပါပြီ။"),
-      Response.genQuickReply(text, [
-        {
-          title: "သတင်း",
-          payload: "NEWS_ANOTHER",
-        },
-        {
-          title: "အကူအညီ",
-          payload: "CARE_HELP",
-        },
-      ]),
-    ];
-  }
-
-  registerAgent() {
-    return Response.genQuickReply(
-      "အေ့ဂျင့်တစ်ယောက်အနေဖြင့်မှတ်ပုံတင်လိုပါသလား။",
+    let respnse = Response.genQuickReply(
+      "အခုဆက်သွယ်မေးမြန်းတဲ့အပေါ် အဆင်ပြေလာဆိုတာ အဆင့်သတ်မှတ်ပေးပါဦးဗျာ။",
       [
-        { title: "ပယ်ဖျက်", payload: "CARE_AGENT_CANCEL" },
-        { title: "အတည်ပြု", payload: "CARE_AGENT_NAME" },
+        {
+          title: "😀",
+          payload: "CARE_RATING_GOOD",
+        },
+        {
+          title: "😐",
+          payload: "CARE_RATING_NULL",
+        },
+        {
+          title: "🙁",
+          payload: "CARE_RATING_BAD",
+        },
       ]
     );
+    respnse["delay"] = 3000;
+    this.clearSession();
+    return [respnse];
+  }
+
+  extendSession() {
+    this.user.mode = "agent";
+    this.user.talk_to_agent = Date.now() + 7200000;
+  }
+
+  clearSession() {
+    this.user.mode = "default";
+    this.user.talk_to_agent = undefined;
   }
 }

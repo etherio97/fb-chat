@@ -1,4 +1,5 @@
 import axios from "axios";
+import Care from "./Care";
 import DB from "./DB";
 import GraphAPI from "./GraphAPI";
 import Receive from "./Receive";
@@ -13,53 +14,13 @@ let updated_at;
 export default class News {
   constructor(public user?: User, public webhookEvent?: any) {}
 
-  update() {
-    return this.updateHeadlines().then((headlines) =>
-      this.updateArticles().then((articles) => {
-        updated_at = Date.now();
-        articles.forEach((article) => {
-          let headline = headlines.find(
-            (headline) => headline["title"] == article.title
-          );
-          if (headline) {
-            article.datetime = headline["datetime"];
-            article.timestamp = headline["timestamp"];
-          } else {
-            article.datetime = new Date();
-            article.timestamp = Date.now();
-          }
-        });
-        return articles;
-      })
-    );
-  }
-
-  updateHeadlines() {
-    return axios
-      .get("https://api.nweoo.com/news/headlines")
-      .then(({ data }) => Object.values(data));
-  }
-
-  updateArticles() {
-    return axios.get("https://api.nweoo.com/articles").then(({ data }) => data);
-  }
-
-  fetchAll() {
-    let diff = Date.now() - updated_at;
-    return new Promise((resolve, reject) => {
-      if (diff < 3000000) {
-        resolve(DB.read()["articles"]);
-      } else {
-        this.update()
-          .then((articles) => {
-            let db = DB.read();
-            db.articles = articles;
-            DB.save(db);
-            resolve(articles);
-          })
-          .catch((e) => reject(e));
-      }
-    });
+  handleMessage() {
+    let event = this.webhookEvent;
+    if (event.message?.text) {
+      return this.handleDelete();
+    }
+    this.user.mode = "default";
+    return [new Care(this.user, this.webhookEvent).defaultFallback()];
   }
 
   latestNews() {
@@ -217,5 +178,54 @@ export default class News {
       this.user.mode = "delete";
     }
     return response;
+  }
+
+  update() {
+    return this.updateHeadlines().then((headlines) =>
+      this.updateArticles().then((articles) => {
+        updated_at = Date.now();
+        articles.forEach((article) => {
+          let headline = headlines.find(
+            (headline) => headline["title"] == article.title
+          );
+          if (headline) {
+            article.datetime = headline["datetime"];
+            article.timestamp = headline["timestamp"];
+          } else {
+            article.datetime = new Date();
+            article.timestamp = Date.now();
+          }
+        });
+        return articles;
+      })
+    );
+  }
+
+  updateHeadlines() {
+    return axios
+      .get("https://api.nweoo.com/news/headlines")
+      .then(({ data }) => Object.values(data));
+  }
+
+  updateArticles() {
+    return axios.get("https://api.nweoo.com/articles").then(({ data }) => data);
+  }
+
+  fetchAll() {
+    let diff = Date.now() - updated_at;
+    return new Promise((resolve, reject) => {
+      if (diff < 3000000) {
+        resolve(DB.read()["articles"]);
+      } else {
+        this.update()
+          .then((articles) => {
+            let db = DB.read();
+            db.articles = articles;
+            DB.save(db);
+            resolve(articles);
+          })
+          .catch((e) => reject(e));
+      }
+    });
   }
 }

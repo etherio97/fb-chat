@@ -12,22 +12,29 @@ export default class Receive {
 
   handleMessage() {
     let responses;
+    let user = this.user;
     let event = this.webhookEvent;
-
     try {
-      if (event.message) {
-        let message = event.message;
-        if (message.quick_reply) {
-          responses = this.handleQuickReply();
-        } else if (message.attachments) {
-          responses = this.handleAttachmentMessage();
-        } else if (message.text) {
-          responses = this.handleTextMessage();
-        }
-      } else if (event.postback) {
-        responses = this.handlePostback();
-      } else if (event.referral) {
-        responses = this.handleReferral();
+      switch (user.mode) {
+        case "agent":
+          responses = new Care(this.user, this.webhookEvent).handleMessage();
+        case "delete":
+          responses = new News(this.user, this.webhookEvent).handleMessage();
+        default:
+          if (event.message) {
+            let message = event.message;
+            if (message.quick_reply) {
+              responses = this.handleQuickReply();
+            } else if (message.attachments) {
+              responses = this.handleAttachmentMessage();
+            } else if (message.text) {
+              responses = this.handleTextMessage();
+            }
+          } else if (event.postback) {
+            responses = this.handlePostback();
+          } else if (event.referral) {
+            responses = this.handleReferral();
+          }
       }
     } catch (error) {
       responses = {
@@ -51,37 +58,10 @@ export default class Receive {
     let user = this.user;
     let response;
 
-    switch (user.mode) {
-      case "agent":
-        let care = new Care(this.user, this.webhookEvent);
-        if (Date.now() - this.user.talk_to_agent < 432000000) {
-          return [
-            Response.genQuickReply(
-              "သတ်မှတ်ထားသောအချိန် ၂ နာရီပြည့်သွားပါပြီး။",
-              [
-                {
-                  title: "ထပ်မံဆက်သွယ်ရန်",
-                  payload: "CARE_AGENT_START",
-                },
-              ]
-            ),
-            ...care.stopAgent(),
-          ];
-        }
-        return [];
-
-      case "delete":
-        let news = new News(this.user, this.webhookEvent);
-        return news.handlePayload("NEWS_REPORT_DELETE");
-    }
-
     if (message.match(/#n[we]{2}oo/gi)) {
-      if (
-        !this.user.last_report ||
-        Date.now() - this.user.last_report > 300000
-      ) {
+      if (!user.last_report || Date.now() - user.last_report > 300000) {
         this.user.last_report = new Date().getTime();
-        Report.send(this.user.psid, message)
+        Report.send(user.psid, message)
           .then(({ id, post_id }) => {
             let [__pageid, __postid] = post_id.split("_");
             this.user.reports.push(id);
@@ -112,7 +92,7 @@ export default class Receive {
           "၅ မိနစ်လောက်ခြားပြီးမှပြန်ပို့ပေးပါခင်ဗျာ။ အခုလိုဆက်သွယ်ပေးပို့တဲ့အတွက်ကျေးဇူးတင်ပါတယ်။";
         response = [Response.genText(text)];
       }
-      this.user.mode = null;
+      this.user.mode = "default";
       return response;
     }
 
@@ -126,22 +106,11 @@ export default class Receive {
       ];
     }
 
-    return new Care(this.user, this.webhookEvent).defaultFallback(message);
+    return new Care(this.user, this.webhookEvent).defaultFallback();
   }
 
   handlePayload(payload) {
     GraphAPI.callFBAEventsAPI(this.user.psid, payload);
-
-    switch (this.user.mode) {
-      case "agent":
-        if (payload.includes("CARE")) {
-          return new Care(this.user, this.webhookEvent).handlePayload(payload);
-        }
-        return [];
-
-      case "delete":
-        return new News(this.user, this.webhookEvent).handlePayload(payload);
-    }
 
     if (payload.includes("CARE")) {
       return new Care(this.user, this.webhookEvent).handlePayload(payload);
@@ -167,30 +136,7 @@ export default class Receive {
     let store = user.store;
     let attachment = this.webhookEvent.message.attachments[0];
 
-    if ("answer" in store) {
-      if (store["answer"].includes("attachment")) {
-        switch (store["class"]) {
-          case "care":
-            let care = new Care(this.user, this.webhookEvent);
-            if (attachment.payload.type == store["answer"].split(":").pop()) {
-              return care[store["callback"]](attachment.payload);
-            }
-        }
-      }
-      user.store = {};
-    }
-
-    return [
-      Response.genQuickReply(
-        "အခုလိုဆက်သွယ်တဲ့အတွက် ကျေးဇူးတင်ရှိပါတယ်ခင်ဗျာ...",
-        [
-          {
-            title: "ပြန်လည်စတင်ရန်",
-            payload: "GET_STARTED",
-          },
-        ]
-      ),
-    ];
+    return [];
   }
 
   handleQuickReply() {
