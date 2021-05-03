@@ -15,14 +15,14 @@ export default class Care {
       return this.defaultFallback();
     }
 
-    if (Date.now() > user.talk_to_agent) {
-      return [
-        Response.genText(
-          "သတ်မှတ်ထားသောအချိန်ပြည့်သွားပါလို့ ဆက်သွယ်မှုကိုရပ်တန့်လိုက်ပါတယ်။"
-        ),
-        ...this.stopAgent(),
-      ];
-    }
+    // if (Date.now() > user.talk_to_agent) {
+    //   return [
+    //     Response.genText(
+    //       "သတ်မှတ်ထားသောအချိန်ပြည့်သွားပါလို့ ဆက်သွယ်မှုကိုရပ်တန့်လိုက်ပါတယ်။"
+    //     ),
+    //     ...this.stopAgent(),
+    //   ];
+    // }
 
     if (this.webhookEvent.postback?.payload) {
       return this.handlePayload(this.webhookEvent.postback.payload);
