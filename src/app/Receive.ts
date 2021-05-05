@@ -18,8 +18,10 @@ export default class Receive {
       switch (user.mode) {
         case "agent":
           responses = new Care(this.user, this.webhookEvent).handleMessage();
+          break;
         case "delete":
           responses = new News(this.user, this.webhookEvent).handleMessage();
+          break;
         default:
           if (event.message) {
             let message = event.message;
