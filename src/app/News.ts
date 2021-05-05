@@ -57,6 +57,10 @@ export default class News {
 
   handlePayload(payload) {
     switch (payload) {
+      case "NEWS_DELETE_CANCEL":
+        this.user.mode = "default";
+        return new Care(this.user, this.webhookEvent).defaultFallback();
+
       case "NEWS_REPORT_DELETE":
         return this.handleDelete();
 
@@ -131,12 +135,19 @@ export default class News {
   handleDelete() {
     let response = [];
     let message = this.webhookEvent.message?.text || "";
-    if (message != "" && this.user.mode === "delete") {
-      let receive = new Receive(this.user, this.webhookEvent);
-      this.user.mode = null;
-      this.user.reports = this.user.reports.filter((id) => id != message);
-      Report.remove(message, this.user.psid)
+    let user = this.user;
+    let psid = this.user.psid;
+    if (message != "" && user.mode === "delete") {
+      let receive = new Receive(user, this.webhookEvent);
+      user.mode = null;
+      if ("_reportid" in user.store) {
+        psid = message;
+        message = user.store["_reportid"];
+        delete user.store["_reportid"];
+      }
+      Report.remove(message, psid)
         .then(() => {
+          this.user.reports = this.user.reports.filter((id) => id != message);
           let response = Response.genQuickReply(
             "ပေးပို့ချက် ID #" + message + " ကို ဖျက်လိုက်ပါပြီးခင်ဗျ...",
             [
@@ -149,13 +160,15 @@ export default class News {
           receive.sendMessage(response);
         })
         .catch((e) => {
-          let response = Response.genButtonTemplate(
-            "လုပ်ဆောင်ချက်မအောင်မြင်ပါ။ အောက်ဖော်ပြပါလင့်ခ်ကဝင်ပြီး ဖျက်ပေးပါခင်ဗျာ...",
+          this.user.mode = "delete";
+          this.user.store["_reportid"] = message;
+          let response = Response.genQuickReply(
+            `လုပ်ဆောင်ချက်မအောင်မြင်ပါ။ ပေးပို့ချက် #${message} ကိုပို့ဆောင်ခဲ့သောသူ၏ ဖုန်းနံပါတ် (သို့မဟုတ်) အကောင့် ID ကိုထည့်သွင်းပါ။`,
             [
-              Response.genWebUrlButton(
-                "ဝင်ရောက်ရန်",
-                `https://www.nweoo.com/report/${message}?phone=${this.user.psid}`
-              ),
+              {
+                title: "ပယ်ဖျက်ရန်",
+                payload: "NEWS_DELETE_CANCEL",
+              },
             ]
           );
           receive.sendMessage(response, 1400);

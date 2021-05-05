@@ -22,6 +22,9 @@ export default class Receive {
         case "delete":
           responses = new News(this.user, this.webhookEvent).handleMessage();
           break;
+        case "suggestion":
+          responses = new Care(this.user, this.webhookEvent).handleSuggestion();
+          break;
         default:
           if (event.message) {
             let message = event.message;
@@ -64,8 +67,15 @@ export default class Receive {
       return new Report().handleMessage(message, this);
     }
 
-    if (message.match(/(?:news|သတင်း|သတငျး|ဘာထူးလဲ)/)) {
+    if (message.match(/^(?:news|သတင်း|သတငျး|ဘာထူးလဲ)$/i)) {
       return new News(this.user, this.webhookEvent).latestNews();
+    }
+
+    if (message.match(/my id/i)) {
+      return [
+        Response.genText(`${this.user.thirdPerson}၏ အကောင့် ID မှာ`),
+        Response.genText(this.user.psid),
+      ];
     }
 
     return new Care(this.user, this.webhookEvent).defaultFallback();

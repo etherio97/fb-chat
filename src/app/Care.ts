@@ -5,13 +5,11 @@ export default class Care {
   constructor(public user?: User, public webhookEvent?: any) {}
 
   handleMessage() {
-    let user = this.user;
-    let event = this.webhookEvent;
-    if (event.postback) {
+    if (this.webhookEvent.postback) {
       return this.handlePayload(this.webhookEvent.postback.payload);
     }
-    if (user.mode === "agent") {
-      return [];
+    if (typeof this.user.talk_to_agent === "number") {
+      this.user.talk_to_agent++;
     }
     return [];
   }
@@ -24,14 +22,33 @@ export default class Care {
         return this.talkToAgent();
       case "CARE_AGENT_STOP":
         return this.stopAgent();
+      case "CARE_RATING_GOOD":
+      case "CARE_RATING_NULL":
+        return [
+          Response.genText(
+            "အခုလိုဖြေကြားပေးတဲ့အတွက် ကျေးဇူးထူးတင်ရှိပါတယ်ခင်ဗျာ။"
+          ),
+        ];
+      case "CARE_RATING_BAD":
+        this.user.mode = "suggestion";
+        return [
+          Response.genText(
+            "အဆင်မပြေတဲ့အတွက်စိတ်မကောင်းပါဘူးဗျာ။ ဘာများလိုအပ်လဲဆိုတာပြောပေးပါအုံးဗျာ..."
+          ),
+        ];
     }
     return [];
   }
 
-  defaultFallback() {
-    if (this.user.mode === "agent") {
-      return [];
+  handleSuggestion() {
+    if (this.webhookEvent.postback) {
+      return this.handleMessage();
     }
+    this.clearSession();
+    return [Response.genText("")];
+  }
+
+  defaultFallback() {
     this.clearSession();
     return [
       Response.genQuickReply("ဘာများကူညီပေးရမလဲခင်ဗျ။", [
@@ -52,43 +69,46 @@ export default class Care {
       return [];
     }
     this.user.mode = "agent";
-    this.user.talk_to_agent = Date.now();
+    this.user.talk_to_agent = 0;
     return [
-      Response.genButtonTemplate(
-        "အေဂျင့်နှင့် ဆက်သွယ်ပေးနေပါတယ်။ အမြန်ဆုံးပြန်လည်ဆက်သွယ်ပေးပါ့မယ်။",
-        [Response.genPostbackButton("ရပ်တန့်ရန်", "CARE_AGENT_STOP")]
-      ),
+      Response.genButtonTemplate("အမြန်ဆုံးပြန်လည်ဆက်သွယ်ပေးပါ့မယ်ခင်ဗျာ။", [
+        Response.genPostbackButton("ရပ်တန့်ရန်", "CARE_AGENT_STOP"),
+      ]),
     ];
   }
 
   stopAgent() {
-    let greeting = Response.genText("မင်္ဂလာရှိသောနေ့ရက်ဖြစ်ပါစေခင်ဗျာ။");
-    let feedback = Response.genQuickReply(
-      "အခုဆက်သွယ်မေးမြန်းတဲ့အပေါ် အဆင်ပြေလာဆိုတာ အဆင့်သတ်မှတ်ပေးပါဦးဗျာ။",
-      [
-        {
-          title: "😀",
-          payload: "CARE_RATING_GOOD",
-        },
-        {
-          title: "😐",
-          payload: "CARE_RATING_NULL",
-        },
-        {
-          title: "🙁",
-          payload: "CARE_RATING_BAD",
-        },
-      ]
-    );
-    feedback["delay"] = 3000;
+    let response = [];
+    response.push(Response.genText("မင်္ဂလာရှိသောနေ့ရက်ဖြစ်ပါစေခင်ဗျာ။"));
+    if (this.user.talk_to_agent > 2) {
+      let feedback = Response.genQuickReply(
+        "အခုဆက်သွယ်မေးမြန်းတဲ့အပေါ် အဆင်ပြေလာဆိုတာ အဆင့်သတ်မှတ်ပေးပါဦးဗျာ။",
+        [
+          {
+            title: "😀",
+            payload: "CARE_RATING_GOOD",
+          },
+          {
+            title: "😐",
+            payload: "CARE_RATING_NULL",
+          },
+          {
+            title: "🙁",
+            payload: "CARE_RATING_BAD",
+          },
+        ]
+      );
+      feedback["delay"] = 3000;
+      response.push(feedback);
+    }
     this.user.mode = "default";
     this.user.talk_to_agent = undefined;
-    return [greeting, feedback];
+    return [];
   }
 
   extendSession() {
     this.user.mode = "agent";
-    this.user.talk_to_agent = Date.now(); //7200000
+    this.user.talk_to_agent = 0; //7200000
   }
 
   clearSession() {
