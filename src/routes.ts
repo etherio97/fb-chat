@@ -64,9 +64,6 @@ router.post("/webhook", (req, res) => {
 
     if (!(psid in users)) {
       let user = new User(psid);
-
-      console.log("person id: %s", psid);
-
       GraphAPI.getUserProfile(psid)
         .then((userProfile) => {
           user.setProfile(userProfile);
@@ -85,40 +82,6 @@ router.post("/webhook", (req, res) => {
     }
   });
 });
-
-router.get("/stop/:psid", (req, res) => {
-  let psid = req.params.psid;
-  closeInAppBrowser(res);
-  if (!(psid in users)) {
-    return [];
-  }
-  let user = users[psid];
-  if (user.mode === "agent") {
-    if (user.talk_to_agent && Date.now() - user.talk_to_agent > 10000) {
-      let recieve = new Receive(user, {
-        postback: { payload: "CARE_AGENT_STOP" },
-      });
-      return recieve.handleMessage();
-    }
-  }
-  return [];
-});
-
-router.get("/articles/:id", (req, res) => {
-  const id = req.params["id"];
-  const articles = DB.read()["articles"];
-  const article = articles.find((article) => article.id == id);
-  if (!article) return res.sendStatus(404);
-  res.render("../static/article.ejs", {
-    APP_ID,
-    PAGE_ID,
-    ...article,
-  });
-});
-
-router.get("/data/feed", (req, res) => res.json(DB.read()["posts"]));
-
-router.get("/data/comment", (req, res) => res.json(DB.read()["comments"]));
 
 router.get("/nweoo", (req, res) => {
   if (req.query["verify_token"] !== VERIFY_TOKEN) return res.sendStatus(403);

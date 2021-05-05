@@ -1,24 +1,18 @@
-import GraphAPI from "./GraphAPI";
-import Receive from "./Receive";
-import Response from "./Response";
 import User from "./User";
-
-const { APP_URL } = process.env;
+import Response from "./Response";
 
 export default class Care {
   constructor(public user?: User, public webhookEvent?: any) {}
 
   handleMessage() {
     let user = this.user;
-
-    if (user.mode !== "agent") {
-      return this.defaultFallback();
-    }
-
-    if (this.webhookEvent.postback?.payload) {
+    let event = this.webhookEvent;
+    if (event.postback) {
       return this.handlePayload(this.webhookEvent.postback.payload);
     }
-
+    if (user.mode === "agent") {
+      return [];
+    }
     return [];
   }
 
@@ -26,14 +20,11 @@ export default class Care {
     switch (payload) {
       case "CARE_HELP":
         return this.defaultFallback();
-
       case "CARE_AGENT_START":
         return this.talkToAgent();
-
       case "CARE_AGENT_STOP":
         return this.stopAgent();
     }
-
     return [];
   }
 
@@ -58,26 +49,21 @@ export default class Care {
 
   talkToAgent() {
     if (this.user.mode === "agent") {
-      this.extendSession();
       return [];
     }
-    this.extendSession();
+    this.user.mode = "agent";
+    this.user.talk_to_agent = Date.now();
     return [
       Response.genButtonTemplate(
         "အေဂျင့်နှင့် ဆက်သွယ်ပေးနေပါတယ်။ အမြန်ဆုံးပြန်လည်ဆက်သွယ်ပေးပါ့မယ်။",
-        [
-          Response.genWebUrlButton(
-            "ရပ်တန့်ရန်",
-            `${APP_URL}/stop/${this.user.psid}?start_time=${this.user.talk_to_agent}`,
-            "compact"
-          ),
-        ]
+        [Response.genPostbackButton("ရပ်တန့်ရန်", "CARE_AGENT_STOP")]
       ),
     ];
   }
 
   stopAgent() {
-    let respnse = Response.genQuickReply(
+    let greeting = Response.genText("မင်္ဂလာရှိသောနေ့ရက်ဖြစ်ပါစေခင်ဗျာ။");
+    let feedback = Response.genQuickReply(
       "အခုဆက်သွယ်မေးမြန်းတဲ့အပေါ် အဆင်ပြေလာဆိုတာ အဆင့်သတ်မှတ်ပေးပါဦးဗျာ။",
       [
         {
@@ -94,9 +80,10 @@ export default class Care {
         },
       ]
     );
-    respnse["delay"] = 3000;
-    this.clearSession();
-    return [respnse];
+    feedback["delay"] = 3000;
+    this.user.mode = "default";
+    this.user.talk_to_agent = undefined;
+    return [greeting, feedback];
   }
 
   extendSession() {
