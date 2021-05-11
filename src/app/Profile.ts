@@ -18,11 +18,11 @@ export default class Profile {
     );
   }
 
-  setThread() {
+  setThread(text?: string, menu?: object) {
     let profilePayload = {
       ...this.getGetStarted(),
-      ...this.getGreeting(),
-      ...this.getPersistentMenu(),
+      ...this.getGreeting(text),
+      ...this.getPersistentMenu(menu),
     };
 
     return GraphAPI.callMessengerProfileAPI(profilePayload);
@@ -56,32 +56,29 @@ export default class Profile {
     };
   }
 
-  getGreeting() {
-    let greetings = [this.getGreetingText()];
-    return {
-      greeting: greetings,
-    };
+  getGreeting(text) {
+    let greeting = [this.getGreetingText()];
+    if (text) greeting[0].text = text;
+    return { greeting };
   }
 
-  getPersistentMenu() {
-    let menuItems = [this.getMenuItems()];
-    return {
-      persistent_menu: menuItems,
-    };
+  getPersistentMenu(menu?: object) {
+    let persistent_menu = [this.getMenuItems()];
+    if (menu) persistent_menu[0] = { ...persistent_menu[0], ...menu };
+    return { persistent_menu };
   }
 
   getGreetingText() {
     return {
       locale: "default",
-      text:
-        "မင်္ဂလာပါ {{user_full_name}}။\nသတင်းမှန်များကို အချိန်နဲ့တပြေးညီ သိရှိနိုင်အောင် ဆောင်ရွက်ပေးနေပါတယ်။",
+      text: "မင်္ဂလာပါ {{user_full_name}}။\nသတင်းမှန်များကို အချိန်နဲ့တပြေးညီ သိရှိနိုင်အောင် ဆောင်ရွက်ပေးနေပါတယ်။",
     };
   }
 
   getMenuItems() {
     return {
       locale: "default",
-      composer_input_disabled: false,
+      composer_input_disabled: true,
       call_to_actions: [
         {
           type: "postback",
@@ -97,18 +94,12 @@ export default class Profile {
     };
   }
 
-  getPageManagers() {
-    let page_managers = process.env.PAGE_MANAGERS || "";
-    return {
-      page_managers: page_managers.split(","),
-    };
-  }
-
   getWhitelistedDomains() {
     return {
       whitelisted_domains: [
         APP_URL,
         SHOP_URL,
+        "https://nweoo.com",
         "https://api.nweoo.com",
         "https://www.nweoo.com",
         "https://facebook.com",

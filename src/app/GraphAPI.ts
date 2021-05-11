@@ -155,4 +155,14 @@ export default class GraphAPI {
       .then(({ data }) => data)
       .catch((e) => console.log(e.response?.data || e.message));
   }
+
+  static callCustomUserSettings(senderPsid, requestBody) {
+    requestBody.psid = senderPsid;
+
+    return axios.post(
+      "https://graph.facebook.com/v10.0/me/custom_user_settings?access_token=" +
+        PAGE_ACCESS_TOKEN,
+      requestBody
+    );
+  }
 }

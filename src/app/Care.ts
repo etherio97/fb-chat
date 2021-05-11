@@ -1,5 +1,7 @@
 import User from "./User";
 import Response from "./Response";
+import GraphAPI from "./GraphAPI";
+import Profile from "./Profile";
 
 export default class Care {
   constructor(public user?: User, public webhookEvent?: any) {}
@@ -37,6 +39,9 @@ export default class Care {
           ),
         ];
     }
+
+    this.user.talk_to_agent++;
+
     return [];
   }
 
@@ -44,12 +49,15 @@ export default class Care {
     if (this.webhookEvent.postback) {
       return this.handleMessage();
     }
+
     this.clearSession();
+
     return [Response.genText("")];
   }
 
   defaultFallback() {
     this.clearSession();
+
     return [
       Response.genQuickReply("ဘာများကူညီပေးရမလဲခင်ဗျ။", [
         {
@@ -68,21 +76,43 @@ export default class Care {
     if (this.user.mode === "agent") {
       return [];
     }
+
     this.user.mode = "agent";
     this.user.talk_to_agent = 0;
+
+    GraphAPI.callCustomUserSettings(this.user.psid, {
+      locale: "default",
+      composer_input_disabled: false,
+      call_to_actions: [
+        {
+          type: "postback",
+          title: "ရပ်တန့်ရန်",
+          payload: "CARE_AGENT_STOP",
+        },
+      ],
+    });
+
     return [
-      Response.genButtonTemplate("အမြန်ဆုံးပြန်လည်ဆက်သွယ်ပေးပါ့မယ်ခင်ဗျာ။", [
-        Response.genPostbackButton("ရပ်တန့်ရန်", "CARE_AGENT_STOP"),
-      ]),
+      Response.genButtonTemplate(
+        "သက်ဆိုင်ရာနဲ့ အမြန်ဆုံးပြန်လည်ဆက်သွယ်ပေးပါ့မယ်ခင်ဗျာ။ ရပ်တန့်လိုပါက stop ဟုပို့၍ရပ်တန့်နိုင်ပါတယ်။",
+        [Response.genPostbackButton("ရပ်တန့်ရန်", "CARE_AGENT_STOP")]
+      ),
     ];
   }
 
   stopAgent() {
     let response = [];
+
+    GraphAPI.callCustomUserSettings(
+      this.user.psid,
+      new Profile(null).getMenuItems()
+    );
+
     response.push(Response.genText("မင်္ဂလာရှိသောနေ့ရက်ဖြစ်ပါစေခင်ဗျာ။"));
+
     if (this.user.talk_to_agent > 2) {
       let feedback = Response.genQuickReply(
-        "အခုဆက်သွယ်မေးမြန်းတဲ့အပေါ် အဆင်ပြေလာဆိုတာ အဆင့်သတ်မှတ်ပေးပါဦးဗျာ။",
+        "အခုဆက်သွယ်မေးမြန်းတဲ့အပေါ် အဆင့်သတ်မှတ်ပေးပါဦးဗျ။",
         [
           {
             title: "😀",
@@ -99,10 +129,13 @@ export default class Care {
         ]
       );
       feedback["delay"] = 3000;
+
       response.push(feedback);
     }
+
     this.user.mode = "default";
     this.user.talk_to_agent = undefined;
+
     return [];
   }
 

@@ -87,12 +87,16 @@ router.get("/nweoo", (req, res) => {
   if (req.query["verify_token"] !== VERIFY_TOKEN) return res.sendStatus(403);
   const profile = new Profile(null);
   const news = new News(null);
-  res.send("1");
+  res.send("EVENT_UPDATED");
   news.fetchAll();
   profile.setThread();
-  profile.setWebhook();
-  profile.setPageFeedWebhook();
   profile.setWhitelistedDomains();
+});
+
+router.post("/set-greeting", (req, res) => {
+  const { text } = req.body;
+  res.sendStatus(200);
+  new Profile(null).getGreeting(text);
 });
 
 function closeInAppBrowser(res) {
