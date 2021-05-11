@@ -56,7 +56,7 @@ export default class Profile {
     };
   }
 
-  getGreeting(text) {
+  getGreeting(text?: string) {
     let greeting = [this.getGreetingText()];
     if (text) greeting[0].text = text;
     return { greeting };
