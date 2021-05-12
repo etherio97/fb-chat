@@ -7,7 +7,7 @@ import Profile from "./app/Profile";
 import Receive from "./app/Receive";
 import User from "./app/User";
 
-const { APP_ID, PAGE_ID, VERIFY_TOKEN } = process.env;
+const { VERIFY_TOKEN } = process.env;
 const router = Router();
 const users = {};
 

@@ -14,6 +14,8 @@ export default function verify(req: Request, res: Response, buf) {
       .createHmac("sha1", APP_SECRET)
       .update(buf)
       .digest("hex");
+    var body = req.body || {};
+    if (body["object"] === "page") return;
     if (signatureHash != expectedHash) {
       throw new Error("Couldn't validate the request signature.");
     }

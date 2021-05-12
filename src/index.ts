@@ -12,18 +12,17 @@ const { PORT, DATABASE_URL } = process.env;
 
 DB.init();
 
-app.set("view engine", "ejs");
 app.use(json({ verify }));
 app.use(urlencoded({ extended: true }));
 
 app.use(router);
 
-mongoose
-  .connect(DATABASE_URL, {
-    useCreateIndex: true,
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-  })
-  .then(() => console.log("database (mongodb) is connected"));
+// mongoose
+//   .connect(DATABASE_URL, {
+//     useCreateIndex: true,
+//     useNewUrlParser: true,
+//     useUnifiedTopology: true,
+//   })
+//   .then(() => console.log("database (mongodb) is connected"));
 
 app.listen(PORT || 3000, () => console.log("server (express) is serving"));
