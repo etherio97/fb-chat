@@ -1,6 +1,5 @@
 import { config } from "dotenv";
 import express, { json, urlencoded } from "express";
-import mongoose from "mongoose";
 import DB from "./app/DB";
 import verify from "./functions/verify";
 import router from "./routes";
