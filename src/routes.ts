@@ -39,14 +39,11 @@ router.post("/webhook", (req, res) => {
         let change = entry.changes[0].value;
         switch (change.item) {
           case "post":
-            console.log("post", change);
-            return /*receiveMessage.handlePrivateReply("post_id", change.post_id)*/;
+            //
+            return;
           case "comment":
-            console.log("post", change);
-            return /* receiveMessage.handlePrivateReply(
-              "comment_id",
-              change.comment_id
-            )*/;
+            //
+            return;
           default:
             console.log("Unsupported feed change type.", change);
             return;
@@ -93,7 +90,7 @@ router.get("/nweoo", (req, res) => {
   profile.setWhitelistedDomains();
 });
 
-router.post("/set-greeting", (req, res) => {
+router.post("/greeting", (req, res) => {
   const { text } = req.body;
   res.sendStatus(200);
   new Profile(null).getGreeting(text);
