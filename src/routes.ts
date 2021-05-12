@@ -6,8 +6,9 @@ import News from "./app/News";
 import Profile from "./app/Profile";
 import Receive from "./app/Receive";
 import User from "./app/User";
+import axios from "axios";
 
-const { VERIFY_TOKEN } = process.env;
+const { API_URL, VERIFY_TOKEN } = process.env;
 const router = Router();
 const users = {};
 
@@ -30,35 +31,34 @@ router.get("/webhook", (req, res) => {
 
 router.post("/webhook", (req, res) => {
   let body = req.body;
-  if (body.object !== "page") return res.sendStatus(404);
-  res.status(200).send("EVENT_RECEIVED");
+  if (body.object !== "page") return res.sendStatus(204);
   body.entry.forEach(function (entry) {
     if ("changes" in entry) {
-      let receiveMessage = new Receive(null);
       if (entry.changes[0].field === "feed") {
         let change = entry.changes[0].value;
         switch (change.item) {
           case "post":
-            //
-            return;
           case "comment":
-            //
-            return;
+            axios
+              .post(`${API_URL}/fb/webhook`, change)
+              .then(() => res.status(204).end())
+              .catch(() => res.status(500).end());
+            break;
+          case "reaction": // ignored
+            break;
           default:
-            console.log("Unsupported feed change type.", change);
-            return;
+            console.log("Unsupported feed change type.", change.item);
         }
       }
+      res.status(204).end();
+      return;
     }
-
+    res.status(200).send("EVENT_RECEIVED");
     let webhookEvent = entry.messaging[0];
-
     if ("read" in webhookEvent || "delivery" in webhookEvent) {
       return;
     }
-
     let psid = webhookEvent.sender.id;
-
     if (!(psid in users)) {
       let user = new User(psid);
       GraphAPI.getUserProfile(psid)
