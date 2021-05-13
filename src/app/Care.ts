@@ -4,9 +4,9 @@ import GraphAPI from "./GraphAPI";
 import Profile from "./Profile";
 
 export default class Care {
-  constructor(public user?: User, public webhookEvent?: any) {}
+  constructor(public user: User, public webhookEvent?: any) {}
 
-  handleMessage() {
+  handle() {
     if (this.webhookEvent.postback) {
       return this.handlePayload(this.webhookEvent.postback.payload);
     }
@@ -47,7 +47,7 @@ export default class Care {
 
   handleSuggestion() {
     if (this.webhookEvent.postback) {
-      return this.handleMessage();
+      return this.handle();
     }
 
     this.clearSession();

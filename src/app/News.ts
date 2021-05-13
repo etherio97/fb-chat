@@ -11,9 +11,9 @@ const { APP_URL } = process.env;
 let updated_at;
 
 export default class News {
-  constructor(public user?: User, public webhookEvent?: any) {}
+  constructor(public user: User, public webhookEvent?: any) {}
 
-  handleMessage() {
+  handle() {
     let event = this.webhookEvent;
     if (event.message?.text) {
       return this.handleDelete();

@@ -17,10 +17,10 @@ export default class Message {
     try {
       switch (user.mode) {
         case "agent":
-          responses = new Care(this.user, this.webhookEvent).handleMessage();
+          responses = new Care(this.user, this.webhookEvent).handle();
           break;
         case "delete":
-          responses = new News(this.user, this.webhookEvent).handleMessage();
+          responses = new News(this.user, this.webhookEvent).handle();
           break;
         case "suggestion":
           responses = new Care(this.user, this.webhookEvent).handleSuggestion();

@@ -60,6 +60,7 @@ router.post(
           if (!(psid in users)) {
             users[psid] = new User(psid);
           }
+          console.log(psid, event["message"]);
           new Message(users[psid], event).handle();
         } else {
           console.log("Unsuported event field:", ...Object.keys(entry));
