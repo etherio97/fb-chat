@@ -40,14 +40,14 @@ interface Context {
   video_id?: string;
 }
 
-const { FACEBOOK_PAGE_ID } = process.env;
+const { PAGE_ID } = process.env;
 
 export default class Feed {
   constructor(public context: Context) {}
 
   handle() {
     let context = this.context;
-    if (context.from.id != FACEBOOK_PAGE_ID) {
+    if (context.from.id != PAGE_ID) {
       return;
     }
     if ("post_id" in context) {
