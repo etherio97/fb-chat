@@ -1,8 +1,7 @@
 import axios from "axios";
 import Care from "./Care";
 import DB from "./DB";
-import GraphAPI from "./GraphAPI";
-import Receive from "./Receive";
+import Message from "./Message";
 import Report from "./Report";
 import Response from "./Response";
 import User from "./User";
@@ -138,7 +137,7 @@ export default class News {
     let user = this.user;
     let psid = this.user.psid;
     if (message != "" && user.mode === "delete") {
-      let receive = new Receive(user, this.webhookEvent);
+      let receive = new Message(user, this.webhookEvent);
       user.mode = null;
       if ("_reportid" in user.store) {
         psid = message;

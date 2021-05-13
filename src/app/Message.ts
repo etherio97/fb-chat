@@ -7,10 +7,10 @@ import Care from "./Care";
 
 const NWEOO_BOT = "278599793960429";
 
-export default class Receive {
+export default class Message {
   constructor(public user?: User, public webhookEvent?: any) {}
 
-  handleMessage() {
+  handle() {
     let responses;
     let user = this.user;
     let event = this.webhookEvent;

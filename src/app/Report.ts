@@ -1,7 +1,6 @@
 import Axios from "axios";
-import Receive from "./Receive";
+import Receive from "./Message";
 import Response from "./Response";
-import User from "./User";
 
 export default class Report {
   handleMessage(message: string, recieve: Receive) {
