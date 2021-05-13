@@ -36,7 +36,7 @@ router.post(
   "/webhook",
   (req, res) =>
     (req.body.object === "page" &&
-      req.body["entry"].forEach(function (entry) {
+      req.body.entry.forEach(function (entry) {
         if ("changes" in entry) {
           res.sendStatus(200);
           let { field, value } = entry.changes[0];
@@ -52,22 +52,15 @@ router.post(
           }
         } else if ("messages" in entry) {
           res.sendStatus(200);
-          let webhookEvent: object = entry.messages[0];
-          let psid: string = webhookEvent["sender"]["id"];
-          if ("read" in webhookEvent || "delivery" in webhookEvent) return;
+          let event: object = entry.messages[0];
+          let psid: string = event["sender"]["id"];
+          if ("read" in event || "delivery" in event) {
+            return;
+          }
           if (!(psid in users)) {
             users[psid] = new User(psid);
-            GraphAPI.getUserProfile(psid)
-              .then((userProfile) => {
-                users[psid].setProfile(userProfile);
-              })
-              .catch((e) => null)
-              .finally(() => {
-                new Message(users[psid], webhookEvent).handle();
-              });
-          } else {
-            new Message(users[psid], webhookEvent).handle();
           }
+          new Message(users[psid], event).handle();
         } else {
           console.log("Unsuported event field:", ...Object.keys(entry));
         }
