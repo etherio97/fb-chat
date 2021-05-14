@@ -20,6 +20,7 @@ export default class Care {
     switch (payload) {
       case "CARE_HELP":
         return this.defaultFallback();
+      case "CARE_OTHER":
       case "CARE_AGENT_START":
         return this.talkToAgent();
       case "CARE_AGENT_STOP":
@@ -67,6 +68,10 @@ export default class Care {
         {
           title: "သတင်းယူ",
           payload: "NEWS_GETTING",
+        },
+        {
+          title: "အခြား",
+          payload: "CARE_OTHER",
         },
       ]),
     ];
