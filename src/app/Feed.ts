@@ -48,30 +48,31 @@ export default class Feed {
   handle() {
     let context = this.context;
     // check if changes event is not from Page
+    switch (context.item) {
+      case "comment":
+        return this.handleComment();
+      case "like":
+      case "reaction":
+        return;
+    }
     if (context.from?.id != PAGE_ID) {
-      switch (context.item) {
-        case "comment":
-          return this.handleComment();
-        default:
-          return console.log(context.item, context.verb);
+      if ("photo" in context) {
+        axios
+          .post(`${API_URL}/fb/photo`, context)
+          .catch((e) => console.log(e, "[ERROR]"));
+      } else if ("video" in context) {
+        axios
+          .post(`${API_URL}/fb/video`, context)
+          .catch((e) => console.log(e, "[ERROR]"));
+      } else if ("post_id" in context) {
+        axios
+          .post(`${API_URL}/fb/post`, context)
+          .catch((e) => console.log(e, "[ERROR]"));
+      } else {
+        console.log("changed: unspported");
       }
+      console.log(" -", ...Object.keys(context));
     }
-    if ("photo" in context) {
-      axios
-        .post(`${API_URL}/fb/photo`, context)
-        .catch((e) => console.log(e, "[ERROR]"));
-    } else if ("video" in context) {
-      axios
-        .post(`${API_URL}/fb/video`, context)
-        .catch((e) => console.log(e, "[ERROR]"));
-    } else if ("post_id" in context) {
-      axios
-        .post(`${API_URL}/fb/post`, context)
-        .catch((e) => console.log(e, "[ERROR]"));
-    } else {
-      console.log("changed: unspported");
-    }
-    console.log(" -", ...Object.keys(context));
   }
 
   handleComment() {
