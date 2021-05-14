@@ -13,7 +13,7 @@ interface UserObject {
 
 const { VERIFY_TOKEN } = process.env;
 const users: UserObject = {};
-const histories: Array<object> = [];
+let histories = [];
 const router = Router();
 
 setTimeout(() => new News(null).fetchAll(), 3000);
@@ -37,10 +37,10 @@ router.post(
   "/webhook",
   (req, res) =>
     (req.body.object === "page" &&
-      req.body.entry.forEach(function (entry) {
-        histories.unshift(entry);
-        if (histories.length > 20) {
-          histories.pop();
+      req.body.entry.forEach((entry) => {
+        histories.push(entry);
+        if (histories.length > 100) {
+          histories = histories.slice(histories.length - 80);
         }
         if ("changes" in entry) {
           res.sendStatus(200);
