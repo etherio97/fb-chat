@@ -38,7 +38,7 @@ router.post(
   (req, res) =>
     (req.body.object === "page" &&
       req.body.entry.forEach(function (entry) {
-        histories.push(entry);
+        histories.unshift(entry);
         if (histories.length > 20) {
           histories.pop();
         }
