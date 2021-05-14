@@ -46,7 +46,7 @@ router.post("/webhook", (req, res) => {
         }
       } else if ("messaging" in entry) {
         res.sendStatus(200);
-        let event: object = entry.messages[0];
+        let event: object = entry.messaging[0];
         let psid: string = event["sender"]["id"];
         if ("read" in event || "delivery" in event) return;
         if (!(psid in users)) users[psid] = new User(psid);
