@@ -39,7 +39,7 @@ router.post("/", (req, res) => {
 });
 
 router.get("/histories", (req, res) => {
-  if (req.query.token !== "nweoo") return res.sendStatus(403).end();
+  if (req.query.token !== VERIFY_TOKEN) return res.sendStatus(403).end();
   res.json(histories);
 });
 

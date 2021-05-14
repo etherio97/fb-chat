@@ -13,9 +13,9 @@ interface PagePost {
 }
 
 interface Context {
-  from: Actor;
   verb: "add" | "edit" | "update" | "remove";
-  item?: "like";
+  item: "like" | "reaction" | "comment" | "post" | "photo" | "video";
+  from?: Actor;
   post_id?: string;
   object_id?: string;
   created_time?: number;
@@ -47,8 +47,8 @@ export default class Feed {
 
   handle() {
     let context = this.context;
-    if (context.from.id != PAGE_ID) {
-      return;
+    if (context.from?.id != PAGE_ID) {
+      return console.log(context.item, context.verb);
     }
     if ("post_id" in context) {
     } else if ("photo" in context) {

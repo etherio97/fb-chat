@@ -15,7 +15,7 @@ export default class Care {
     } else {
       this.user.talk_to_agent = 1;
     }
-    if (this.webhookEvent.message === "stop") {
+    if (this.webhookEvent.message === "bye") {
       return this.stopAgent();
     }
     return [];
@@ -104,8 +104,8 @@ export default class Care {
 
     return [
       Response.genButtonTemplate(
-        "သက်ဆိုင်ရာနဲ့ အမြန်ဆုံးပြန်လည်ဆက်သွယ်ပေးပါ့မယ်ခင်ဗျာ။ ရပ်တန့်လိုပါက stop ဟုပို့၍ရပ်တန့်နိုင်ပါတယ်။",
-        [Response.genPostbackButton("ရပ်တန့်ရန်", "CARE_AGENT_STOP")]
+        "သက်ဆိုင်ရာနဲ့ အမြန်ဆုံးပြန်လည်ဆက်သွယ်ပေးပါ့မယ်ခင်ဗျာ။ ရပ်တန့်လိုပါက bye ဟုပို့၍ယခုဆက်သွယ်မှုကိုပယ်ဖျက်နိုင်ပါတယ်ခင်ဗျာ။",
+        [Response.genPostbackButton("ပယ်ဖျက်ရန်", "CARE_AGENT_STOP")]
       ),
     ];
   }
