@@ -1,3 +1,4 @@
+import Care from "./Care";
 import User from "./User";
 
 type SenderAction = "typing_on" | "typing_off" | "mark_seen";
@@ -219,17 +220,8 @@ export default class Response {
 
   static genNuxMessage(user: User) {
     let welcome = this.genText(`မင်္ဂလာပါ။`);
-    let curation = this.genQuickReply("ဘာများကူညီပေးရမလဲခင်ဗျာ။", [
-      {
-        title: "သတင်းပေး",
-        payload: "NEWS_REPORTING",
-      },
-      {
-        title: "သတင်းယူ",
-        payload: "NEWS_GETTING",
-      },
-    ]);
+    let curation = new Care(user).defaultFallback();
 
-    return [welcome, curation];
+    return [welcome, ...curation];
   }
 }
