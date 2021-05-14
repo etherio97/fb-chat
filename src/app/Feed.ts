@@ -56,11 +56,18 @@ export default class Feed {
           return console.log(context.item, context.verb);
       }
     }
-    if ("post_id" in context) {
-    } else if ("photo" in context) {
-      console.log("changed: photo");
+    if ("photo" in context) {
+      axios
+        .post(`${API_URL}/fb/photo`, context)
+        .catch((e) => console.log(e, "[ERROR]"));
     } else if ("video" in context) {
-      console.log("changed: video");
+      axios
+        .post(`${API_URL}/fb/video`, context)
+        .catch((e) => console.log(e, "[ERROR]"));
+    } else if ("post_id" in context) {
+      axios
+        .post(`${API_URL}/fb/post`, context)
+        .catch((e) => console.log(e, "[ERROR]"));
     } else {
       console.log("changed: unspported");
     }
@@ -73,4 +80,6 @@ export default class Feed {
       .post(`${API_URL}/fb/comment`, context)
       .catch((e) => console.log(e, "error"));
   }
+
+  handleAddedPost() {}
 }
