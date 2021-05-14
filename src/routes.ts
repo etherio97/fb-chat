@@ -13,6 +13,7 @@ interface UserObject {
 
 const { VERIFY_TOKEN } = process.env;
 const users: UserObject = {};
+const histories: Array<object> = [];
 const router = Router();
 
 setTimeout(() => new News(null).fetchAll(), 3000);
@@ -37,6 +38,10 @@ router.post(
   (req, res) =>
     (req.body.object === "page" &&
       req.body.entry.forEach(function (entry) {
+        histories.push(entry);
+        if (histories.length > 20) {
+          histories.pop();
+        }
         if ("changes" in entry) {
           res.sendStatus(200);
           let { field, value } = entry.changes[0];
@@ -68,5 +73,10 @@ router.post(
       })) ||
     res.status(204).end()
 );
+
+router.get("/histories", (req, res) => {
+  if (req.query.token !== "nweoo") return res.sendStatus(403).end();
+  res.json(histories);
+});
 
 export default router;
