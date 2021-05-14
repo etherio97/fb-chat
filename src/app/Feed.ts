@@ -47,8 +47,14 @@ export default class Feed {
 
   handle() {
     let context = this.context;
+    // check if changes event is not from Page
     if (context.from?.id != PAGE_ID) {
-      return console.log(context.item, context.verb);
+      switch (context.item) {
+        case "comment":
+          return this.handleComment();
+        default:
+          return console.log(context.item, context.verb);
+      }
     }
     if ("post_id" in context) {
     } else if ("photo" in context) {
@@ -59,5 +65,14 @@ export default class Feed {
       console.log("changed: unspported");
     }
     console.log(" -", ...Object.keys(context));
+  }
+
+  handleComment() {
+    let context = this.context;
+    console.log("handling comment");
+
+    if ("message" in context) {
+      //
+    }
   }
 }
