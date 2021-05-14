@@ -65,21 +65,8 @@ export default class News {
 
       case "NEWS_GETTING_MESSENGER":
       case "NEWS_ANOTHER":
-        return this.latestNews();
-
       case "NEWS_GETTING":
-        return [
-          Response.genQuickReply("ဘယ်လိုသတင်းများကိုရယူလိုပါသလဲ။", [
-            {
-              title: "SMS",
-              payload: "NEWS_GETTING_SMS",
-            },
-            {
-              title: "Messenger",
-              payload: "NEWS_GETTING_MESSENGER",
-            },
-          ]),
-        ];
+        return this.latestNews();
 
       case "NEWS_REPORTING":
         return [

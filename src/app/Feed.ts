@@ -72,7 +72,16 @@ export default class Feed {
     console.log("handling comment");
 
     if ("message" in context) {
-      //
+      let included_badwords = 0;
+      let bad_words = [];
+      bad_words.forEach((badword) => {
+        if (context.message.includes(badword)) {
+          included_badwords++;
+        }
+      });
+      if (included_badwords) {
+        console.log(context.comment_id, context.message);
+      }
     }
   }
 }
