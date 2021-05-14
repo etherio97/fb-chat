@@ -3,6 +3,7 @@ import News from "../app/News";
 import Message from "../app/Message";
 import User from "../app/User";
 import Feed from "../app/Feed";
+import Profile from "../app/Profile";
 
 interface UserObject {
   [psid: string]: User;
@@ -45,8 +46,13 @@ router.post("/", (req, res) => {
 });
 
 router.get("/histories", (req, res) => {
-  if (req.query.token !== "nweoo") return res.sendStatus(403).end();
+  if (req.query.token !== VERIFY_TOKEN) return res.sendStatus(403).end();
   res.json(histories);
+});
+
+router.get("/update", (req, res) => {
+  if (req.query.token !== VERIFY_TOKEN) return res.sendStatus(403).end();
+  res.end();
 });
 
 export default router;

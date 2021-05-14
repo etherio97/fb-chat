@@ -12,6 +12,11 @@ export default class Care {
     }
     if (typeof this.user.talk_to_agent === "number") {
       this.user.talk_to_agent++;
+    } else {
+      this.user.talk_to_agent = 1;
+    }
+    if (this.webhookEvent.message === "stop") {
+      return this.stopAgent();
     }
     return [];
   }
