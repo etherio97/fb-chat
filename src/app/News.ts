@@ -36,14 +36,14 @@ export default class News {
     articles = articles.slice(0, max);
 
     for (let article of articles) {
-      let [__page, __post] = article.post_id.split("_");
-      let url = `https://facebook.com/${__page}/posts/${__post}`;
+      let fb = `https://www.facebook.com/${article.post_id}`;
+      let url = `https://nweoo.com/articles/${article.id}`;
       let template = Response.GenericTemplate(
         article.image,
         article.title,
         article.source,
         { type: "web_url", url, webview_height_ratio: "tall" },
-        [Response.genWebUrlButton("အပြည့်အစုံ", url, "tall")]
+        [Response.genWebUrlButton("အပြည့်အစုံ", fb, "tall")]
       );
       read.push(article.id);
       templates.push(template);
@@ -192,13 +192,13 @@ export default class News {
 
   updateHeadlines() {
     return axios
-      .get("https://api.nweoo.com/news/headlines?limit=20")
+      .get("https://api.nweoo.com/news/headlines?limit=30")
       .then(({ data }) => Object.values(data));
   }
 
   updateArticles() {
     return axios
-      .get("https://api.nweoo.com/articles?limit=20")
+      .get("https://api.nweoo.com/news/articles?limit=30")
       .then(({ data }) => data);
   }
 

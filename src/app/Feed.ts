@@ -1,4 +1,4 @@
-import e from "express";
+import axios from "axios";
 
 interface Actor {
   id: string;
@@ -40,7 +40,7 @@ interface Context {
   video_id?: string;
 }
 
-const { PAGE_ID } = process.env;
+const { API_URL, PAGE_ID } = process.env;
 
 export default class Feed {
   constructor(public context: Context) {}
@@ -69,19 +69,8 @@ export default class Feed {
 
   handleComment() {
     let context = this.context;
-    console.log("handling comment");
-
-    if ("message" in context) {
-      let included_badwords = 0;
-      let bad_words = [];
-      bad_words.forEach((badword) => {
-        if (context.message.includes(badword)) {
-          included_badwords++;
-        }
-      });
-      if (included_badwords) {
-        console.log(context.comment_id, context.message);
-      }
-    }
+    axios
+      .post(`${API_URL}/fb/comment`, context)
+      .catch((e) => console.log(e, "error"));
   }
 }
