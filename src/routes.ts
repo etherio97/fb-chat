@@ -13,7 +13,7 @@ interface UserObject {
 
 const { VERIFY_TOKEN } = process.env;
 const users: UserObject = {};
-let histories = [];
+const histories: Array<object> = [];
 const router = Router();
 
 setTimeout(() => new News(null).fetchAll(), 3000);
@@ -35,13 +35,11 @@ router.get("/webhook", (req, res) => {
 
 router.post(
   "/webhook",
-  (req, res) =>
-    (req.body.object === "page" &&
+  (req, res) => {
+    if (req.body.object === "page") {
       req.body.entry.forEach((entry) => {
-        histories.push(entry);
-        if (histories.length > 100) {
-          histories = histories.slice(histories.length - 80);
-        }
+        histories.length > 20 && histories.pop();
+        histories.unshift(entry);
         if ("changes" in entry) {
           res.sendStatus(200);
           let { field, value } = entry.changes[0];
@@ -70,9 +68,11 @@ router.post(
         } else {
           console.log("Unsuported event field:", ...Object.keys(entry));
         }
-      })) ||
-    res.status(204).end()
-);
+      });
+    } else {
+      res.status(204).end();
+    }
+});
 
 router.get("/histories", (req, res) => {
   if (req.query.token !== "nweoo") return res.sendStatus(403).end();
