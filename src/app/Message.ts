@@ -8,7 +8,9 @@ import Care from "./Care";
 const NWEOO_BOT = "278599793960429";
 
 export default class Message {
-  constructor(public user: User, public webhookEvent?: any) {}
+  constructor(public user: User, public webhookEvent?: any) {
+    user.times++;
+  }
 
   handle() {
     let responses;
@@ -17,13 +19,13 @@ export default class Message {
     try {
       switch (user.mode) {
         case "agent":
-          responses = new Care(this.user, this.webhookEvent).handle();
+          responses = new Care(user, event).handle();
           break;
         case "delete":
-          responses = new News(this.user, this.webhookEvent).handle();
+          responses = new News(user, event).handle();
           break;
         case "suggestion":
-          responses = new Care(this.user, this.webhookEvent).handleSuggestion();
+          responses = new Care(user, event).handleSuggestion();
           break;
         default:
           if (event.message) {
@@ -60,8 +62,6 @@ export default class Message {
 
   handleTextMessage() {
     let message = this.webhookEvent.message.text.trim();
-    let user = this.user;
-    let response;
 
     if (message.match(/#n[we]{2}oo/gi)) {
       return new Report().handleMessage(message, this);
@@ -77,6 +77,8 @@ export default class Message {
         Response.genText(this.user.psid),
       ];
     }
+
+    if (this.user.times > 2) return [];
 
     return new Care(this.user, this.webhookEvent).defaultFallback();
   }

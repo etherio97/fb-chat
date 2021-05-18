@@ -8,6 +8,7 @@ export default class User {
   public firstName: string;
   public lastName: string;
   public profileURL: string;
+  public times: number;
   public gender: Gender;
   public mode: Mode;
   public persona_id?: string;
@@ -28,6 +29,7 @@ export default class User {
     this.headlines = [];
     this.reports = [];
     this.store = {};
+    this.times = 0;
   }
 
   setProfile(profile: object) {
@@ -35,7 +37,6 @@ export default class User {
     this.lastName = profile["last_name"] || "";
     this.profileURL = profile["profile_pic"] || "";
     this.gender = profile["profile_pic"] || "netural";
-
     this.name =
       profile["name"] || (this.firstName + " " + this.lastName).trim();
   }
