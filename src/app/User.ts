@@ -1,5 +1,3 @@
-import { User as UserModel } from "../models/User";
-
 type Mode = "delete" | "agent" | "default" | "suggestion";
 type Gender = "netural" | "male" | "female";
 
