@@ -1,9 +1,6 @@
 import { Router } from "express";
-import News from "../app/News";
 import Message from "../app/Message";
 import User from "../app/User";
-import Feed from "../app/Feed";
-import Profile from "../app/Profile";
 
 interface UserObject {
   [psid: string]: User;

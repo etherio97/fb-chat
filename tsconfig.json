@@ -1,5 +1,8 @@
 {
-  "include": ["src/**/*.js", "src/**/*.ts"],
+  "include": [
+    "src/**/*.js",
+    "src/**/*.ts"
+  ],
   "compilerOptions": {
     "target": "es2017",
     "module": "commonjs",
@@ -13,6 +16,8 @@
     "experimentalDecorators": true,
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
-    "types": ["@types/express", "@types/mongoose"]
+    "types": [
+      "@types/express"
+    ]
   }
 }
