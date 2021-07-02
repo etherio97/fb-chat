@@ -7,18 +7,13 @@ import router from "./routes";
 config();
 
 const app = express();
-const { PORT, VERIFY_TOKEN } = process.env;
+const { PORT } = process.env;
 
 DB.init();
 
 app.use(json());
 app.use(urlencoded({ extended: true }));
-app.use((req, res, next) => {
-    if ('token' in req.query && String(req.query['token']).toUpperCase() === String(VERIFY_TOKEN).toUpperCase()) {
-        app.use(cors());
-    }
-    next();
-})
+app.use(cors())
 
 app.use(router);
 
