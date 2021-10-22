@@ -164,7 +164,7 @@ export default class Message {
           id: this.user.psid,
         },
         message: response,
-        persona_id,
+        // persona_id,
       };
     }
 

@@ -174,7 +174,6 @@ export default class News {
     return this.updateArticles()
       .then(
 	(articles: any[]) => articles.reverse())
-      );
   }
 
   updateArticles() {
