@@ -8,7 +8,7 @@ import User from "./User";
 
 const { APP_URL } = process.env;
 
-let updated_at;
+let updated_at: number;
 
 export default class News {
   constructor(public user: User, public webhookEvent?: any) {}
@@ -36,7 +36,7 @@ export default class News {
     articles = articles.slice(0, max);
 
     for (let article of articles) {
-      let fb = `https://www.facebook.com/${article.post_id}`;
+      let fb = `https://facebook.com/${article.post_id}`;
       let url = `https://nweoo.com/articles/${article.id}`;
       let template = Response.GenericTemplate(
         article.image,
@@ -170,30 +170,11 @@ export default class News {
   }
 
   update() {
-    return this.updateHeadlines().then((headlines: Array<object>) =>
-      this.updateArticles().then((articles: Array<object>) => {
-        updated_at = Date.now();
-        articles.forEach((article) => {
-          let headline = headlines.find(
-            (headline) => headline["title"] == article["title"]
-          );
-          if (headline) {
-            article["datetime"] = headline["datetime"];
-            article["timestamp"] = headline["timestamp"];
-          } else {
-            article["datetime"] = new Date();
-            article["timestamp"] = Date.now();
-          }
-        });
-        return articles.reverse();
-      })
-    );
-  }
-
-  updateHeadlines() {
-    return axios
-      .get("https://api.nweoo.com/news/headlines?limit=30")
-      .then(({ data }) => Object.values(data));
+    updated_at = Date.now();
+    return this.updateArticles()
+      .then(
+	(articles: any[]) => articles.reverse())
+      );
   }
 
   updateArticles() {
