@@ -8,12 +8,14 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - uses: actions/nose-setup@v1
+      - uses: actions/node-setup@v1
         with:
           node-version: 14
           cache: yarn
-      - run: yarn
-      - run: yarn build
+      - name: Install Dependencies
+        run: yarn
+      - name: Build Production
+        run: yarn build:prod
       - name: Git Config
         run: |
           git config --global user.name Ghost

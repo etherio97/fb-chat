@@ -17,8 +17,7 @@
   "main": "dist/index.js",
   "scripts": {
     "start": "node dist/index.js",
-    "build": "tsc --project ./tsconfig.json",
-    "watch": "npm run build -- --watch",
+    "build:prod": "tsc --project ./tsconfig.json",
     "dev": "nodemon src/index.ts"
   },
   "dependencies": {
