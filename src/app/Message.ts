@@ -84,7 +84,7 @@ export default class Message {
   }
 
   handlePayload(payload) {
-    GraphAPI.callFBAEventsAPI(this.user.psid, payload);
+    // GraphAPI.callFBAEventsAPI(this.user.psid, payload);
 
     if (payload.includes("CARE")) {
       return new Care(this.user, this.webhookEvent).handlePayload(payload);
