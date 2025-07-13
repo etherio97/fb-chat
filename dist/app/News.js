@@ -146,12 +146,11 @@ class News {
     }
     update() {
         updated_at = Date.now();
-        return this.updateArticles()
-            .then((articles) => articles.reverse());
+        return this.updateArticles().then((articles) => articles.reverse());
     }
     updateArticles() {
         return axios_1.default
-            .get("https://api.nweoo.com/news/articles?limit=30")
+            .get("https://nweoo-developer.onrender.com/news/articles?limit=30")
             .then(({ data }) => data);
     }
     fetchAll() {

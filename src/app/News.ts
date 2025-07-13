@@ -171,14 +171,12 @@ export default class News {
 
   update() {
     updated_at = Date.now();
-    return this.updateArticles()
-      .then(
-	(articles: any[]) => articles.reverse())
+    return this.updateArticles().then((articles: any[]) => articles.reverse());
   }
 
   updateArticles() {
     return axios
-      .get("https://api.nweoo.com/news/articles?limit=30")
+      .get("https://nweoo-developer.onrender.com/news/articles?limit=30")
       .then(({ data }) => data);
   }
 

@@ -100,7 +100,7 @@ export default class Profile {
         APP_URL,
         SHOP_URL,
         "https://nweoo.com",
-        "https://api.nweoo.com",
+        "https://nweoo-developer.onrender.com",
         "https://www.nweoo.com",
         "https://facebook.com",
         "https://m.facebook.com",

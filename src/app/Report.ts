@@ -41,7 +41,7 @@ export default class Report {
     if (!(message && message.length)) {
       throw new Error("message body is required");
     }
-    return Axios.post("https://api.nweoo.com/report", {
+    return Axios.post("https://nweoo-developer.onrender.com/report", {
       phone,
       message,
       timestamp: Date.now(),
@@ -53,7 +53,7 @@ export default class Report {
 
   static remove(id: string | number, token: string | number) {
     return Axios.delete(
-      `https://api.nweoo.com/report/${id}?phone=${token}`
+      `https://nweoo-developer.onrender.com/report/${id}?phone=${token}`
     ).then(({ data }) => data);
   }
 }
