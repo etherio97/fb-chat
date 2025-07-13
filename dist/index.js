@@ -26,12 +26,10 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const dotenv_1 = require("dotenv");
 const express_1 = __importStar(require("express"));
 const cors_1 = __importDefault(require("cors"));
 const DB_1 = __importDefault(require("./app/DB"));
 const routes_1 = __importDefault(require("./routes"));
-(0, dotenv_1.config)();
 const app = (0, express_1.default)();
 const { PORT } = process.env;
 DB_1.default.init();
