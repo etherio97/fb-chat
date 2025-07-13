@@ -1,6 +1,7 @@
 import { Router } from "express";
 import Message from "../app/Message";
 import User from "../app/User";
+import News from "../app/News";
 
 interface UserObject {
   [psid: string]: User;
@@ -50,6 +51,7 @@ router.get("/histories", (req, res) => {
 
 router.get("/update", (req, res) => {
   if (req.query.token !== VERIFY_TOKEN) return res.sendStatus(403).end();
+  new News(null).fetchAll();
   res.end();
 });
 

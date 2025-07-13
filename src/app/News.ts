@@ -191,6 +191,7 @@ export default class News {
             let db = DB.read();
             db.articles = articles;
             DB.save(db);
+            console.log("Updated Data:", db);
             resolve(articles);
           })
           .catch((e) => reject(e));

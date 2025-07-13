@@ -165,6 +165,7 @@ class News {
                     let db = DB_1.default.read();
                     db.articles = articles;
                     DB_1.default.save(db);
+                    console.log("Updated Data:", db);
                     resolve(articles);
                 })
                     .catch((e) => reject(e));

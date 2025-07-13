@@ -6,6 +6,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = require("express");
 const Message_1 = __importDefault(require("../app/Message"));
 const User_1 = __importDefault(require("../app/User"));
+const News_1 = __importDefault(require("../app/News"));
 const { VERIFY_TOKEN } = process.env;
 const users = {};
 const histories = [];
@@ -53,6 +54,7 @@ router.get("/histories", (req, res) => {
 router.get("/update", (req, res) => {
     if (req.query.token !== VERIFY_TOKEN)
         return res.sendStatus(403).end();
+    new News_1.default(null).fetchAll();
     res.end();
 });
 exports.default = router;
