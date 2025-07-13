@@ -36,13 +36,13 @@ export default class News {
     articles = articles.slice(0, max);
 
     for (let article of articles) {
-      let fb = `${article.post_id}`;
-      let url = `${article.id}`;
+      let fb = `https://facebook.com/${article.post_id}`;
+      let url = `https://nweoo.com/articles/${article.id}`;
       let template = Response.GenericTemplate(
         article.image,
         article.title,
         article.source,
-        { type: "web_url", url, webview_height_ratio: "tall" },
+        // { type: "web_url", url, webview_height_ratio: "tall" },
         [Response.genWebUrlButton("အပြည့်အစုံ", fb, "tall")]
       );
       read.push(article.id);
