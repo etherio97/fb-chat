@@ -22,6 +22,7 @@ router.get("/", (req, res) => {
 });
 
 router.post("/", (req, res) => {
+  console.log("MESSEAGES: POST", JSON.stringify(req.body));
   if (req.body.object === "page") {
     req.body.entry.forEach((entry) => {
       histories.unshift(entry);
