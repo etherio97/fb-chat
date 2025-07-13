@@ -37,8 +37,8 @@ class News {
         remain = articles.length - max;
         articles = articles.slice(0, max);
         for (let article of articles) {
-            let fb = `https://facebook.com/${article.post_id}`;
-            let url = `https://nweoo.com/articles/${article.id}`;
+            let fb = `${article.post_id}`;
+            let url = `${article.id}`;
             let template = Response_1.default.GenericTemplate(article.image, article.title, article.source, { type: "web_url", url, webview_height_ratio: "tall" }, [Response_1.default.genWebUrlButton("အပြည့်အစုံ", fb, "tall")]);
             read.push(article.id);
             templates.push(template);
